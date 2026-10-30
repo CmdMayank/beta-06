@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '../i18n/LanguageContext';
 import { sessionApi } from '../services/sessionApi';
@@ -12,6 +12,7 @@ import { ArrowLeft, ArrowRight, CheckCircle2, RotateCcw, HelpCircle } from 'luci
 export const ScreeningPage = () => {
   const { t, getLocalized, language } = useLanguage();
   const navigate = useNavigate();
+  const questionContainerRef = useRef(null);
 
   const [sessionId, setSessionId] = useState(null);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -22,6 +23,12 @@ export const ScreeningPage = () => {
   const [loading, setLoading] = useState(true);
   const [evaluating, setEvaluating] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+
+  // Scroll reset to top of questionnaire card on step/question change
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    questionContainerRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, [currentIndex]);
 
   // Initialize or resume session
   useEffect(() => {
@@ -83,7 +90,12 @@ export const ScreeningPage = () => {
     setErrorMessage('');
   };
 
-  const handleNext = async () => {
+  const handleNext = async (e) => {
+    if (e) {
+      e.preventDefault();
+      e.currentTarget?.blur();
+    }
+
     if (!currentQuestion) return;
 
     // Validation for required fields
@@ -119,7 +131,12 @@ export const ScreeningPage = () => {
     }
   };
 
-  const handleBack = () => {
+  const handleBack = (e) => {
+    if (e) {
+      e.preventDefault();
+      e.currentTarget?.blur();
+    }
+
     if (currentIndex > 0) {
       loadQuestion(sessionId, currentIndex - 1);
     }
@@ -196,7 +213,10 @@ export const ScreeningPage = () => {
         </div>
 
         {/* Progress Card */}
-        <div className="glass-panel rounded-[36px] shadow-glass-lg p-6 sm:p-10 sm:py-12 border border-white/80 relative overflow-hidden">
+        <div
+          ref={questionContainerRef}
+          className="glass-panel rounded-[36px] shadow-glass-lg p-6 sm:p-10 sm:py-12 border border-white/80 relative overflow-hidden"
+        >
           
           {/* Progress Bar */}
           <div className="mb-8">
@@ -274,7 +294,7 @@ export const ScreeningPage = () => {
                   <span>{t('btnBack', 'Back')}</span>
                 </button>
 
-                {/* Dark Pill CTA with capsule arrow (inspired by reference design) */}
+                {/* Dark Pill CTA with capsule arrow */}
                 <button
                   type="button"
                   onClick={handleNext}
