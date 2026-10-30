@@ -19,7 +19,7 @@ export const LanguageSwitcher = ({ className = '' }) => {
         onClick={() => setLanguage('en')}
         className={`px-3 py-1 rounded-full transition-all text-[11px] ${
           language === 'en'
-            ? 'bg-white text-slate-900 shadow-xs font-bold'
+            ? 'bg-orange-500 text-white shadow-xs font-bold'
             : 'text-slate-600 hover:text-slate-900'
         }`}
         aria-pressed={language === 'en'}

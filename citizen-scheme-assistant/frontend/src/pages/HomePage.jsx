@@ -27,7 +27,7 @@ export const HomePage = () => {
       <HeroSection />
 
       {/* 2. Search Section */}
-      <section className="relative px-4 sm:px-6 lg:px-8 z-20">
+      <section className="relative px-4 sm:px-6 lg:px-8 z-20 -mt-2 sm:-mt-4">
         <SearchBar />
       </section>
 

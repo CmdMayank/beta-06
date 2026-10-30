@@ -25,6 +25,7 @@ export const SUPPORTED_DOCUMENT_TYPES = {
   DOMICILE_CERTIFICATE: 'DOMICILE_CERTIFICATE',
   RATION_CARD: 'RATION_CARD',
   BANK_PASSBOOK: 'BANK_PASSBOOK',
+  MARKSHEET: 'MARKSHEET',
 };
 
 export const DOCUMENT_SAMPLE_REGISTRY = {
@@ -434,6 +435,67 @@ export const DOCUMENT_SAMPLE_REGISTRY = {
       hi: 'प्रत्येक बैंक की पासबुक का प्रारूप अलग होता है। भौतिक पासबुक के स्थान पर निरस्त चेक (Cancelled Cheque) या बैंक मुहरयुक्त विवरण भी स्वीकार्य है।',
     },
   },
+
+  [SUPPORTED_DOCUMENT_TYPES.MARKSHEET]: {
+    type: SUPPORTED_DOCUMENT_TYPES.MARKSHEET,
+    sampleImage: '/samples/marksheet-sample.jpg',
+    name: {
+      en: 'Class VII / VIII Marksheet',
+      hi: 'कक्षा 7वीं / 8वीं अंकसूची सह प्रमाण-पत्र',
+    },
+    category: {
+      en: 'Educational Qualification & Merit Proof',
+      hi: 'शैक्षणिक योग्यता एवं प्राप्तांक प्रमाण',
+    },
+    purpose: {
+      en: 'Verifies academic qualification, passing year, subject scores, and minimum percentage criteria required for merit scholarships and educational welfare schemes.',
+      hi: 'शैक्षणिक योग्यता, उत्तीर्ण वर्ष, विषयवार प्राप्तांक और छात्रवृत्ति योजनाओं के लिए निर्धारित न्यूनतम प्रतिशत की पुष्टि हेतु।',
+    },
+    issuingAuthority: {
+      en: 'School Headmaster / Recognized State or Central Education Board',
+      hi: 'संबंधित विद्यालय / मान्यता प्राप्त राज्य अथवा केंद्रीय शिक्षा बोर्ड',
+    },
+    whereToObtain: {
+      en: 'Obtain from your school administration or download verified digital copy from DigiLocker / State Education Board portal.',
+      hi: 'अपने विद्यालय कार्यालय से प्राप्त करें अथवा डिजिलॉकर / संबंधित शिक्षा बोर्ड पोर्टल से डिजिटल प्रति डाउनलोड करें।',
+    },
+    importantChecks: [
+      {
+        title: {
+          en: 'Minimum Percentage Criteria',
+          hi: 'न्यूनतम प्रतिशत अहर्ता',
+        },
+        desc: {
+          en: 'Ensure your aggregate marks meet the scheme threshold (e.g., minimum 55% marks for General/OBC, 50% for SC/ST).',
+          hi: 'सुनिश्चित करें कि कुल प्राप्तांक योजना की न्यूनतम सीमा (सामान्य/ओबीसी 55%, एससी/एसटी 50%) के अनुरूप हों।',
+        },
+      },
+      {
+        title: {
+          en: 'Student & Parents Name Match',
+          hi: 'छात्र व माता-पिता के नाम का मिलान',
+        },
+        desc: {
+          en: 'Student name, date of birth, and parents names must match your Aadhaar card and bank account records exactly.',
+          hi: 'छात्र का नाम, जन्म तिथि व माता-पिता का नाम आधार कार्ड व बैंक विवरण से अक्षरशः मेल खाना चाहिए।',
+        },
+      },
+      {
+        title: {
+          en: 'School Seal or Board Verification',
+          hi: 'विद्यालय की मुहर अथवा बोर्ड सत्यापन',
+        },
+        desc: {
+          en: 'Physical marksheet must bear school principal seal and signature, or have a verifiable DigiLocker digital signature.',
+          hi: 'भौतिक अंकसूची पर संस्था प्राचार्य के हस्ताक्षर व मुहर अथवा डिजिलॉकर डिजिटल सत्यापन होना अनिवार्य है।',
+        },
+      },
+    ],
+    formatDisclaimer: {
+      en: 'Marksheet layouts differ across state secondary education boards, ICSE, and CBSE. DigiLocker verified digital marksheets are officially recognized everywhere.',
+      hi: 'विभिन्न शिक्षा बोर्डों के अंकसूची प्रारूप अलग हो सकते हैं। डिजिलॉकर सत्यापित डिजिटल अंकसूची सभी जगह आधिकारिक रूप से मान्य है।',
+    },
+  },
 };
 
 /**
@@ -448,6 +510,7 @@ const EXACT_ID_MAP = {
   'doc-aadhaar-mp': SUPPORTED_DOCUMENT_TYPES.AADHAAR_CARD,
   'doc-aadhaar-pmjay': SUPPORTED_DOCUMENT_TYPES.AADHAAR_CARD,
   'doc-aadhaar-svanidhi': SUPPORTED_DOCUMENT_TYPES.AADHAAR_CARD,
+  'doc-age-proof': SUPPORTED_DOCUMENT_TYPES.AADHAAR_CARD,
   'aadhaar-card': SUPPORTED_DOCUMENT_TYPES.AADHAAR_CARD,
 
   // 2. Income Certificate
@@ -474,14 +537,17 @@ const EXACT_ID_MAP = {
   'doc-bpl-card': SUPPORTED_DOCUMENT_TYPES.RATION_CARD,
   'ration-card': SUPPORTED_DOCUMENT_TYPES.RATION_CARD,
 
-  // 7. Bank Passbook (Standard Passbooks only; Aadhaar-seeded / DBT-active / Jan Dhan accounts excluded from View Sample)
+  // 7. Bank Passbook (Standard Passbooks only; Aadhaar-seeded / DBT-active / Student / Jan Dhan accounts excluded from View Sample)
   'doc-bank-passbook': SUPPORTED_DOCUMENT_TYPES.BANK_PASSBOOK,
   'doc-bank-account-artisan': SUPPORTED_DOCUMENT_TYPES.BANK_PASSBOOK,
   'doc-bank-account-pmay': SUPPORTED_DOCUMENT_TYPES.BANK_PASSBOOK,
   'doc-bank-account-svanidhi': SUPPORTED_DOCUMENT_TYPES.BANK_PASSBOOK,
   'doc-dbt-bank-mp': SUPPORTED_DOCUMENT_TYPES.BANK_PASSBOOK,
-  'doc-bank-student': SUPPORTED_DOCUMENT_TYPES.BANK_PASSBOOK,
   'bank-passbook': SUPPORTED_DOCUMENT_TYPES.BANK_PASSBOOK,
+
+  // 8. Educational Marksheet
+  'doc-marksheet-7th-8th': SUPPORTED_DOCUMENT_TYPES.MARKSHEET,
+  'marksheet': SUPPORTED_DOCUMENT_TYPES.MARKSHEET,
 };
 
 /**
@@ -500,16 +566,21 @@ export function resolveDocumentType(doc) {
   const combined = `${docId.toLowerCase()} ${titleEn} ${titleHi}`;
 
   // Explicit exclusions: "Aadhaar-Seeded Bank Passbook", "Bank Account Passbook (DBT Active)",
-  // "Aadhaar Card (Biometric)", "Ration Card / Family Composition Certificate", and
-  // "Bank Account Passbook (Jan Dhan or Savings)" must NOT show a View Sample / photo preview option
+  // "Aadhaar Card (Biometric)", "Ration Card / Family Composition Certificate",
+  // "Bank Account Passbook (Jan Dhan or Savings)", and "Student's Own Aadhaar-Linked Bank Account"
+  // must NOT show a View Sample / photo preview option
   if (
     docId === 'doc-bank' ||
     docId === 'doc-bank-pmay' ||
     docId === 'doc-bank-ind' ||
+    docId === 'doc-bank-student' ||
     docId === 'doc-aadhaar-vk' ||
     docId === 'doc-aadhaar-artisan' ||
     docId === 'doc-ration-card' ||
     docId === 'doc-bank-account' ||
+    combined.includes('student') ||
+    combined.includes('विद्यार्थी') ||
+    combined.includes('छात्र') ||
     combined.includes('family composition') ||
     combined.includes('परिवार संरचना') ||
     combined.includes('jan dhan') ||
@@ -521,6 +592,10 @@ export function resolveDocumentType(doc) {
     combined.includes('aadhaar seeding') ||
     combined.includes('आधार-सीडेड') ||
     combined.includes('आधार सीडेड') ||
+    combined.includes('aadhaar-linked') ||
+    combined.includes('aadhaar linked') ||
+    combined.includes('आधार-लिंक') ||
+    combined.includes('आधार लिंक') ||
     combined.includes('dbt active') ||
     combined.includes('dbt-active') ||
     combined.includes('dbt enabled') ||
@@ -548,8 +623,6 @@ export function resolveDocumentType(doc) {
     'phone',
     'मोबाइल',
     'फोन',
-    'age proof',
-    'आयु प्रमाण',
     'land',
     'khasra',
     'khatauni',
@@ -559,9 +632,6 @@ export function resolveDocumentType(doc) {
     'खसरा',
     'खतौनी',
     'जमाबंदी',
-    'marksheet',
-    'अंकसूची',
-    'मार्कशीट',
     'job card',
     'mgnrega',
     'मनरेगा',
@@ -650,6 +720,16 @@ export function resolveDocumentType(doc) {
     combined.includes('ration')
   ) {
     return SUPPORTED_DOCUMENT_TYPES.RATION_CARD;
+  }
+
+  // Check Educational Marksheet
+  if (
+    combined.includes('marksheet') ||
+    combined.includes('अंकसूची') ||
+    combined.includes('मार्कशीट') ||
+    combined.includes('marks statement')
+  ) {
+    return SUPPORTED_DOCUMENT_TYPES.MARKSHEET;
   }
 
   // Any other document is unsupported

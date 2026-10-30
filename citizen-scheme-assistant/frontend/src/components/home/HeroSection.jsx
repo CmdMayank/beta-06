@@ -7,7 +7,7 @@ export const HeroSection = () => {
   const { t } = useLanguage();
 
   return (
-    <section className="relative overflow-hidden py-12 md:py-16 min-h-0 md:min-h-[80vh] flex flex-col justify-center">
+    <section className="relative overflow-hidden pt-8 pb-4 md:pt-12 md:pb-6 flex flex-col justify-center">
       {/* Ambient 3D Glass Orbs & Lighting in Background */}
       <div
         className="absolute top-8 right-1/4 w-80 h-80 rounded-full glass-orb-saffron opacity-80 pointer-events-none blur-sm"
