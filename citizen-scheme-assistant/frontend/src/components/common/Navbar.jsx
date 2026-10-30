@@ -1,27 +1,17 @@
 import React, { useState } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { useLanguage } from '../../i18n/LanguageContext';
 import { LanguageSwitcher } from './LanguageSwitcher';
-import { sessionApi } from '../../services/sessionApi';
-import { Menu, X, Trash2, ArrowRight, Sparkles } from 'lucide-react';
+import { Menu, X, ArrowRight } from 'lucide-react';
 
 export const Navbar = () => {
   const { t, language } = useLanguage();
   const location = useLocation();
-  const navigate = useNavigate();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [showClearConfirm, setShowClearConfirm] = useState(false);
 
   const isActive = (path) => {
     if (path === '/') return location.pathname === '/';
     return location.pathname.startsWith(path);
-  };
-
-  const handleClearSession = () => {
-    sessionApi.clearSession();
-    setShowClearConfirm(false);
-    setMobileMenuOpen(false);
-    navigate('/');
   };
 
   return (
@@ -98,22 +88,11 @@ export const Navbar = () => {
           </nav>
 
           {/* Desktop Actions */}
-          <div className="hidden md:flex items-center gap-2.5">
+          <div className="hidden md:flex items-center gap-3">
             {/* Language Switcher */}
             <LanguageSwitcher />
 
-            {/* Clear Session / Shared-Phone Privacy Button */}
-            <button
-              type="button"
-              onClick={() => setShowClearConfirm(true)}
-              className="p-2 text-slate-500 hover:text-rose-600 hover:bg-rose-50/70 rounded-full transition border border-transparent hover:border-rose-200"
-              title={t('btnClearSession', 'Clear Data / New Citizen')}
-              aria-label={t('btnClearSession', 'Clear Data / New Citizen')}
-            >
-              <Trash2 className="w-4 h-4" />
-            </button>
-
-            {/* Dark Capsule Button inspired by reference design */}
+            {/* Dark Capsule Button */}
             <Link
               to="/screening"
               className="glass-dark-pill inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-xs font-semibold tracking-wide hover:bg-black transition-all shadow-md active:scale-95"
@@ -174,18 +153,7 @@ export const Navbar = () => {
               {t('navAbout', 'About Us')}
             </a>
 
-            <div className="pt-3 border-t border-slate-200/50 space-y-2">
-              <button
-                type="button"
-                onClick={() => {
-                  setShowClearConfirm(true);
-                }}
-                className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-full text-xs font-semibold text-rose-700 bg-rose-50/80 border border-rose-200/80"
-              >
-                <Trash2 className="w-3.5 h-3.5" />
-                <span>{t('btnClearSession', 'Clear Data / New Citizen')}</span>
-              </button>
-
+            <div className="pt-3 border-t border-slate-200/50">
               <Link
                 to="/screening"
                 onClick={() => setMobileMenuOpen(false)}
@@ -194,46 +162,6 @@ export const Navbar = () => {
                 <span>{t('navCheckEligibility', 'Check Eligibility')}</span>
                 <ArrowRight className="w-3.5 h-3.5" />
               </Link>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Clear Data Modal (Shared-Phone Privacy) */}
-      {showClearConfirm && (
-        <div
-          className="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-md flex items-center justify-center p-4"
-          role="dialog"
-          aria-modal="true"
-        >
-          <div className="glass-panel rounded-3xl max-w-sm w-full p-6 sm:p-7 shadow-2xl border border-white">
-            <div className="w-12 h-12 rounded-2xl bg-rose-100/80 text-rose-600 flex items-center justify-center mb-4">
-              <Trash2 className="w-6 h-6" />
-            </div>
-            <h3 className="text-base font-bold text-slate-900 mb-2">
-              {t('btnClearSession', 'Clear Data / New Citizen')}
-            </h3>
-            <p className="text-xs text-slate-600 mb-6 leading-relaxed">
-              {t(
-                'clearSessionConfirm',
-                'Are you sure you want to clear all entered responses and reset the questionnaire? This ensures privacy when sharing this device.'
-              )}
-            </p>
-            <div className="flex items-center justify-end gap-3">
-              <button
-                type="button"
-                onClick={() => setShowClearConfirm(false)}
-                className="px-4 py-2 text-xs font-semibold text-slate-700 hover:bg-white/80 rounded-full transition"
-              >
-                Cancel
-              </button>
-              <button
-                type="button"
-                onClick={handleClearSession}
-                className="px-5 py-2 text-xs font-semibold text-white bg-rose-600 hover:bg-rose-700 rounded-full transition shadow-xs"
-              >
-                Confirm Clear
-              </button>
             </div>
           </div>
         </div>
