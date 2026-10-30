@@ -44,21 +44,21 @@ export const CategoryCard = ({ categoryId, titleKey, descKey, className = '' }) 
   return (
     <Link
       to={`/schemes?category=${categoryId}`}
-      className={`group relative flex flex-col justify-between p-6 rounded-[24px] glass-panel glass-panel-hover shadow-glass ${className}`}
+      className={`group relative flex flex-col p-6 rounded-[24px] glass-panel glass-panel-hover shadow-glass ${className}`}
     >
       <div>
         <div
-          className={`w-12 h-12 rounded-2xl flex items-center justify-center mb-4 transition-transform group-hover:scale-105 border ${iconStyle} shadow-2xs`}
+          className={`w-12 h-12 rounded-2xl flex items-center justify-center mb-3.5 transition-transform group-hover:scale-105 border ${iconStyle} shadow-2xs`}
         >
           <Icon className="w-5 h-5" aria-hidden="true" />
         </div>
-        <h3 className="text-base font-bold text-slate-900 mb-1.5 group-hover:text-orange-600 transition-colors">
+        <h3 className="text-base font-bold text-slate-900 mb-1 group-hover:text-orange-600 transition-colors">
           {t(titleKey)}
         </h3>
         <p className="text-xs text-slate-500 leading-relaxed font-normal">{t(descKey)}</p>
       </div>
 
-      <div className="mt-5 pt-3 border-t border-white/60 flex items-center justify-between text-xs font-semibold text-slate-700 group-hover:text-orange-600">
+      <div className="mt-4 pt-3 border-t border-white/60 flex items-center justify-between text-xs font-semibold text-slate-700 group-hover:text-orange-600">
         <span>{t('browseAllButton', 'Browse Schemes')}</span>
         <div className="w-6 h-6 rounded-full bg-white/70 group-hover:bg-orange-500 group-hover:text-white flex items-center justify-center transition-all shadow-2xs">
           <ArrowRight className="w-3 h-3 transition-transform group-hover:translate-x-0.5" />

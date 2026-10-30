@@ -27,14 +27,14 @@ export const HomePage = () => {
       <HeroSection />
 
       {/* 2. Search Section */}
-      <section className="relative -mt-6 sm:-mt-8 px-4 sm:px-6 lg:px-8 z-20">
+      <section className="relative px-4 sm:px-6 lg:px-8 z-20">
         <SearchBar />
       </section>
 
       {/* 3. Popular Categories */}
-      <section className="py-16 sm:py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
-        <div className="text-center max-w-2xl mx-auto mb-14">
-          <span className="inline-block px-3.5 py-1 rounded-full glass-card-subtle text-[11px] font-bold text-orange-700 uppercase tracking-wider mb-2.5">
+      <section className="py-12 md:py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
+        <div className="text-center max-w-2xl mx-auto mb-8 md:mb-10">
+          <span className="inline-block px-3.5 py-1 rounded-full glass-card-subtle text-[11px] font-bold text-orange-700 uppercase tracking-wider mb-2">
             Targeted Welfare
           </span>
           <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight mb-2">

@@ -33,15 +33,15 @@ export const TrustPrivacy = ({ className = '' }) => {
   ];
 
   return (
-    <section id="about" className={`py-16 sm:py-24 relative ${className}`}>
+    <section id="about" className={`py-12 md:py-16 relative ${className}`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Section Header */}
-        <div className="text-center max-w-2xl mx-auto mb-14">
-          <span className="inline-block px-3.5 py-1 rounded-full glass-card-subtle text-[11px] font-bold text-emerald-800 uppercase tracking-wider mb-2.5">
+        <div className="text-center max-w-2xl mx-auto mb-8 md:mb-10">
+          <span className="inline-block px-3.5 py-1 rounded-full glass-card-subtle text-[11px] font-bold text-emerald-800 uppercase tracking-wider mb-2">
             Safety & Integrity
           </span>
-          <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight mb-3">
+          <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight mb-2">
             {t('trustHeading', 'Built on Trust, Privacy, and Official Sources')}
           </h2>
           <p className="text-sm text-slate-600">
@@ -59,15 +59,15 @@ export const TrustPrivacy = ({ className = '' }) => {
             return (
               <div
                 key={point.titleKey}
-                className="glass-panel rounded-[26px] p-6 sm:p-7 shadow-glass flex flex-col justify-between"
+                className="glass-panel rounded-[26px] p-6 shadow-glass flex flex-col"
               >
                 <div>
                   <div
-                    className={`w-12 h-12 rounded-2xl flex items-center justify-center mb-5 border shadow-2xs ${point.color}`}
+                    className={`w-12 h-12 rounded-2xl flex items-center justify-center mb-4 border shadow-2xs ${point.color}`}
                   >
                     <Icon className="w-5 h-5" aria-hidden="true" />
                   </div>
-                  <h3 className="text-sm sm:text-base font-bold text-slate-900 mb-2">{t(point.titleKey)}</h3>
+                  <h3 className="text-sm sm:text-base font-bold text-slate-900 mb-1.5">{t(point.titleKey)}</h3>
                   <p className="text-xs text-slate-600 leading-relaxed font-normal">{t(point.descKey)}</p>
                 </div>
               </div>

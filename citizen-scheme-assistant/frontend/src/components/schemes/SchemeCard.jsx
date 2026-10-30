@@ -13,11 +13,11 @@ export const SchemeCard = ({ scheme, className = '' }) => {
 
   return (
     <div
-      className={`group relative glass-panel glass-panel-hover rounded-[28px] p-6 sm:p-7 shadow-glass flex flex-col justify-between ${className}`}
+      className={`group relative glass-panel glass-panel-hover rounded-[28px] p-6 shadow-glass flex flex-col ${className}`}
     >
       <div>
         {/* Badges: Level & Category */}
-        <div className="flex flex-wrap items-center justify-between gap-2 mb-4">
+        <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
           <div className="flex items-center gap-2">
             {isCentral ? (
               <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-[11px] font-semibold bg-blue-50/80 text-blue-700 border border-blue-200/60 shadow-2xs">
@@ -45,18 +45,18 @@ export const SchemeCard = ({ scheme, className = '' }) => {
         </div>
 
         {/* Scheme Title */}
-        <h3 className="text-base sm:text-lg font-bold text-slate-900 mb-2.5 leading-snug group-hover:text-orange-600 transition-colors">
+        <h3 className="text-base sm:text-lg font-bold text-slate-900 mb-2 leading-snug group-hover:text-orange-600 transition-colors">
           <Link to={`/schemes/${scheme.code || scheme.id}`}>{schemeName}</Link>
         </h3>
 
         {/* Short Description */}
-        <p className="text-xs sm:text-sm text-slate-600 line-clamp-3 mb-4 leading-relaxed font-normal">
+        <p className="text-xs sm:text-sm text-slate-600 line-clamp-3 mb-3 leading-relaxed font-normal">
           {schemeDesc}
         </p>
 
         {/* Benefit Highlight snippet */}
         {benefitsText && (
-          <div className="glass-card-subtle p-3 rounded-2xl border border-white/80 mb-5 flex items-start gap-2.5">
+          <div className="glass-card-subtle p-3 rounded-2xl border border-white/80 mb-4 flex items-start gap-2.5">
             <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
             <p className="text-xs text-slate-700 font-medium line-clamp-2">{benefitsText}</p>
           </div>
@@ -64,7 +64,7 @@ export const SchemeCard = ({ scheme, className = '' }) => {
       </div>
 
       {/* Card Footer Actions */}
-      <div className="pt-4 border-t border-white/60 flex items-center justify-between gap-3">
+      <div className="mt-auto pt-3 border-t border-white/60 flex items-center justify-between gap-3">
         <Link
           to={`/schemes/${scheme.code || scheme.id}`}
           className="text-xs font-semibold text-slate-700 hover:text-black flex items-center gap-1.5 transition"
