@@ -1,0 +1,171 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://citizen-scheme-assistant.org/schemas/scheme.schema.json",
+  "title": "GovernmentSchemeDefinition",
+  "description": "Declarative schema defining a single government scheme, its eligibility rules, official source, and required documents.",
+  "type": "object",
+  "required": [
+    "id",
+    "name",
+    "description",
+    "category",
+    "level",
+    "official_source",
+    "criteria",
+    "required_documents"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9-]+$",
+      "description": "Unique slug for the scheme (e.g., pm-kisan, pm-jay)."
+    },
+    "name": {
+      "type": "object",
+      "required": ["en", "hi"],
+      "properties": {
+        "en": { "type": "string" },
+        "hi": { "type": "string" }
+      }
+    },
+    "description": {
+      "type": "object",
+      "required": ["en", "hi"],
+      "properties": {
+        "en": { "type": "string" },
+        "hi": { "type": "string" }
+      }
+    },
+    "category": {
+      "type": "string",
+      "enum": ["agriculture", "healthcare", "housing", "social_security", "financial_inclusion", "employment", "education"]
+    },
+    "level": {
+      "type": "string",
+      "enum": ["central", "state"]
+    },
+    "applicable_states": {
+      "type": "array",
+      "description": "List of ISO state codes (e.g. IN-UP, IN-MP) or ['ALL'] for central schemes.",
+      "items": { "type": "string" }
+    },
+    "official_source": {
+      "type": "object",
+      "required": ["url", "last_checked_date", "issuing_ministry"],
+      "properties": {
+        "url": {
+          "type": "string",
+          "format": "uri",
+          "pattern": "^https?://.*(\\.(gov|nic)\\.in(/.*)?$|.*)"
+        },
+        "last_checked_date": {
+          "type": "string",
+          "format": "date",
+          "description": "ISO 8601 date when the rule set was last verified against official notifications."
+        },
+        "issuing_ministry": {
+          "type": "object",
+          "required": ["en", "hi"],
+          "properties": {
+            "en": { "type": "string" },
+            "hi": { "type": "string" }
+          }
+        },
+        "gazette_or_order_ref": {
+          "type": "string"
+        }
+      }
+    },
+    "criteria": {
+      "type": "array",
+      "description": "List of rule conditions evaluated by the engine.",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "field",
+          "operator",
+          "criticality",
+          "explanation_if_met",
+          "explanation_if_violated"
+        ],
+        "properties": {
+          "id": { "type": "string" },
+          "field": { "type": "string" },
+          "operator": {
+            "type": "string",
+            "enum": [
+              "EQUALS",
+              "NOT_EQUALS",
+              "LESS_THAN",
+              "LESS_THAN_OR_EQUAL",
+              "GREATER_THAN",
+              "GREATER_THAN_OR_EQUAL",
+              "IN_LIST",
+              "NOT_IN_LIST"
+            ]
+          },
+          "target_value": {},
+          "criticality": {
+            "type": "string",
+            "enum": ["MANDATORY", "DISQUALIFIER"]
+          },
+          "borderline_margin_percentage": {
+            "type": "number",
+            "description": "Optional percentage threshold around numeric values (e.g., income) that triggers an UNCERTAIN warning."
+          },
+          "explanation_if_met": {
+            "type": "object",
+            "required": ["en", "hi"],
+            "properties": {
+              "en": { "type": "string" },
+              "hi": { "type": "string" }
+            }
+          },
+          "explanation_if_violated": {
+            "type": "object",
+            "required": ["en", "hi"],
+            "properties": {
+              "en": { "type": "string" },
+              "hi": { "type": "string" }
+            }
+          }
+        }
+      }
+    },
+    "required_documents": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "title", "issuing_authority"],
+        "properties": {
+          "id": { "type": "string" },
+          "title": {
+            "type": "object",
+            "required": ["en", "hi"],
+            "properties": {
+              "en": { "type": "string" },
+              "hi": { "type": "string" }
+            }
+          },
+          "issuing_authority": {
+            "type": "object",
+            "required": ["en", "hi"],
+            "properties": {
+              "en": { "type": "string" },
+              "hi": { "type": "string" }
+            }
+          },
+          "optional": { "type": "boolean" },
+          "guidance": {
+            "type": "object",
+            "properties": {
+              "en": { "type": "string" },
+              "hi": { "type": "string" }
+            }
+          }
+        }
+      }
+    }
+  }
+}

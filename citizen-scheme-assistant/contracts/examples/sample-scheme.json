@@ -1,0 +1,105 @@
+{
+  "id": "pm-kisan",
+  "name": {
+    "en": "PM-KISAN (Pradhan Mantri Kisan Samman Nidhi)",
+    "hi": "प्रधानमंत्री किसान सम्मान निधि (पीएम-किसान)"
+  },
+  "description": {
+    "en": "Direct income support of ₹6,000 per year in three equal installments to all landholding farmer families.",
+    "hi": "भूमिधारक किसान परिवारों को प्रति वर्ष ₹6,000 की प्रत्यक्ष आय सहायता तीन समान किस्तों में।"
+  },
+  "category": "agriculture",
+  "level": "central",
+  "applicable_states": ["ALL"],
+  "official_source": {
+    "url": "https://pmkisan.gov.in",
+    "last_checked_date": "2026-01-15",
+    "issuing_ministry": {
+      "en": "Ministry of Agriculture & Farmers Welfare",
+      "hi": "कृषि एवं किसान कल्याण मंत्रालय"
+    },
+    "gazette_or_order_ref": "Operational Guidelines (Revised) 2024"
+  },
+  "criteria": [
+    {
+      "id": "crit-landowner",
+      "field": "owns_agricultural_land",
+      "operator": "EQUALS",
+      "target_value": true,
+      "criticality": "MANDATORY",
+      "explanation_if_met": {
+        "en": "You own cultivable agricultural land registered in your name.",
+        "hi": "आपके नाम पर खेती योग्य कृषि भूमि दर्ज है।"
+      },
+      "explanation_if_violated": {
+        "en": "This scheme requires cultivable agricultural land ownership in your family's name.",
+        "hi": "इस योजना के लिए आपके या परिवार के नाम पर खेती योग्य ज़मीन का होना अनिवार्य है।"
+      }
+    },
+    {
+      "id": "crit-not-taxpayer",
+      "field": "is_income_taxpayer",
+      "operator": "EQUALS",
+      "target_value": false,
+      "criticality": "DISQUALIFIER",
+      "explanation_if_met": {
+        "en": "No member of the household paid income tax in the last assessment year.",
+        "hi": "परिवार के किसी भी सदस्य ने पिछले वर्ष आयकर नहीं भरा है।"
+      },
+      "explanation_if_violated": {
+        "en": "Institutional landholders and income tax-paying individuals are excluded from PM-KISAN.",
+        "hi": "आयकर भरने वाले किसान परिवार पीएम-किसान योजना के तहत पात्र नहीं हैं।"
+      }
+    }
+  ],
+  "required_documents": [
+    {
+      "id": "doc-aadhaar",
+      "title": {
+        "en": "Aadhaar Card (linked with mobile)",
+        "hi": "आधार कार्ड (मोबाइल से लिंक)"
+      },
+      "issuing_authority": {
+        "en": "UIDAI",
+        "hi": "भारतीय विशिष्ट पहचान प्राधिकरण"
+      },
+      "optional": false,
+      "guidance": {
+        "en": "Mandatory for e-KYC on the PM-KISAN portal.",
+        "hi": "पीएम-किसान पोर्टल पर ई-केवाईसी के लिए अनिवार्य है।"
+      }
+    },
+    {
+      "id": "doc-land-records",
+      "title": {
+        "en": "Land Ownership Record (Khatauni / RoR)",
+        "hi": "भू-अभिलेख खतौनी / जमाबंदी"
+      },
+      "issuing_authority": {
+        "en": "State Revenue Department / Bhulekh",
+        "hi": "राज्य राजस्व विभाग / भूलेख"
+      },
+      "optional": false,
+      "guidance": {
+        "en": "Must show your name as landowner in the state land database.",
+        "hi": "सरकारी रिकॉर्ड में भूमि मालिक के रूप में आपका नाम दर्ज होना चाहिए।"
+      }
+    },
+    {
+      "id": "doc-bank-passbook",
+      "title": {
+        "en": "Bank Account Passbook (Aadhaar Seeded)",
+        "hi": "बैंक खाता पासबुक (आधार से लिंक)"
+      },
+      "issuing_authority": {
+        "en": "Commercial Bank, Gramin Bank, or Post Office",
+        "hi": "बैंक, ग्रामीण बैंक या डाकघर बैंक"
+      },
+      "optional": false,
+      "guidance": {
+        "en": "Direct Benefit Transfer (DBT) requires Aadhaar-NPCI mapping.",
+        "hi": "डीबीटी (DBT) राशि प्राप्त करने के लिए बैंक खाते में आधार मैप होना चाहिए।"
+      }
+    }
+  ]
+}

@@ -1,0 +1,75 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://citizen-scheme-assistant.org/schemas/citizen-profile.schema.json",
+  "title": "CitizenProfile",
+  "description": "Structured responses collected from a citizen during an active screening session.",
+  "type": "object",
+  "required": ["language"],
+  "properties": {
+    "language": {
+      "type": "string",
+      "enum": ["hi", "en"],
+      "description": "Active UI/Speech language."
+    },
+    "age": {
+      "type": ["integer", "null"],
+      "minimum": 0,
+      "maximum": 125
+    },
+    "gender": {
+      "type": ["string", "null"],
+      "enum": ["male", "female", "transgender", "other", "unknown", null]
+    },
+    "occupation": {
+      "type": ["string", "null"],
+      "enum": [
+        "farmer",
+        "street_vendor",
+        "daily_wage_laborer",
+        "construction_worker",
+        "domestic_worker",
+        "salaried",
+        "student",
+        "unemployed",
+        "other",
+        null
+      ]
+    },
+    "annual_household_income_inr": {
+      "type": ["number", "null"],
+      "minimum": 0
+    },
+    "income_proxy_category": {
+      "type": ["string", "null"],
+      "enum": ["antyodaya", "bpl", "apl", "unknown", null],
+      "description": "Proxy for income when exact annual earnings are unknown by the citizen."
+    },
+    "owns_agricultural_land": {
+      "type": ["boolean", "null"]
+    },
+    "land_size_hectares": {
+      "type": ["number", "null"],
+      "minimum": 0
+    },
+    "owns_pucca_house": {
+      "type": ["boolean", "null"]
+    },
+    "is_urban_resident": {
+      "type": ["boolean", "null"]
+    },
+    "state_of_residence": {
+      "type": ["string", "null"],
+      "description": "ISO 3166-2:IN code (e.g. IN-UP, IN-MP, IN-BR, IN-MH)."
+    },
+    "is_income_taxpayer": {
+      "type": ["boolean", "null"],
+      "description": "Whether any household member pays income tax (common disqualifier)."
+    },
+    "has_bank_account": {
+      "type": ["boolean", "null"]
+    },
+    "has_aadhaar": {
+      "type": ["boolean", "null"]
+    }
+  }
+}

@@ -1,0 +1,176 @@
+{
+  "timestamp": "2026-10-30T16:45:00.000Z",
+  "language": "hi",
+  "schemes_evaluated": 3,
+  "summary_counts": {
+    "eligible": 1,
+    "uncertain": 1,
+    "ineligible": 1
+  },
+  "results": [
+    {
+      "scheme_id": "pm-kisan",
+      "scheme_name": {
+        "en": "PM-KISAN (Pradhan Mantri Kisan Samman Nidhi)",
+        "hi": "प्रधानमंत्री किसान सम्मान निधि (पीएम-किसान)"
+      },
+      "category": "agriculture",
+      "status": "ELIGIBLE",
+      "confidence_score": 1.0,
+      "decisive_rule": {
+        "en": "You qualify because you own 1.2 hectares of agricultural land and no member of your household pays income tax.",
+        "hi": "आप पात्र हैं क्योंकि आपके पास 1.2 हेक्टेयर कृषि भूमि है और आपके परिवार में कोई आयकर नहीं भरता है।"
+      },
+      "uncertainty_details": null,
+      "official_source": {
+        "url": "https://pmkisan.gov.in",
+        "last_checked_date": "2026-01-15",
+        "is_stale": false,
+        "issuing_ministry": {
+          "en": "Ministry of Agriculture & Farmers Welfare",
+          "hi": "कृषि एवं किसान कल्याण मंत्रालय"
+        }
+      },
+      "document_checklist": [
+        {
+          "id": "doc-aadhaar",
+          "title": {
+            "en": "Aadhaar Card (linked with mobile)",
+            "hi": "आधार कार्ड (मोबाइल से लिंक)"
+          },
+          "issuing_authority": {
+            "en": "UIDAI",
+            "hi": "भारतीय विशिष्ट पहचान प्राधिकरण"
+          },
+          "guidance": {
+            "en": "Mandatory for biometric/OTP e-KYC.",
+            "hi": "ई-केवाईसी सत्यापन के लिए आवश्यक है।"
+          }
+        },
+        {
+          "id": "doc-land-records",
+          "title": {
+            "en": "Land Ownership Record (Khatauni)",
+            "hi": "भू-अभिलेख खतौनी / नकल"
+          },
+          "issuing_authority": {
+            "en": "Tehsil / Bhulekh Portal",
+            "hi": "तहसील / भूलेख पोर्टल"
+          },
+          "guidance": {
+            "en": "Recent computerised copy of land record showing your name.",
+            "hi": "अपने नाम दर्ज ज़मीन की ताज़ा कंप्यूटर नकल।"
+          }
+        },
+        {
+          "id": "doc-bank-passbook",
+          "title": {
+            "en": "Bank Passbook with Aadhaar Seeding",
+            "hi": "आधार लिंक बैंक पासबुक"
+          },
+          "issuing_authority": {
+            "en": "Bank or Post Office",
+            "hi": "बैंक या डाकघर"
+          },
+          "guidance": {
+            "en": "Ensure NPCI mapping is active for DBT payment receipt.",
+            "hi": "सुनिश्चित करें कि खाते में डीबीटी (DBT) सक्रिय है।"
+          }
+        }
+      ]
+    },
+    {
+      "scheme_id": "pm-jay",
+      "scheme_name": {
+        "en": "Ayushman Bharat PM-JAY",
+        "hi": "आयुष्मान भारत - प्रधानमंत्री जन आरोग्य योजना"
+      },
+      "category": "healthcare",
+      "status": "UNCERTAIN",
+      "confidence_score": 0.5,
+      "decisive_rule": {
+        "en": "Eligibility depends on whether your family is listed in SECC 2011 or holds an eligible state ration card.",
+        "hi": "पात्रता इस बात पर निर्भर करती है कि आपका परिवार SECC 2011 सूची में है या पात्र राशन कार्ड धारक है।"
+      },
+      "uncertainty_details": {
+        "reason": {
+          "en": "We cannot confirm if your ration card is officially tagged under NFSA/SECC deprived categories.",
+          "hi": "हम यह पुष्टि नहीं कर पा रहे हैं कि आपका राशन कार्ड आधिकारिक तौर पर खाद्य सुरक्षा सूची में शामिल है या नहीं।"
+        },
+        "missing_fields": ["ration_card_number", "secc_deprivation_category"],
+        "is_borderline_income": false,
+        "is_stale_rule": false,
+        "resolution_advice": {
+          "en": "Check your name on mera.pmjay.gov.in or visit your nearest Ayushman Arogya Mandir / CSC.",
+          "hi": "mera.pmjay.gov.in पर अपना नाम जांचें या निकटतम जन सेवा केंद्र / आयुष्मान आरोग्य मंदिर जाएं।"
+        }
+      },
+      "official_source": {
+        "url": "https://nha.gov.in/PM-JAY",
+        "last_checked_date": "2026-02-01",
+        "is_stale": false,
+        "issuing_ministry": {
+          "en": "National Health Authority",
+          "hi": "राष्ट्रीय स्वास्थ्य प्राधिकरण"
+        }
+      },
+      "document_checklist": [
+        {
+          "id": "doc-ration-card",
+          "title": {
+            "en": "Ration Card",
+            "hi": "राशन कार्ड"
+          },
+          "issuing_authority": {
+            "en": "Food & Civil Supplies Department",
+            "hi": "खाद्य एवं रसद विभाग"
+          },
+          "guidance": {
+            "en": "Bring to CSC to verify household member IDs.",
+            "hi": "जन सेवा केंद्र पर परिवार के सदस्यों का नाम चेक कराने हेतु ले जाएं।"
+          }
+        },
+        {
+          "id": "doc-aadhaar",
+          "title": {
+            "en": "Aadhaar Card",
+            "hi": "आधार कार्ड"
+          },
+          "issuing_authority": {
+            "en": "UIDAI",
+            "hi": "भारतीय विशिष्ट पहचान प्राधिकरण"
+          },
+          "guidance": {
+            "en": "For instant biometric matching at empanelled hospital.",
+            "hi": "अस्पताल में बायोमेट्रिक मिलान के लिए।"
+          }
+        }
+      ]
+    },
+    {
+      "scheme_id": "pm-svanidhi",
+      "scheme_name": {
+        "en": "PM-SVANidhi (Street Vendor Loan Scheme)",
+        "hi": "पीएम स्वनिधि (स्ट्रीट वेंडर आत्मनिर्भर निधि)"
+      },
+      "category": "employment",
+      "status": "INELIGIBLE",
+      "confidence_score": 1.0,
+      "decisive_rule": {
+        "en": "This scheme is exclusively for urban street vendors and hawkers. Your primary occupation is listed as farmer in a rural area.",
+        "hi": "यह योजना केवल शहरी रेहड़ी-पटरी विक्रेताओं के लिए है। आपकी मुख्य आजीविका ग्रामीण क्षेत्र में किसान के रूप में दर्ज है।"
+      },
+      "uncertainty_details": null,
+      "official_source": {
+        "url": "https://pmsvanidhi.mohua.gov.in",
+        "last_checked_date": "2026-01-20",
+        "is_stale": false,
+        "issuing_ministry": {
+          "en": "Ministry of Housing and Urban Affairs",
+          "hi": "आवासन और शहरी कार्य मंत्रालय"
+        }
+      },
+      "document_checklist": []
+    }
+  ]
+}

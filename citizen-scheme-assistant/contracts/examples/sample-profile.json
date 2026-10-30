@@ -1,0 +1,16 @@
+{
+  "language": "hi",
+  "age": 44,
+  "gender": "male",
+  "occupation": "farmer",
+  "annual_household_income_inr": 120000,
+  "income_proxy_category": "bpl",
+  "owns_agricultural_land": true,
+  "land_size_hectares": 1.2,
+  "owns_pucca_house": false,
+  "is_urban_resident": false,
+  "state_of_residence": "IN-MP",
+  "is_income_taxpayer": false,
+  "has_bank_account": true,
+  "has_aadhaar": true
+}
