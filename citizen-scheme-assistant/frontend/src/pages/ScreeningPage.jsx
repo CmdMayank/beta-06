@@ -24,10 +24,11 @@ export const ScreeningPage = () => {
   const [evaluating, setEvaluating] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
 
-  // Scroll reset to top of questionnaire card on step/question change
+  // 1. Scroll to very top of window and document on step change
   useEffect(() => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-    questionContainerRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0;
   }, [currentIndex]);
 
   // Initialize or resume session
@@ -190,15 +191,19 @@ export const ScreeningPage = () => {
   }
 
   return (
-    <div className="flex-1 py-8 sm:py-14 relative">
+    // 2 & 3. Outer Page Wrapper with ref, scroll-mt-6, and compact py-6 md:py-8 padding
+    <div
+      ref={questionContainerRef}
+      className="flex-1 py-6 md:py-8 relative scroll-mt-6"
+    >
       {/* Background soft glowing sun orbs */}
       <div className="absolute top-1/4 right-1/4 w-72 h-72 rounded-full bg-orange-300/30 blur-3xl pointer-events-none" />
       <div className="absolute bottom-10 left-1/4 w-72 h-72 rounded-full bg-emerald-200/20 blur-3xl pointer-events-none" />
 
       <div className="max-w-3xl mx-auto px-4 sm:px-6 relative z-10">
         
-        {/* Top Control Bar */}
-        <div className="flex items-center justify-between mb-6">
+        {/* Top Control Bar ("Clear Data / New Citizen" and language switcher) */}
+        <div className="flex items-center justify-between mb-4 sm:mb-5">
           <button
             type="button"
             onClick={handleClear}
@@ -212,25 +217,22 @@ export const ScreeningPage = () => {
           <LanguageSwitcher />
         </div>
 
-        {/* Progress Card */}
-        <div
-          ref={questionContainerRef}
-          className="glass-panel rounded-[36px] shadow-glass-lg p-6 sm:p-10 sm:py-12 border border-white/80 relative overflow-hidden"
-        >
+        {/* Questionnaire Progress & Question Card */}
+        <div className="glass-panel rounded-[36px] shadow-glass-lg p-6 sm:p-8 sm:py-10 border border-white/80 relative overflow-hidden">
           
-          {/* Progress Bar */}
-          <div className="mb-8">
+          {/* Progress Bar ("Step X of 10") */}
+          <div className="mb-6 sm:mb-8">
             <ProgressBar current={currentIndex} total={totalQuestions || 10} />
           </div>
 
           {loading ? (
             <LoadingState message="Loading next question..." />
           ) : currentQuestion ? (
-            <div className="space-y-8">
+            <div className="space-y-6 sm:space-y-8">
               
               {/* Question Header & Voice Assistant */}
               <div>
-                <div className="flex items-center justify-between gap-3 mb-3">
+                <div className="flex items-center justify-between gap-3 mb-2.5">
                   <span className="text-[11px] font-bold text-orange-700 uppercase tracking-wider glass-card-subtle px-3 py-0.5 rounded-full">
                     {t('stepProgress', 'Question')} {currentIndex + 1} {t('ofText', 'of')}{' '}
                     {totalQuestions}
@@ -255,7 +257,7 @@ export const ScreeningPage = () => {
                 </h2>
 
                 {helpText && (
-                  <div className="mt-2.5 flex items-start gap-2 text-xs text-slate-500 font-normal">
+                  <div className="mt-2 flex items-start gap-2 text-xs text-slate-500 font-normal">
                     <HelpCircle className="w-4 h-4 text-slate-400 shrink-0 mt-0.5" />
                     <p>{helpText}</p>
                   </div>
@@ -263,7 +265,7 @@ export const ScreeningPage = () => {
               </div>
 
               {/* Dynamic Input Control */}
-              <div className="py-2">
+              <div className="py-1">
                 <QuestionInput
                   question={currentQuestion}
                   value={currentAnswer}
@@ -279,10 +281,13 @@ export const ScreeningPage = () => {
               )}
 
               {/* Navigation Controls */}
-              <div className="pt-6 border-t border-white/60 flex items-center justify-between gap-4">
+              <div className="pt-5 border-t border-white/60 flex items-center justify-between gap-4">
                 <button
                   type="button"
-                  onClick={handleBack}
+                  onClick={(e) => {
+                    e.currentTarget?.blur();
+                    handleBack(e);
+                  }}
                   disabled={currentIndex === 0}
                   className={`inline-flex items-center gap-2 px-5 py-3 rounded-full text-xs font-semibold transition ${
                     currentIndex === 0
@@ -297,7 +302,10 @@ export const ScreeningPage = () => {
                 {/* Dark Pill CTA with capsule arrow */}
                 <button
                   type="button"
-                  onClick={handleNext}
+                  onClick={(e) => {
+                    e.currentTarget?.blur();
+                    handleNext(e);
+                  }}
                   className="glass-dark-pill inline-flex items-center gap-3 px-6 py-3.5 rounded-full text-xs font-semibold tracking-wide hover:bg-black transition-all shadow-md active:scale-95"
                 >
                   <span>
@@ -319,7 +327,7 @@ export const ScreeningPage = () => {
         </div>
 
         {/* Ephemeral Privacy Note */}
-        <div className="mt-6 text-center text-xs text-slate-400 font-medium">
+        <div className="mt-5 text-center text-xs text-slate-400 font-medium">
           <span>🔒 Ephemeral Session: Your answers are not stored permanently on any server.</span>
         </div>
 
