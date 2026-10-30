@@ -1,0 +1,73 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 380" width="100%" height="100%">
+  <rect width="600" height="380" fill="#f8fafc" />
+  
+  <rect x="20" y="32" width="560" height="328" rx="14" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5" />
+  
+  <!-- Header Bar -->
+  <rect x="20" y="32" width="560" height="48" rx="14" fill="#0f766e" />
+  <text x="300" y="54" text-anchor="middle" font-family="sans-serif" font-size="13" font-weight="bold" fill="#ffffff">मध्य प्रदेश शासन — समग्र सामाजिक सुरक्षा मिशन (SSSM)</text>
+  <text x="300" y="70" text-anchor="middle" font-family="sans-serif" font-size="10" font-weight="500" fill="#ccfbf1">Samagra Social Security Mission (Specimen Citizen Card)</text>
+
+  <!-- Key IDs Highlight Boxes -->
+  <g transform="translate(45, 95)">
+    <rect width="240" height="58" rx="8" fill="#f0fdfa" stroke="#99f6e4" stroke-width="1" />
+    <text x="15" y="22" font-family="sans-serif" font-size="11" font-weight="bold" fill="#115e59">परिवार समग्र आईडी (8 अंक):</text>
+    <text x="15" y="47" font-family="monospace" font-size="18" font-weight="bold" fill="#0f766e" letter-spacing="2">12345678</text>
+  </g>
+
+  <g transform="translate(315, 95)">
+    <rect width="240" height="58" rx="8" fill="#f0fdfa" stroke="#99f6e4" stroke-width="1" />
+    <text x="15" y="22" font-family="sans-serif" font-size="11" font-weight="bold" fill="#115e59">सदस्य समग्र आईडी (9 अंक):</text>
+    <text x="15" y="47" font-family="monospace" font-size="18" font-weight="bold" fill="#0f766e" letter-spacing="2">987654321</text>
+  </g>
+
+  <!-- Member Table -->
+  <g transform="translate(45, 170)">
+    <rect width="510" height="110" rx="6" fill="#ffffff" stroke="#e2e8f0" stroke-width="1" />
+    <!-- Table Header -->
+    <rect width="510" height="28" rx="6" fill="#f1f5f9" />
+    <text x="15" y="19" font-family="sans-serif" font-size="10" font-weight="bold" fill="#475569">क्र.</text>
+    <text x="50" y="19" font-family="sans-serif" font-size="10" font-weight="bold" fill="#475569">सदस्य का नाम</text>
+    <text x="190" y="19" font-family="sans-serif" font-size="10" font-weight="bold" fill="#475569">आयु / लिंग</text>
+    <text x="280" y="19" font-family="sans-serif" font-size="10" font-weight="bold" fill="#475569">मुखिया से संबंध</text>
+    <text x="400" y="19" font-family="sans-serif" font-size="10" font-weight="bold" fill="#475569">e-KYC स्थिति</text>
+
+    <!-- Row 1 -->
+    <text x="15" y="52" font-family="sans-serif" font-size="11" fill="#334155">1</text>
+    <text x="50" y="52" font-family="sans-serif" font-size="11" font-weight="bold" fill="#0f172a">अनीता शर्मा (ANITA SHARMA)</text>
+    <text x="190" y="52" font-family="sans-serif" font-size="11" fill="#334155">35 / महिला</text>
+    <text x="280" y="52" font-family="sans-serif" font-size="11" fill="#334155">स्वयं (मुखिया)</text>
+    <rect x="395" y="38" width="85" height="20" rx="10" fill="#dcfce7" />
+    <text x="437" y="52" text-anchor="middle" font-family="sans-serif" font-size="10" font-weight="bold" fill="#15803d">सत्यापित (Yes)</text>
+
+    <!-- Row 2 -->
+    <line x1="10" y1="68" x2="500" y2="68" stroke="#f1f5f9" stroke-width="1" />
+    <text x="15" y="92" font-family="sans-serif" font-size="11" fill="#334155">2</text>
+    <text x="50" y="92" font-family="sans-serif" font-size="11" fill="#475569">राहुल शर्मा</text>
+    <text x="190" y="92" font-family="sans-serif" font-size="11" fill="#334155">12 / पुरुष</text>
+    <text x="280" y="92" font-family="sans-serif" font-size="11" fill="#334155">पुत्र</text>
+    <rect x="395" y="78" width="85" height="20" rx="10" fill="#dcfce7" />
+    <text x="437" y="92" text-anchor="middle" font-family="sans-serif" font-size="10" font-weight="bold" fill="#15803d">सत्यापित (Yes)</text>
+  </g>
+
+  <!-- Footer Tip -->
+  <rect x="45" y="295" width="510" height="42" rx="8" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1" />
+  <text x="300" y="321" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#475569">
+    लाडली बहना जैसी योजनाओं के लिए <tspan font-weight="bold" fill="#0f766e">सदस्य आईडी + आधार e-KYC</tspan> अनिवार्य है।
+  </text>
+
+  
+    <rect x="0" y="0" width="600" height="24" fill="#fef2f2" />
+    <text x="300" y="16" text-anchor="middle" font-family="sans-serif" font-size="11" font-weight="bold" fill="#b91c1c" letter-spacing="1">
+      FICTIONAL SPECIMEN ONLY • NOT A VALID OFFICIAL DOCUMENT • केवल उदाहरणार्थ नमूना
+    </text>
+  
+  
+    <!-- Prominent Watermark Overlay -->
+    <g transform="translate(300, 200) rotate(-25)">
+      <rect x="-240" y="-45" width="480" height="90" rx="12" fill="#ef4444" fill-opacity="0.12" stroke="#ef4444" stroke-opacity="0.35" stroke-dasharray="6,4" stroke-width="2" />
+      <text x="0" y="-8" text-anchor="middle" font-family="sans-serif" font-size="28" font-weight="900" fill="#dc2626" fill-opacity="0.55" letter-spacing="3">SAMPLE – NOT VALID</text>
+      <text x="0" y="26" text-anchor="middle" font-family="sans-serif" font-size="20" font-weight="bold" fill="#dc2626" fill-opacity="0.55">केवल नमूना - अमान्य</text>
+    </g>
+  
+</svg>

@@ -5,6 +5,8 @@ import { schemeApi } from '../services/schemeApi';
 import { LoadingState } from '../components/common/LoadingState';
 import { ErrorState } from '../components/common/ErrorState';
 import { Disclaimer } from '../components/common/Disclaimer';
+import DocumentCard from '../components/documents/DocumentCard';
+import DocumentPreviewModal from '../components/documents/DocumentPreviewModal';
 import {
   ArrowLeft,
   Building2,
@@ -28,6 +30,7 @@ export const SchemeDetailsPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [copied, setCopied] = useState(false);
+  const [selectedSample, setSelectedSample] = useState(null);
 
   useEffect(() => {
     let active = true;
@@ -246,30 +249,23 @@ export const SchemeDetailsPage = () => {
         {/* Required Documents */}
         {documents.length > 0 && (
           <div className="glass-panel rounded-[32px] shadow-glass p-6 sm:p-8 mb-8 border border-white/80">
-            <div className="flex items-center gap-2 text-slate-900 font-bold text-base sm:text-lg mb-4">
-              <FileText className="w-5 h-5 text-orange-500" />
-              <h2>{t('documentsHeading', 'Required Documents')}</h2>
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-5">
+              <div className="flex items-center gap-2 text-slate-900 font-bold text-base sm:text-lg">
+                <FileText className="w-5 h-5 text-orange-500" />
+                <h2>{t('documentsHeading', 'Required Documents')}</h2>
+              </div>
+              <span className="text-xs text-slate-500 font-normal">
+                {t('knowYourDocumentsSub', 'Click "View Sample" to see specimen guides')}
+              </span>
             </div>
 
             <div className="space-y-3">
               {documents.map((doc, idx) => (
-                <div
+                <DocumentCard
                   key={doc.id || idx}
-                  className="p-4 rounded-2xl border border-white/80 glass-card-subtle flex flex-col sm:flex-row sm:items-center justify-between gap-2.5"
-                >
-                  <div>
-                    <h4 className="text-sm font-bold text-slate-900">{getLocalized(doc.title)}</h4>
-                    {doc.guidance && (
-                      <p className="text-xs text-slate-500 mt-0.5 font-normal">{getLocalized(doc.guidance)}</p>
-                    )}
-                  </div>
-
-                  {doc.issuing_authority && (
-                    <span className="text-[11px] font-medium text-slate-600 bg-white/80 px-3 py-1 rounded-full border border-white shrink-0 self-start sm:self-center">
-                      {getLocalized(doc.issuing_authority)}
-                    </span>
-                  )}
-                </div>
+                  doc={doc}
+                  onViewSample={(sample) => setSelectedSample(sample)}
+                />
               ))}
             </div>
           </div>
@@ -324,6 +320,12 @@ export const SchemeDetailsPage = () => {
         {/* Disclaimer */}
         <Disclaimer />
 
+        {/* Specimen Preview Modal (Know Your Documents) */}
+        <DocumentPreviewModal
+          sample={selectedSample}
+          isOpen={Boolean(selectedSample)}
+          onClose={() => setSelectedSample(null)}
+        />
       </div>
     </div>
   );

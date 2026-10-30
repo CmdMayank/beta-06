@@ -185,6 +185,19 @@ export const translations = {
     verifyNotice: "Always verify criteria and latest amendments on the official portal before submitting applications.",
     startCheckForThisScheme: "Check Your Eligibility for this Scheme",
 
+    // Know Your Documents
+    knowYourDocuments: "Know Your Documents",
+    knowYourDocumentsSub: "Check fictional specimen samples to understand document structures and requirements before applying.",
+    viewSample: "View Sample",
+    sampleDocModalTitle: "Specimen Document Preview",
+    specimenWatermarkNotice: "Fictional specimen for informational reference only. Actual layout, seals, and colors may vary by state and district.",
+    docPurposeHeading: "Purpose & Role in Welfare Schemes",
+    whereToObtainHeading: "Where to Obtain This Document",
+    importantChecksHeading: "Important Details to Check Before Applying",
+    formatVariationHeading: "State Format Variations",
+    closeModal: "Close Preview",
+    sampleWatermarkBadge: "SAMPLE – NOT VALID",
+
     // Common
     loading: "Loading information...",
     errorTitle: "Something went wrong",
@@ -373,6 +386,19 @@ export const translations = {
     gazetteRef: "शासनादेश / दिशा-निर्देश संदर्भ",
     verifyNotice: "आवेदन करने से पहले हमेशा आधिकारिक पोर्टल (.gov.in) पर नियमों की नवीनतम जानकारी अवश्य देख लें।",
     startCheckForThisScheme: "इस योजना के लिए अपनी पात्रता जांचें",
+
+    // Know Your Documents
+    knowYourDocuments: "अपने दस्तावेज़ पहचानें",
+    knowYourDocumentsSub: "आवेदन करने से पहले दस्तावेज़ों का प्रारूप और आवश्यक विवरण समझने के लिए नमूना देखें।",
+    viewSample: "नमूना देखें",
+    sampleDocModalTitle: "दस्तावेज़ नमूना पूर्वावलोकन",
+    specimenWatermarkNotice: "यह केवल जानकारी और समझ हेतु काल्पनिक नमूना है। वास्तविक प्रारूप राज्य व जिले अनुसार भिन्न हो सकता है।",
+    docPurposeHeading: "योजनाओं में उपयोग व उद्देश्य",
+    whereToObtainHeading: "यह दस्तावेज़ कहाँ से प्राप्त करें",
+    importantChecksHeading: "आवेदन से पहले जांचने योग्य मुख्य बातें",
+    formatVariationHeading: "राज्य प्रारूप भिन्नता संबंधी जानकारी",
+    closeModal: "पूर्वावलोकन बंद करें",
+    sampleWatermarkBadge: "केवल नमूना - अमान्य",
 
     // Common
     loading: "जानकारी लोड हो रही है...",

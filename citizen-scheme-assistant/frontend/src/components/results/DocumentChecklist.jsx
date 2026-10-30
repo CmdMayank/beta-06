@@ -1,10 +1,13 @@
 import React, { useState } from 'react';
 import { useLanguage } from '../../i18n/LanguageContext';
-import { CheckSquare, Square, Printer, FileText } from 'lucide-react';
+import { CheckSquare, Square, Printer, FileText, Eye } from 'lucide-react';
+import { getDocumentSample } from '../../data/documentSamples';
+import DocumentPreviewModal from '../documents/DocumentPreviewModal';
 
 export const DocumentChecklist = ({ results = [] }) => {
   const { t, getLocalized } = useLanguage();
   const [checkedIds, setCheckedIds] = useState({});
+  const [selectedSample, setSelectedSample] = useState(null);
 
   const eligibleSchemes = results.filter(
     (r) => r.status === 'POTENTIALLY_ELIGIBLE' || r.status === 'NEEDS_VERIFICATION'
@@ -99,11 +102,31 @@ export const DocumentChecklist = ({ results = [] }) => {
                   <span className={`text-sm font-bold ${isDone ? 'line-through text-slate-500' : ''}`}>
                     {getLocalized(doc.title)}
                   </span>
-                  {doc.issuing_authority && (
-                    <span className="text-[10px] font-medium text-slate-600 bg-white/80 px-2.5 py-0.5 rounded-full border border-white">
-                      {getLocalized(doc.issuing_authority)}
-                    </span>
-                  )}
+                  <div className="flex items-center gap-2">
+                    {doc.issuing_authority && (
+                      <span className="text-[10px] font-medium text-slate-600 bg-white/80 px-2.5 py-0.5 rounded-full border border-white">
+                        {getLocalized(doc.issuing_authority)}
+                      </span>
+                    )}
+                    {(() => {
+                      const sample = getDocumentSample(doc);
+                      if (!sample) return null;
+                      return (
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setSelectedSample(sample);
+                          }}
+                          className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-lg bg-white/90 hover:bg-orange-50 text-orange-700 text-[10px] font-semibold border border-orange-200/80 shadow-xs transition-all active:scale-95"
+                          title={`${t('viewSample', 'View Sample')} - ${getLocalized(doc.title)}`}
+                        >
+                          <Eye className="w-3 h-3 text-orange-600" />
+                          <span>{t('viewSample', 'View Sample')}</span>
+                        </button>
+                      );
+                    })()}
+                  </div>
                 </div>
 
                 {doc.guidance && (
@@ -126,6 +149,13 @@ export const DocumentChecklist = ({ results = [] }) => {
           );
         })}
       </div>
+
+      {/* Specimen Preview Modal */}
+      <DocumentPreviewModal
+        sample={selectedSample}
+        isOpen={Boolean(selectedSample)}
+        onClose={() => setSelectedSample(null)}
+      />
     </div>
   );
 };

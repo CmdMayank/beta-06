@@ -10,11 +10,15 @@ import {
   ChevronDown,
   ChevronUp,
   ArrowRight,
+  Eye,
 } from 'lucide-react';
+import { getDocumentSample } from '../../data/documentSamples';
+import DocumentPreviewModal from '../documents/DocumentPreviewModal';
 
 export const ResultCard = ({ result, className = '' }) => {
   const { t, getLocalized } = useLanguage();
   const [showDocuments, setShowDocuments] = useState(true);
+  const [selectedSample, setSelectedSample] = useState(null);
 
   const schemeName = getLocalized(result.scheme_name);
   const explanation = getLocalized(result.explanation);
@@ -95,26 +99,45 @@ export const ResultCard = ({ result, className = '' }) => {
 
             {showDocuments && (
               <ul className="mt-3 space-y-2.5">
-                {documents.map((doc) => (
-                  <li
-                    key={doc.id || doc.title.en}
-                    className="p-3 sm:p-3.5 glass-card-subtle rounded-xl border border-white/80 text-xs flex flex-col gap-1"
-                  >
-                    <div className="flex items-center justify-between font-bold text-slate-900">
-                      <span>{getLocalized(doc.title)}</span>
-                      {doc.issuing_authority && (
-                        <span className="text-[10px] font-medium text-slate-600 bg-white/80 px-2 py-0.5 rounded-full border border-white">
-                          {getLocalized(doc.issuing_authority)}
-                        </span>
+                {documents.map((doc) => {
+                  const sample = getDocumentSample(doc);
+                  return (
+                    <li
+                      key={doc.id || doc.title.en}
+                      className="p-3 sm:p-3.5 glass-card-subtle rounded-xl border border-white/80 text-xs flex flex-col gap-2"
+                    >
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 font-bold text-slate-900">
+                        <span>{getLocalized(doc.title)}</span>
+                        <div className="flex items-center gap-2 shrink-0">
+                          {doc.issuing_authority && (
+                            <span className="text-[10px] font-medium text-slate-600 bg-white/80 px-2 py-0.5 rounded-full border border-white">
+                              {getLocalized(doc.issuing_authority)}
+                            </span>
+                          )}
+                          {sample && (
+                            <button
+                              type="button"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setSelectedSample(sample);
+                              }}
+                              className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-lg bg-white/90 hover:bg-orange-50 text-orange-700 text-[10px] font-semibold border border-orange-200/80 shadow-xs transition-all active:scale-95"
+                              title={`${t('viewSample', 'View Sample')} - ${getLocalized(doc.title)}`}
+                            >
+                              <Eye className="w-3 h-3 text-orange-600" />
+                              <span>{t('viewSample', 'View Sample')}</span>
+                            </button>
+                          )}
+                        </div>
+                      </div>
+                      {doc.guidance && (
+                        <p className="text-[11px] text-slate-500 italic font-normal">
+                          {getLocalized(doc.guidance)}
+                        </p>
                       )}
-                    </div>
-                    {doc.guidance && (
-                      <p className="text-[11px] text-slate-500 italic font-normal">
-                        {getLocalized(doc.guidance)}
-                      </p>
-                    )}
-                  </li>
-                ))}
+                    </li>
+                  );
+                })}
               </ul>
             )}
           </div>
@@ -145,6 +168,13 @@ export const ResultCard = ({ result, className = '' }) => {
           <ArrowRight className="w-3.5 h-3.5" />
         </Link>
       </div>
+
+      {/* Specimen Preview Modal */}
+      <DocumentPreviewModal
+        sample={selectedSample}
+        isOpen={Boolean(selectedSample)}
+        onClose={() => setSelectedSample(null)}
+      />
     </div>
   );
 };

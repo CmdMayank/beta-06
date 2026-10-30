@@ -1,0 +1,17 @@
+# Environment Files
+.env
+.env.*
+*.env
+**/.env*
+
+# Dependencies
+node_modules/
+**/node_modules/
+
+# Build Output
+dist/
+**/dist/
+build/
+**/build/
+.vite/
+**/.vite/
