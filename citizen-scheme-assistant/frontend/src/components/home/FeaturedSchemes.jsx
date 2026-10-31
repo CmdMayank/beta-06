@@ -4,29 +4,32 @@ import { useLanguage } from '../../i18n/LanguageContext';
 import { schemeApi } from '../../services/schemeApi';
 import { SchemeCard } from '../schemes/SchemeCard';
 import { ArrowRight, Sparkles } from 'lucide-react';
+import { errorKey } from '../../i18n/integration.js';
 
 export const FeaturedSchemes = ({ className = '' }) => {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const [schemes, setSchemes] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error,setError] = useState('');
 
   useEffect(() => {
     let mounted = true;
+    setLoading(true);setError('');
     schemeApi
-      .getFeaturedSchemes()
+      .getFeaturedSchemes(language)
       .then((data) => {
         if (mounted) {
           setSchemes(data.slice(0, 5));
           setLoading(false);
         }
       })
-      .catch(() => {
-        if (mounted) setLoading(false);
+      .catch(e => {
+        if (mounted) {setSchemes([]);setError(t(errorKey(e)));setLoading(false);}
       });
     return () => {
       mounted = false;
     };
-  }, []);
+  }, [language]);
 
   return (
     <section className={`py-12 md:py-16 relative ${className}`}>
@@ -37,7 +40,7 @@ export const FeaturedSchemes = ({ className = '' }) => {
           <div>
             <div className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full glass-card-subtle text-orange-800 text-xs font-semibold mb-2">
               <Sparkles className="w-3.5 h-3.5 text-orange-500" />
-              <span>Flagship Programs</span>
+              <span>{t('publishedCatalog')}</span>
             </div>
             <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight mb-1.5">
               {t('featuredHeading', 'Featured Government Schemes')}
@@ -58,8 +61,7 @@ export const FeaturedSchemes = ({ className = '' }) => {
 
         {/* Development sample content notice pill */}
         <div className="mb-6 p-3 px-4 rounded-2xl glass-card-subtle text-xs text-slate-500 flex items-center justify-between">
-          <span>{t('sampleNotice')}</span>
-          <span className="font-mono text-[10px] text-slate-400">Contracts v1.0.0</span>
+          <span role={error?'alert':'status'}>{error || (loading ? t('loading') : schemes.length ? t('publishedCatalog') : t('emptyPublished'))}</span>
         </div>
 
         {/* Schemes Grid */}

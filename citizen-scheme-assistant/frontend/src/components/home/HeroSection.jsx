@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { useLanguage } from '../../i18n/LanguageContext';
 import { schemeApi } from '../../services/schemeApi';
 import { ArrowRight, Search, ShieldCheck, CheckCircle2 } from 'lucide-react';
+import { SearchBar } from './SearchBar';
 
 export const HeroSection = () => {
   const { t } = useLanguage();
@@ -96,6 +97,11 @@ export const HeroSection = () => {
             <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0" />
             <span className="text-xs font-semibold text-slate-700">{t('heroStat3', 'Nothing is saved after you close it')}</span>
           </div>
+        </div>
+
+        {/* Search Bar */}
+        <div className="mt-8 max-w-2xl mx-auto">
+          <SearchBar />
         </div>
 
       </div>

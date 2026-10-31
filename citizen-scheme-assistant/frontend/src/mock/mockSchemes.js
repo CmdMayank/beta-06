@@ -1460,6 +1460,770 @@ export const MOCK_SCHEMES = [
         },
       },
     ],
+  },,
+  {
+    id: 'ksb-home-loan-interest-subsidy',
+    code: 'ksb-home-loan-interest-subsidy',
+    name: {
+      en: 'Financial Assistance as Interest Subsidy on Home Loan (Ex-Servicemen)',
+      hi: 'गृह ऋण पर ब्याज सब्सिडी के रूप में वित्तीय सहायता (पूर्व सैनिक)',
+    },
+    short_name: 'Ex-Servicemen Home Loan Interest Subsidy',
+    category: 'housing',
+    level: 'central',
+    state_code: 'ALL',
+    applicable_states: ['ALL'],
+    featured: false,
+    description: {
+      en: 'Relief from the Kendriya Sainik Board for war widows, war-bereaved families, war-disabled personnel and attributable peacetime casualties (all ranks): the Government pays back 50% of the interest on a home loan.',
+      hi: 'केंद्रीय सैनिक बोर्ड की ओर से युद्ध विधवाओं, युद्ध में शहीद सैनिकों के परिवारों, युद्ध में विकलांग हुए सैनिकों और शांतिकाल में सेवा के कारण हताहत हुए (सभी रैंक) सैनिकों को गृह ऋण के ब्याज का 50% वापस।',
+    },
+    benefits: {
+      en: '50% of the interest on your home loan is reimbursed. Only up to ₹1,00,000 of the loan is counted, even if your loan is larger. The subsidy runs for at most 5 years, or until the loan is repaid, whichever is earlier. The loan must be from a bank, a Government or public sector undertaking, LIC, GIC or HUDCO. Payment is made online after approval, when funds are available.',
+      hi: 'आपके गृह ऋण के ब्याज का 50% लौटाया जाता है। ऋण चाहे अधिक हो, केवल ₹1,00,000 तक के ऋण को गिना जाता है। सब्सिडी अधिकतम 5 वर्ष, या ऋण चुकने तक, जो भी पहले हो, मिलती है। ऋण बैंक, सरकारी या सार्वजनिक क्षेत्र के उपक्रम, एलआईसी, जीआईसी या हुडको से लिया होना चाहिए। मंज़ूरी के बाद, धन उपलब्ध होने पर भुगतान ऑनलाइन होता है।',
+    },
+    official_source: {
+      url: 'https://www.ksb.gov.in/',
+      last_checked_date: null, // TODO: set when verified
+      issuing_ministry: {
+        en: 'Kendriya Sainik Board, Department of Ex-Servicemen Welfare, Ministry of Defence',
+        hi: 'केंद्रीय सैनिक बोर्ड, पूर्व सैनिक कल्याण विभाग, रक्षा मंत्रालय',
+      },
+      gazette_or_order_ref: null,
+    },
+    criteria: [
+      {
+        id: 'crit-ksb-applicant-category',
+        field: 'servicemen_welfare_category',
+        operator: 'IN',
+        target_value: ['WAR_WIDOW', 'WAR_BEREAVED_FAMILY', 'WAR_DISABLED', 'ATTRIBUTABLE_PEACETIME_CASUALTY'],
+        criticality: 'MANDATORY',
+        explanation_if_met: {
+          en: 'You are a war widow, a member of a war-bereaved family, war-disabled personnel, or an attributable peacetime casualty (all ranks).',
+          hi: 'आप युद्ध विधवा, युद्ध में शहीद सैनिक के परिवार के सदस्य, युद्ध में विकलांग हुए सैनिक, या शांतिकाल में सेवा के कारण हताहत (सभी रैंक) हैं।',
+        },
+        explanation_if_violated: {
+          en: 'The scheme is only for war widows, war-bereaved families, war-disabled personnel and attributable peacetime casualties. Other ex-servicemen are not covered.',
+          hi: 'यह योजना केवल युद्ध विधवाओं, शहीद सैनिकों के परिवारों, युद्ध में विकलांग सैनिकों और शांतिकाल में सेवा के कारण हताहत सैनिकों के लिए है। अन्य पूर्व सैनिक शामिल नहीं हैं।',
+        },
+      },
+      {
+        // CONFIRM: Eligibility says a loan from "a bank", but the FAQ says a loan from a
+        // private bank does not count ("only approved banks, government/public sector
+        // undertakings, LIC, GIC and HUDCO"). The source does not say which banks are
+        // "approved". Check the KSB scheme page and add the correct list of lender types.
+        id: 'crit-ksb-approved-lender',
+        field: 'home_loan_lender_type',
+        operator: 'IN',
+        target_value: ['APPROVED_BANK', 'GOVT_PSU', 'LIC', 'GIC', 'HUDCO'],
+        criticality: 'MANDATORY',
+        explanation_if_met: {
+          en: 'Your home loan is from an approved bank, a Government or public sector undertaking, LIC, GIC or HUDCO.',
+          hi: 'आपका गृह ऋण किसी मान्य बैंक, सरकारी या सार्वजनिक क्षेत्र के उपक्रम, एलआईसी, जीआईसी या हुडको से है।',
+        },
+        explanation_if_violated: {
+          en: 'The home loan must be from an approved bank, a Government or public sector undertaking, LIC, GIC or HUDCO. A loan from a private lender may not count.',
+          hi: 'गृह ऋण किसी मान्य बैंक, सरकारी या सार्वजनिक क्षेत्र के उपक्रम, एलआईसी, जीआईसी या हुडको से होना चाहिए। निजी ऋणदाता से लिया ऋण मान्य नहीं हो सकता।',
+        },
+      },
+      {
+        // From the documents section: the banker must certify that repayment of the loan and
+        // interest was regular and the repayment schedule has not changed. It is not in the
+        // Eligibility list, but without it the claim cannot be made. CONFIRM.
+        id: 'crit-ksb-regular-repayment',
+        field: 'loan_repayment_regular',
+        operator: 'EQUALS',
+        target_value: true,
+        criticality: 'MANDATORY',
+        explanation_if_met: {
+          en: 'You have repaid the loan and interest regularly, and the repayment schedule has not been changed.',
+          hi: 'आपने ऋण और ब्याज नियमित रूप से चुकाया है और चुकौती की समय-सारणी में कोई बदलाव नहीं हुआ है।',
+        },
+        explanation_if_violated: {
+          en: 'The bank must certify that repayment was regular and the schedule did not change. Irregular repayment can block the claim.',
+          hi: 'बैंक को प्रमाणित करना होता है कि चुकौती नियमित रही और समय-सारणी नहीं बदली। अनियमित चुकौती से दावा रुक सकता है।',
+        },
+      },
+      // Not a criterion: the ₹1,00,000 limit is a cap on the loan amount counted, not a reason
+      // to refuse (the source says "regardless of the actual loan amount").
+    ],
+    required_documents: [
+      {
+        id: 'doc-ksb-ex-servicemen-id',
+        title: { en: 'Ex-Servicemen Identity Card (attested copy)', hi: 'पूर्व सैनिक पहचान पत्र (सत्यापित प्रति)' },
+        issuing_authority: { en: 'Armed Forces / Department of Ex-Servicemen Welfare', hi: 'सशस्त्र बल / पूर्व सैनिक कल्याण विभाग' },
+        optional: false,
+        guidance: { en: 'A duly attested copy.', hi: 'विधिवत सत्यापित प्रति।' },
+      },
+      {
+        // CONFIRM: for a war widow or war-bereaved family, the Discharge Book would be the
+        // soldier’s, and may not exist. Check with the District Sainik Board what they accept.
+        id: 'doc-ksb-discharge-book',
+        title: { en: 'Discharge Book (attested copy)', hi: 'डिस्चार्ज बुक (सत्यापित प्रति)' },
+        issuing_authority: { en: 'Armed Forces', hi: 'सशस्त्र बल' },
+        optional: false,
+        guidance: { en: 'A duly attested copy.', hi: 'विधिवत सत्यापित प्रति।' },
+      },
+      {
+        id: 'doc-ksb-no-change-cert',
+        title: { en: 'Certificate that the repayment schedule has not changed', hi: 'प्रमाण पत्र कि चुकौती की समय-सारणी में बदलाव नहीं हुआ' },
+        issuing_authority: { en: 'Your bank or lender (Government/PSU, LIC, GIC, HUDCO)', hi: 'आपका बैंक या ऋणदाता (सरकारी/पीएसयू, एलआईसी, जीआईसी, हुडको)' },
+        optional: false,
+        guidance: { en: 'Ask your lender for this certificate.', hi: 'यह प्रमाण पत्र अपने ऋणदाता से लें।' },
+      },
+      {
+        id: 'doc-ksb-interest-statement',
+        title: { en: 'Statement of interest actually paid for the claim period', hi: 'दावे की अवधि में वास्तव में चुकाए गए ब्याज का विवरण' },
+        issuing_authority: { en: 'Your bank or lender', hi: 'आपका बैंक या ऋणदाता' },
+        optional: false,
+        guidance: { en: 'Shows the interest you paid.', hi: 'आपके द्वारा चुकाया गया ब्याज दर्शाता है।' },
+      },
+      {
+        id: 'doc-ksb-regular-repayment-cert',
+        title: { en: 'Certificate that loan and interest were repaid regularly', hi: 'प्रमाण पत्र कि ऋण और ब्याज नियमित रूप से चुकाए गए' },
+        issuing_authority: { en: 'Your bank or lender', hi: 'आपका बैंक या ऋणदाता' },
+        optional: false,
+        guidance: { en: 'Ask your lender for this certificate.', hi: 'यह प्रमाण पत्र अपने ऋणदाता से लें।' },
+      },
+      {
+        // Listed only in the online upload step, not in "Documents Required". CONFIRM.
+        id: 'doc-ksb-photo',
+        title: { en: 'Photograph', hi: 'फ़ोटो' },
+        issuing_authority: { en: 'Self', hi: 'स्वयं' },
+        optional: false,
+        guidance: { en: 'To upload with the online application.', hi: 'ऑनलाइन आवेदन के साथ अपलोड करने के लिए।' },
+      },
+      {
+        id: 'doc-ksb-bank-passbook',
+        title: { en: 'Bank passbook', hi: 'बैंक पासबुक' },
+        issuing_authority: { en: 'Bank', hi: 'बैंक' },
+        optional: false,
+        guidance: { en: 'The subsidy is paid online into your bank account.', hi: 'सब्सिडी ऑनलाइन आपके बैंक खाते में आती है।' },
+      },
+      {
+        // CONFIRM: the upload step also mentions a caste certificate and a residential
+        // certificate. These look copied from another scheme (the same page even says
+        // "eligible students"). Not in the Documents Required list. Ask the District Sainik
+        // Board whether they are really needed.
+        id: 'doc-ksb-residential-cert',
+        title: { en: 'Residential certificate and caste certificate', hi: 'निवास प्रमाण पत्र और जाति प्रमाण पत्र' },
+        issuing_authority: { en: 'Competent authority', hi: 'सक्षम प्राधिकारी' },
+        optional: true,
+        guidance: {
+          en: 'The online form mentions these, but the document list does not. Check with your District Sainik Board before arranging them.',
+          hi: 'ऑनलाइन फ़ॉर्म में इनका उल्लेख है, पर दस्तावेज़ सूची में नहीं। इन्हें बनवाने से पहले अपने ज़िला सैनिक बोर्ड से पूछ लें।',
+        },
+      },
+    ],
+    application_steps: [
+      {
+        step_number: 1,
+        title: { en: 'Register on the Kendriya Sainik Board website', hi: 'केंद्रीय सैनिक बोर्ड की वेबसाइट पर पंजीकरण करें' },
+        description: {
+          en: 'On ksb.gov.in choose "Register". Fill in your name, Aadhaar number, email ID, mobile number and bank details, and set a password. You then get a User ID and password.',
+          hi: 'ksb.gov.in पर "Register" चुनें। अपना नाम, आधार नंबर, ईमेल, मोबाइल नंबर और बैंक विवरण भरें और पासवर्ड बनाएँ। इसके बाद आपको यूज़र आईडी और पासवर्ड मिलेगा।',
+        },
+      },
+      {
+        step_number: 2,
+        title: { en: 'Fill the online application', hi: 'ऑनलाइन आवेदन भरें' },
+        description: {
+          en: 'Log in, click "New Application", select this scheme, fill in the form and upload the documents.',
+          hi: 'लॉग इन करें, "New Application" पर क्लिक करें, यह योजना चुनें, फ़ॉर्म भरें और दस्तावेज़ अपलोड करें।',
+        },
+      },
+      {
+        step_number: 3,
+        title: { en: 'Save, print and submit to the District Sainik Board', hi: 'सेव करें, प्रिंट लें और ज़िला सैनिक बोर्ड में जमा करें' },
+        description: {
+          en: 'Click "Save & Forward", take a printout, and submit it with all the required documents to your District Sainik Board. The Kendriya Sainik Board then checks and approves it, and payment is made online when funds are available.',
+          hi: '"Save & Forward" पर क्लिक करें, प्रिंट निकालें और सभी ज़रूरी दस्तावेज़ों के साथ अपने ज़िला सैनिक बोर्ड में जमा करें। इसके बाद केंद्रीय सैनिक बोर्ड जाँच कर मंज़ूरी देता है और धन उपलब्ध होने पर भुगतान ऑनलाइन होता है।',
+        },
+      },
+    ],
+  },
+  {
+    id: 'pmksy-per-drop-more-crop',
+    code: 'pmksy-per-drop-more-crop',
+    name: {
+      en: 'PM Krishi Sinchayee Yojana: Per Drop More Crop',
+      hi: 'प्रधानमंत्री कृषि सिंचाई योजना: पर ड्रॉप मोर क्रॉप',
+    },
+    short_name: 'PMKSY Per Drop More Crop',
+    category: 'agriculture',
+    level: 'central',
+    state_code: 'ALL',
+    applicable_states: ['ALL'],
+    featured: false,
+    description: {
+      en: 'Subsidy for farmers to install drip and sprinkler irrigation so that every drop of water gives more crop. It also supports farm ponds and other water-saving work.',
+      hi: 'किसानों को ड्रिप और स्प्रिंकलर सिंचाई लगाने के लिए सब्सिडी, ताकि हर बूंद से अधिक फसल मिले। खेत तालाब जैसे जल-संरक्षण कार्यों में भी सहायता।',
+    },
+    benefits: {
+      en: 'Subsidy of 55% of the cost for small and marginal farmers and 45% for other farmers, limited to 5 hectares per farmer, paid by Direct Benefit Transfer. The cost is shared between Centre and State 60:40 (90:10 for North Eastern and Himalayan states; 100% Centre for Union Territories).',
+      hi: 'लघु और सीमांत किसानों को लागत का 55% और अन्य किसानों को 45% सब्सिडी, प्रति किसान अधिकतम 5 हेक्टेयर तक, डीबीटी से। लागत केंद्र और राज्य में 60:40 बंटती है (पूर्वोत्तर और हिमालयी राज्यों में 90:10; केंद्र शासित प्रदेशों में 100% केंद्र)।',
+    },
+    official_source: {
+      // Site found and opened on 2026-10-31 (it is the portal for all of PMKSY). Rules NOT yet checked against it.
+      url: 'https://pmksy.gov.in/',
+      last_checked_date: null, // TODO: set to the day a teammate verifies the rules on the official site
+      issuing_ministry: {
+        en: 'Department of Agriculture & Farmers Welfare, Ministry of Agriculture & Farmers Welfare',
+        hi: 'कृषि एवं किसान कल्याण विभाग, कृषि एवं किसान कल्याण मंत्रालय',
+      },
+      gazette_or_order_ref: 'Launched 1 July 2015 (as stated on the myScheme page)',
+    },
+    criteria: [
+      {
+        id: 'crit-pdmc-citizen',
+        field: 'is_indian_citizen',
+        operator: 'EQUALS',
+        target_value: true,
+        criticality: 'MANDATORY',
+        explanation_if_met: {
+          en: 'You are a citizen of India.',
+          hi: 'आप भारत के नागरिक हैं।',
+        },
+        explanation_if_violated: {
+          en: 'The applicant should be a citizen of India.',
+          hi: 'आवेदक भारत का नागरिक होना चाहिए।',
+        },
+      },
+      {
+        id: 'crit-pdmc-farmer',
+        field: 'is_farmer',
+        operator: 'EQUALS',
+        target_value: true,
+        criticality: 'MANDATORY',
+        explanation_if_met: {
+          en: 'You are a farmer. The scheme is open to all farmers.',
+          hi: 'आप किसान हैं। यह योजना सभी किसानों के लिए है।',
+        },
+        explanation_if_violated: {
+          en: 'The scheme is for farmers.',
+          hi: 'यह योजना किसानों के लिए है।',
+        },
+      },
+    ],
+    required_documents: [
+      {
+        id: 'doc-pdmc-aadhaar',
+        title: { en: 'Aadhaar Card', hi: 'आधार कार्ड' },
+        issuing_authority: { en: 'UIDAI', hi: 'भारतीय विशिष्ट पहचान प्राधिकरण' },
+        optional: false,
+        guidance: {
+          en: 'Aadhaar details are needed because the subsidy is paid by Direct Benefit Transfer.',
+          hi: 'सब्सिडी डीबीटी से मिलती है, इसलिए आधार विवरण ज़रूरी है।',
+        },
+      },
+      {
+        id: 'doc-pdmc-bank',
+        title: { en: 'Bank account details', hi: 'बैंक खाते का विवरण' },
+        issuing_authority: { en: 'Bank', hi: 'बैंक' },
+        optional: false,
+      },
+      {
+        id: 'doc-pdmc-address',
+        title: { en: 'Address proof', hi: 'पते का प्रमाण' },
+        issuing_authority: { en: 'Government authority', hi: 'सरकारी प्राधिकारी' },
+        optional: false,
+      },
+      {
+        id: 'doc-pdmc-photo',
+        title: { en: 'Passport-size photograph', hi: 'पासपोर्ट साइज़ फ़ोटो' },
+        issuing_authority: { en: 'Self', hi: 'स्वयं' },
+        optional: false,
+        guidance: {
+          en: 'Paste it on the form and sign across it.',
+          hi: 'फ़ॉर्म पर चिपकाएं और उस पर हस्ताक्षर करें।',
+        },
+      },
+      {
+        id: 'doc-pdmc-caste',
+        title: { en: 'Caste certificate (if applicable)', hi: 'जाति प्रमाण पत्र (यदि लागू हो)' },
+        issuing_authority: { en: 'Competent authority', hi: 'सक्षम अधिकारी' },
+        optional: true,
+      },
+      {
+        id: 'doc-pdmc-land',
+        title: { en: 'Proof of agricultural land', hi: 'कृषि भूमि के दस्तावेज़' },
+        issuing_authority: { en: 'State Revenue Department', hi: 'राज्य राजस्व विभाग' },
+        optional: false,
+      },
+      {
+        id: 'doc-pdmc-domicile',
+        title: { en: 'Domicile certificate of the State / UT', hi: 'राज्य / केंद्र शासित प्रदेश का मूल निवासी प्रमाण पत्र' },
+        issuing_authority: { en: 'Revenue Department', hi: 'राजस्व विभाग' },
+        optional: false,
+      },
+    ],
+    application_steps: [
+      {
+        step_number: 1,
+        title: { en: 'Contact the agriculture office', hi: 'कृषि कार्यालय से संपर्क करें' },
+        description: {
+          en: 'Contact your Block or District Agriculture Office through your Gram Panchayat, or call the Kisan Call Centre on 1800-180-1551 (toll free), and ask for the application form.',
+          hi: 'अपनी ग्राम पंचायत के माध्यम से ब्लॉक या जिला कृषि कार्यालय से संपर्क करें, या किसान कॉल सेंटर 1800-180-1551 (टोल फ्री) पर कॉल करें और आवेदन फ़ॉर्म लें।',
+        },
+      },
+      {
+        step_number: 2,
+        title: { en: 'Fill the form with documents', hi: 'दस्तावेज़ों के साथ फ़ॉर्म भरें' },
+        description: {
+          en: 'Fill all mandatory fields, paste a signed passport-size photograph and attach self-attested copies of the documents.',
+          hi: 'सभी ज़रूरी जानकारी भरें, हस्ताक्षर किया हुआ पासपोर्ट फ़ोटो चिपकाएं और दस्तावेज़ों की स्व-सत्यापित प्रतियां लगाएं।',
+        },
+      },
+      {
+        step_number: 3,
+        title: { en: 'Submit and keep the receipt', hi: 'जमा करें और पावती रखें' },
+        description: {
+          en: 'Submit the signed form to the designated authority and collect the receipt. Buy only BIS-marked irrigation systems and components.',
+          hi: 'हस्ताक्षरित फ़ॉर्म निर्धारित अधिकारी को जमा करें और पावती लें। केवल बीआईएस-चिह्नित सिंचाई उपकरण ही खरीदें।',
+        },
+      },
+    ],
+  },
+  // NOTE: this scheme's rules are closed (2016-18 sales). Kept in the list as requested; its description says so.
+  {
+    id: 'mp-krishak-samriddhi',
+    code: 'mp-krishak-samriddhi',
+    name: {
+      en: 'Mukhya Mantri Krishak Samriddhi Yojana (Madhya Pradesh)',
+      hi: 'मुख्यमंत्री कृषक समृद्धि योजना (मध्य प्रदेश)',
+    },
+    short_name: 'Krishak Samriddhi',
+    category: 'agriculture',
+    level: 'state',
+    state_code: 'MP',
+    applicable_states: ['MP'],
+    featured: false,
+    rules_status: 'CLOSED_HISTORICAL', // the sale windows in the rules ended in 2018
+    description: {
+      en: 'An incentive per quintal for registered MP farmers who sold paddy, wheat, gram, lentil or mustard in the 2016-17 and 2017-18 seasons. The sale windows on the page ended in 2018.',
+      hi: 'पंजीकृत मध्य प्रदेश के किसानों को 2016-17 और 2017-18 के सीज़न में धान, गेहूं, चना, मसूर या सरसों बेचने पर प्रति क्विंटल प्रोत्साहन राशि। पेज पर दी गई बिक्री अवधि 2018 में समाप्त हो चुकी है।',
+    },
+    benefits: {
+      en: '₹200 per quintal for paddy (Kharif 2016) and wheat (Rabi 2016-17); ₹265 per quintal for wheat and ₹100 per quintal for gram, lentil and mustard (Rabi 2017-18). Paid by RTGS/NEFT after the District Level Implementation Committee verifies.',
+      hi: 'धान (खरीफ 2016) और गेहूं (रबी 2016-17) पर ₹200 प्रति क्विंटल; गेहूं पर ₹265 और चना, मसूर, सरसों पर ₹100 प्रति क्विंटल (रबी 2017-18)। जिला स्तरीय क्रियान्वयन समिति के सत्यापन के बाद RTGS/NEFT से भुगतान।',
+    },
+    official_source: {
+      // No official link found (only third-party sites). Left empty on purpose; the UI hides the button.
+      url: '',
+      last_checked_date: null, // TODO: set when a teammate verifies whether this scheme is still open
+      issuing_ministry: {
+        en: 'Farmer Welfare and Agriculture Development Department, Government of Madhya Pradesh',
+        hi: 'किसान कल्याण एवं कृषि विकास विभाग, मध्य प्रदेश शासन',
+      },
+      gazette_or_order_ref: 'Not stated on the myScheme page',
+    },
+    criteria: [
+      {
+        id: 'crit-ks-registered-farmer',
+        field: 'is_registered_farmer_eupajan',
+        operator: 'EQUALS',
+        target_value: true,
+        criticality: 'MANDATORY',
+        explanation_if_met: {
+          en: 'You are a farmer registered on the e-Upajan portal.',
+          hi: 'आप ई-उपज पोर्टल पर पंजीकृत किसान हैं।',
+        },
+        explanation_if_violated: {
+          en: 'The farmer must be registered on the e-Upajan portal.',
+          hi: 'किसान का ई-उपज पोर्टल पर पंजीकृत होना ज़रूरी है।',
+        },
+      },
+      {
+        // The sale windows listed on the page all ended in 2018.
+        id: 'crit-ks-sold-in-window',
+        field: 'sold_eligible_crop_in_listed_window',
+        operator: 'EQUALS',
+        target_value: true,
+        criticality: 'MANDATORY',
+        explanation_if_met: {
+          en: 'You sold an eligible crop at a mandi or procurement centre in the listed sale period.',
+          hi: 'आपने सूचीबद्ध बिक्री अवधि में मंडी या खरीद केंद्र पर पात्र फसल बेची।',
+        },
+        explanation_if_violated: {
+          en: 'Only sales in the listed seasons count, and those periods ended in 2018.',
+          hi: 'केवल सूचीबद्ध सीज़न की बिक्री मान्य है, और वे अवधियां 2018 में समाप्त हो चुकी हैं।',
+        },
+      },
+    ],
+    required_documents: [
+      {
+        id: 'doc-ks-aadhaar',
+        title: { en: 'Aadhaar Card', hi: 'आधार कार्ड' },
+        issuing_authority: { en: 'UIDAI', hi: 'भारतीय विशिष्ट पहचान प्राधिकरण' },
+        optional: false,
+      },
+      {
+        id: 'doc-ks-bank',
+        title: { en: 'Bank account details', hi: 'बैंक खाते का विवरण' },
+        issuing_authority: { en: 'Bank', hi: 'बैंक' },
+        optional: false,
+      },
+      {
+        id: 'doc-ks-mandi-slip',
+        title: {
+          en: 'Mandi entry slip details (slip number, date of sale, commodity number, quantity, payment received)',
+          hi: 'मंडी प्रवेश पर्ची का विवरण (पर्ची क्रमांक, बिक्री की तारीख, उपज क्रमांक, मात्रा, प्राप्त भुगतान)',
+        },
+        issuing_authority: { en: 'Mandi / Procurement centre', hi: 'मंडी / खरीद केंद्र' },
+        optional: false,
+      },
+    ],
+    application_steps: [
+      {
+        step_number: 1,
+        title: { en: 'Register on e-Upajan', hi: 'ई-उपज पर पंजीकरण' },
+        description: {
+          en: 'Register on the e-Upajan portal with Aadhaar, mobile number and bank details before selling.',
+          hi: 'बेचने से पहले आधार, मोबाइल नंबर और बैंक विवरण के साथ ई-उपज पोर्टल पर पंजीकरण करें।',
+        },
+      },
+      {
+        step_number: 2,
+        title: { en: 'Sell at a mandi or procurement centre', hi: 'मंडी या खरीद केंद्र पर बिक्री' },
+        description: {
+          en: 'Sell the eligible crop in the listed period, then the District Level Implementation Committee verifies the data and the amount is sent to your account.',
+          hi: 'सूचीबद्ध अवधि में पात्र फसल बेचें, फिर जिला स्तरीय क्रियान्वयन समिति डेटा का सत्यापन करती है और राशि आपके खाते में भेजी जाती है।',
+        },
+      },
+    ],
+  },
+  // ---------------------------------------------------------------------------
+  // Gujarat: Stipend Scheme for Scheduled Tribes, Poultry Training Stipend
+  // Drafted only from the myScheme text. Not yet checked against the official source.
+  // The page puts the steps under the wrong headings (the "Online" heading describes visiting an
+  // office; the "Offline" heading describes the I-Khedut portal). Both routes are kept below.
+  // No income limit is stated, only that income proof is needed, so none is coded.
+  // ---------------------------------------------------------------------------
+  {
+    id: 'gj-st-poultry-training-stipend',
+    code: 'gj-st-poultry-training-stipend',
+    name: {
+      en: 'Stipend Scheme for Scheduled Tribes: Poultry Training Stipend (Gujarat)',
+      hi: 'अनुसूचित जनजाति के लिए स्टाइपेंड योजना: पोल्ट्री प्रशिक्षण स्टाइपेंड (गुजरात)',
+    },
+    short_name: 'Poultry Training Stipend (ST, Gujarat)',
+    category: 'agriculture',
+    level: 'state',
+    state_code: 'GJ',
+    applicable_states: ['GJ'],
+    featured: false,
+    description: {
+      en: 'A stipend for adult Scheduled Tribe people of Gujarat who take six days of scientific poultry farming training. Women and people below the poverty line get priority.',
+      hi: 'गुजरात के वयस्क अनुसूचित जनजाति के लोगों के लिए, जो छह दिन का वैज्ञानिक मुर्गीपालन प्रशिक्षण लेते हैं, स्टाइपेंड। महिलाओं और गरीबी रेखा से नीचे के लोगों को प्राथमिकता।',
+    },
+    benefits: {
+      en: 'Up to ₹2,000 paid into your bank account for the 6-day training (₹300 a day for 6 days = ₹1,800, plus ₹200 for travel), and a poultry training certificate after the training.',
+      hi: '6 दिन के प्रशिक्षण के लिए बैंक खाते में अधिकतम ₹2,000 (₹300 प्रतिदिन × 6 दिन = ₹1,800 और आने-जाने के ₹200), और प्रशिक्षण पूरा होने पर पोल्ट्री प्रशिक्षण प्रमाण पत्र।',
+    },
+    official_source: {
+      // Link taken from the myScheme page (I-Khedut portal application page).
+      url: 'https://ikhedut.gujarat.gov.in/iKhedutPublicScheme/Public/frm_Public_ANH2_SchemeApplicaiton.aspx',
+      last_checked_date: null, // TODO: set to the day a teammate verifies the rules on the official source
+      issuing_ministry: {
+        en: 'Department of Agriculture, Farmers Welfare & Co-operation, Government of Gujarat',
+        hi: 'कृषि, किसान कल्याण एवं सहकारिता विभाग, गुजरात सरकार',
+      },
+      gazette_or_order_ref: 'Not stated on the myScheme page',
+    },
+    criteria: [
+      {
+        // Source: "only be given to the adult of Schedule Tribes people of the society of Gujarat State"
+        id: 'crit-gjp-gujarat-resident',
+        field: 'is_gujarat_resident',
+        operator: 'EQUALS',
+        target_value: true,
+        criticality: 'MANDATORY',
+        explanation_if_met: {
+          en: 'You belong to Gujarat State.',
+          hi: 'आप गुजरात राज्य के निवासी हैं।',
+        },
+        explanation_if_violated: {
+          en: 'This scheme is only for people of Gujarat State.',
+          hi: 'यह योजना केवल गुजरात राज्य के लोगों के लिए है।',
+        },
+      },
+      {
+        id: 'crit-gjp-scheduled-tribe',
+        field: 'is_scheduled_tribe',
+        operator: 'EQUALS',
+        target_value: true,
+        criticality: 'MANDATORY',
+        explanation_if_met: {
+          en: 'You belong to a Scheduled Tribe.',
+          hi: 'आप अनुसूचित जनजाति से हैं।',
+        },
+        explanation_if_violated: {
+          en: 'This scheme is only for people of Scheduled Tribes.',
+          hi: 'यह योजना केवल अनुसूचित जनजाति के लोगों के लिए है।',
+        },
+      },
+      {
+        // Source: "adult"
+        id: 'crit-gjp-adult',
+        field: 'age',
+        operator: 'GREATER_THAN_OR_EQUAL',
+        target_value: 18,
+        criticality: 'MANDATORY',
+        explanation_if_met: {
+          en: 'You are an adult (18 or older).',
+          hi: 'आप वयस्क (18 वर्ष या अधिक) हैं।',
+        },
+        explanation_if_violated: {
+          en: 'Only adults can get this stipend.',
+          hi: 'यह स्टाइपेंड केवल वयस्कों को मिलता है।',
+        },
+      },
+    ],
+    required_documents: [
+      {
+        id: 'doc-gjp-id',
+        title: { en: 'Identity proof (Aadhaar Card or Voter ID Card)', hi: 'पहचान प्रमाण (आधार कार्ड या मतदाता पहचान पत्र)' },
+        issuing_authority: { en: 'UIDAI / Election Commission', hi: 'यूआईडीएआई / चुनाव आयोग' },
+        optional: false,
+      },
+      {
+        id: 'doc-gjp-income',
+        title: { en: 'Income proof certificate', hi: 'आय प्रमाण पत्र' },
+        issuing_authority: { en: 'Competent authority', hi: 'सक्षम अधिकारी' },
+        optional: false,
+      },
+      {
+        id: 'doc-gjp-residence',
+        title: { en: 'Residence proof', hi: 'निवास प्रमाण' },
+        issuing_authority: { en: 'Government authority', hi: 'सरकारी प्राधिकारी' },
+        optional: false,
+      },
+      {
+        id: 'doc-gjp-caste',
+        title: { en: 'Caste certificate (Scheduled Tribe)', hi: 'जाति प्रमाण पत्र (अनुसूचित जनजाति)' },
+        issuing_authority: { en: 'Competent authority', hi: 'सक्षम अधिकारी' },
+        optional: false,
+      },
+      {
+        id: 'doc-gjp-bpl',
+        title: { en: 'Below Poverty Line (BPL) card', hi: 'गरीबी रेखा से नीचे (बीपीएल) कार्ड' },
+        issuing_authority: { en: 'Competent authority', hi: 'सक्षम अधिकारी' },
+        optional: true,
+        guidance: { en: 'If you have one. It gives you priority.', hi: 'यदि है तो। इससे प्राथमिकता मिलती है।' },
+      },
+      {
+        id: 'doc-gjp-disability',
+        title: { en: 'Disability certificate (only for persons with disabilities)', hi: 'दिव्यांगता प्रमाण पत्र (केवल दिव्यांगजनों के लिए)' },
+        issuing_authority: { en: 'Competent authority', hi: 'सक्षम अधिकारी' },
+        optional: true,
+      },
+      {
+        id: 'doc-gjp-ration',
+        title: { en: 'Barcoded ration card', hi: 'बारकोड वाला राशन कार्ड' },
+        issuing_authority: { en: 'Food & Civil Supplies Department', hi: 'खाद्य एवं नागरिक आपूर्ति विभाग' },
+        optional: true,
+        guidance: { en: 'If applicable.', hi: 'यदि लागू हो।' },
+      },
+      {
+        id: 'doc-gjp-bank',
+        title: { en: 'Savings account bank passbook or cancelled cheque', hi: 'बचत खाते की बैंक पासबुक या रद्द किया हुआ चेक' },
+        issuing_authority: { en: 'Bank', hi: 'बैंक' },
+        optional: true,
+        guidance: { en: 'If applicable. The stipend is paid into your bank account.', hi: 'यदि लागू हो। स्टाइपेंड बैंक खाते में आता है।' },
+      },
+    ],
+    application_steps: [
+      {
+        step_number: 1,
+        title: { en: 'Apply on the I-Khedut portal', hi: 'आई-खेडूत पोर्टल पर आवेदन करें' },
+        description: {
+          en: 'On the I-Khedut portal click "Apply New" and submit the application. Use "Update Application" to correct it. Confirm the application within 7 days of saving it.',
+          hi: 'आई-खेडूत पोर्टल पर "Apply New" पर क्लिक करके आवेदन जमा करें। सुधार के लिए "Update Application" का उपयोग करें। आवेदन सेव करने के 7 दिन के भीतर उसे कन्फर्म करें।',
+        },
+      },
+      {
+        step_number: 2,
+        title: { en: 'Print, sign and submit', hi: 'प्रिंट निकालें, हस्ताक्षर करें और जमा करें' },
+        description: {
+          en: 'Take a printout of the confirmed application (applying online alone does not count). Sign or put your thumbprint on it and submit it with the documents to the office on the form, or upload the signed scan (PDF, under 200 KB). If documents are wrong or missing, submit the correct ones to the office within 7 days.',
+          hi: 'कन्फर्म किए आवेदन का प्रिंट निकालें (केवल ऑनलाइन आवेदन मान्य नहीं है)। उस पर हस्ताक्षर या अंगूठा लगाकर दस्तावेज़ों के साथ फ़ॉर्म पर दिए कार्यालय में जमा करें, या हस्ताक्षरित स्कैन (PDF, 200 KB से कम) अपलोड करें। दस्तावेज़ गलत या अधूरे हों तो सही दस्तावेज़ 7 दिन के भीतर कार्यालय में जमा करें।',
+        },
+      },
+      {
+        step_number: 3,
+        title: { en: 'Or collect the form from the poultry office', hi: 'या पोल्ट्री कार्यालय से फ़ॉर्म लें' },
+        description: {
+          en: 'You can also collect the form from the nearest Intensive Poultry Development Project Office or District Poultry Extension Centre, fill it in, attach self-attested documents and submit it. After verification you can get the benefit.',
+          hi: 'आप नज़दीकी गहन पोल्ट्री विकास परियोजना कार्यालय या जिला पोल्ट्री विस्तार केंद्र से फ़ॉर्म लेकर भर सकते हैं, स्व-सत्यापित दस्तावेज़ लगाकर जमा करें। सत्यापन के बाद लाभ मिलता है।',
+        },
+      },
+    ],
+  },
+  // ---------------------------------------------------------------------------
+  // PM VIKAS (Pradhan Mantri Virasat Ka Samvardhan), Ministry of Minority Affairs
+  // Drafted from the myScheme text. When I opened the official site's "About us" page it confirmed
+  // the ministry and structure, but it did NOT show the age limits, the community list or the
+  // quotas, and it says the scheme is aligned with the 15th Finance Commission cycle "up to
+  // 2025-26". That cycle has ended, so check whether the scheme was extended.
+  // Seats are limited (quotas for women, PwD and up to 25% / 15% non-minority EWS candidates), which
+  // is not modelled here. Age 18+ applies to the women leadership component only.
+  // ---------------------------------------------------------------------------
+  {
+    id: 'pm-vikas',
+    code: 'pm-vikas',
+    name: {
+      en: 'Pradhan Mantri Virasat Ka Samvardhan (PM VIKAS)',
+      hi: 'प्रधानमंत्री विरासत का संवर्धन (पीएम विकास)',
+    },
+    short_name: 'PM VIKAS',
+    category: 'employment',
+    level: 'central',
+    state_code: 'ALL',
+    applicable_states: ['ALL'],
+    featured: false,
+    description: {
+      en: 'Skill training, open-school education for dropouts, and leadership and enterprise support for women from the six notified minority communities (Muslims, Christians, Sikhs, Buddhists, Jains and Parsis).',
+      hi: 'छह अधिसूचित अल्पसंख्यक समुदायों (मुस्लिम, ईसाई, सिख, बौद्ध, जैन और पारसी) के लिए कौशल प्रशिक्षण, स्कूल छोड़ चुके लोगों के लिए ओपन स्कूल से शिक्षा, और महिलाओं के लिए नेतृत्व व उद्यमिता सहायता।',
+    },
+    benefits: {
+      en: 'Skill training (traditional and modern), education support to complete Class 8, 10 or 12 through open schooling (NIOS), leadership and entrepreneurship support for women, and a stipend for trainees.',
+      hi: 'कौशल प्रशिक्षण (पारंपरिक और आधुनिक), ओपन स्कूल (एनआईओएस) से कक्षा 8, 10 या 12 पूरी करने में सहायता, महिलाओं के लिए नेतृत्व और उद्यमिता सहायता, और प्रशिक्षुओं को स्टाइपेंड।',
+    },
+    official_source: {
+      url: 'https://pmvikas.minorityaffairs.gov.in/',
+      last_checked_date: null, // TODO: set to the day a teammate verifies the rules and checks the scheme is still running
+      issuing_ministry: {
+        en: 'Ministry of Minority Affairs, Government of India',
+        hi: 'अल्पसंख्यक कार्य मंत्रालय, भारत सरकार',
+      },
+      gazette_or_order_ref: 'PM VIKAS Guidelines (pmvikas.minorityaffairs.gov.in)',
+    },
+    criteria: [
+      {
+        id: 'crit-pmv-indian-national',
+        field: 'is_indian_citizen',
+        operator: 'EQUALS',
+        target_value: true,
+        criticality: 'MANDATORY',
+        explanation_if_met: {
+          en: 'You are an Indian national.',
+          hi: 'आप भारतीय नागरिक हैं।',
+        },
+        explanation_if_violated: {
+          en: 'The scheme is for Indian nationals.',
+          hi: 'यह योजना भारतीय नागरिकों के लिए है।',
+        },
+      },
+      {
+        // Source: "Indian nationals belonging to the six notified minority communities".
+        // Up to 25% (traditional skilling) / 15% (other components) seats may go to non-minority EWS candidates.
+        id: 'crit-pmv-minority',
+        field: 'belongs_to_notified_minority_community',
+        operator: 'EQUALS',
+        target_value: true,
+        criticality: 'MANDATORY',
+        explanation_if_met: {
+          en: 'You belong to one of the six notified minority communities.',
+          hi: 'आप छह अधिसूचित अल्पसंख्यक समुदायों में से एक से हैं।',
+        },
+        explanation_if_violated: {
+          en: 'The scheme is mainly for the six notified minority communities. A small share of seats can go to non-minority candidates from economically weaker sections, so ask the training centre.',
+          hi: 'यह योजना मुख्य रूप से छह अधिसूचित अल्पसंख्यक समुदायों के लिए है। कुछ सीटें आर्थिक रूप से कमज़ोर वर्ग के गैर-अल्पसंख्यक उम्मीदवारों को मिल सकती हैं, इसलिए प्रशिक्षण केंद्र से पूछें।',
+        },
+      },
+      {
+        // Source: "14 to 45 years for skilling and education; 18 to 45 for women leadership"
+        id: 'crit-pmv-min-age',
+        field: 'age',
+        operator: 'GREATER_THAN_OR_EQUAL',
+        target_value: 14,
+        criticality: 'MANDATORY',
+        explanation_if_met: {
+          en: 'You are at least 14 years old.',
+          hi: 'आपकी आयु कम से कम 14 वर्ष है।',
+        },
+        explanation_if_violated: {
+          en: 'You must be at least 14 years old (18 for the women leadership and entrepreneurship component).',
+          hi: 'आपकी आयु कम से कम 14 वर्ष होनी चाहिए (महिला नेतृत्व और उद्यमिता के लिए 18 वर्ष)।',
+        },
+      },
+      {
+        id: 'crit-pmv-max-age',
+        field: 'age',
+        operator: 'LESS_THAN_OR_EQUAL',
+        target_value: 45,
+        criticality: 'MANDATORY',
+        explanation_if_met: {
+          en: 'You are 45 years old or younger.',
+          hi: 'आपकी आयु 45 वर्ष या उससे कम है।',
+        },
+        explanation_if_violated: {
+          en: 'The upper age limit is 45 years.',
+          hi: 'अधिकतम आयु सीमा 45 वर्ष है।',
+        },
+      },
+    ],
+    required_documents: [
+      {
+        id: 'doc-pmv-aadhaar-bank',
+        title: { en: 'Aadhaar card and Aadhaar-linked bank account', hi: 'आधार कार्ड और आधार से जुड़ा बैंक खाता' },
+        issuing_authority: { en: 'UIDAI / Bank', hi: 'यूआईडीएआई / बैंक' },
+        optional: false,
+      },
+      {
+        id: 'doc-pmv-ews',
+        title: { en: 'EWS certificate (for non-minority candidates only)', hi: 'ईडब्ल्यूएस प्रमाण पत्र (केवल गैर-अल्पसंख्यक उम्मीदवारों के लिए)' },
+        issuing_authority: { en: 'Competent authority', hi: 'सक्षम अधिकारी' },
+        optional: true,
+      },
+      {
+        id: 'doc-pmv-qualification',
+        title: { en: 'Educational qualification for the training programme you apply to', hi: 'जिस प्रशिक्षण में आवेदन कर रहे हैं उसके अनुसार शैक्षणिक योग्यता' },
+        issuing_authority: { en: 'School / Board / Institute', hi: 'स्कूल / बोर्ड / संस्थान' },
+        optional: false,
+      },
+    ],
+    application_steps: [
+      {
+        step_number: 1,
+        title: { en: 'Register on the SIDH portal', hi: 'एसआईडीएच पोर्टल पर पंजीकरण करें' },
+        description: {
+          en: 'Go to the Skill India Digital Hub (skillindiadigital.gov.in), register as a learner, or log in, and complete e-KYC.',
+          hi: 'स्किल इंडिया डिजिटल हब (skillindiadigital.gov.in) पर जाएं, शिक्षार्थी के रूप में पंजीकरण करें या लॉगिन करें और ई-केवाईसी पूरा करें।',
+        },
+      },
+      {
+        step_number: 2,
+        title: { en: 'Set up your profile', hi: 'अपनी प्रोफ़ाइल बनाएं' },
+        description: {
+          en: 'Create a password or PIN, verify your mobile number with an OTP, and check that your name, date of birth and contact details are correct.',
+          hi: 'पासवर्ड या पिन बनाएं, ओटीपी से मोबाइल नंबर सत्यापित करें और जांचें कि नाम, जन्म तिथि और संपर्क विवरण सही हैं।',
+        },
+      },
+      {
+        step_number: 3,
+        title: { en: 'Find PM VIKAS courses', hi: 'पीएम विकास के पाठ्यक्रम खोजें' },
+        description: {
+          en: 'On your dashboard search for PM VIKAS and job roles, using the filters for scheme, mode and sector.',
+          hi: 'डैशबोर्ड पर पीएम विकास और जॉब रोल खोजें, योजना, मोड और सेक्टर के फ़िल्टर का उपयोग करें।',
+        },
+      },
+      {
+        step_number: 4,
+        title: { en: 'Apply for a batch', hi: 'बैच के लिए आवेदन करें' },
+        description: {
+          en: 'Choose a batch for your job role and apply. You can pick up to 5 batches, which the training partner or centre reviews.',
+          hi: 'अपने जॉब रोल का बैच चुनकर आवेदन करें। आप अधिकतम 5 बैच चुन सकते हैं, जिनकी समीक्षा प्रशिक्षण भागीदार या केंद्र करता है।',
+        },
+      },
+      {
+        step_number: 5,
+        title: { en: 'Confirm your enrolment', hi: 'नामांकन की पुष्टि करें' },
+        description: {
+          en: 'After approval, accept the invitation on the portal to confirm your enrolment and track the status under "Applications".',
+          hi: 'मंज़ूरी के बाद पोर्टल पर निमंत्रण स्वीकार कर नामांकन पक्का करें और "Applications" में स्थिति देखें।',
+        },
+      },
+    ],
   },
 ];
-

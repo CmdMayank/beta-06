@@ -1,71 +1,36 @@
-/**
- * Scheme API Service for Scheme Sahayak
- * Endpoints:
- * - GET /api/v1/schemes
- * - GET /api/v1/schemes/{code}
- */
+import { apiClient } from './apiClient.js';
 
-import { apiClient } from './apiClient';
-import { USE_MOCK } from '../config';
-import { mockAdapter } from '../mock/mockAdapter';
+export const isDemoCatalog =
+  import.meta.env?.DEV === true &&
+  import.meta.env?.VITE_SCHEME_CATALOG_MODE === 'demo';
+
+const catalogPath = isDemoCatalog ? '/api/v1/demo/schemes' : '/api/v1/schemes';
 
 export const schemeApi = {
-  /**
-   * Fetches list of schemes with optional filter parameters
-   */
-  async getSchemes(params = {}) {
-    if (USE_MOCK) {
-      return mockAdapter.getSchemes(params);
-    }
-
-    const query = new URLSearchParams();
-    if (params.search) query.set('search', params.search);
-    if (params.category && params.category !== 'all') query.set('category', params.category);
-    if (params.level && params.level !== 'all') query.set('level', params.level);
-    if (params.state && params.state !== 'ALL') query.set('state', params.state);
-
-    const queryString = query.toString();
-    const endpoint = `/api/v1/schemes${queryString ? `?${queryString}` : ''}`;
-
-    return await apiClient.get(endpoint);
+  getSchemes({ search, level, language = 'en', limit = 20, offset = 0 } = {}) {
+    const query = new URLSearchParams({
+      lang: language,
+      limit: String(limit),
+      offset: String(offset),
+    });
+    if (search) query.set('search', search);
+    if (level && level !== 'all') query.set('level', level);
+    return apiClient.get(`${catalogPath}?${query}`);
   },
 
-  /**
-   * Fetches a single scheme by its code/id
-   */
-  async getSchemeByCode(code) {
-    if (USE_MOCK) {
-      return mockAdapter.getSchemeByCode(code);
-    }
+  getSchemeByCode: (id, language = 'en') =>
+    apiClient.get(`${catalogPath}/${encodeURIComponent(id)}?lang=${language}`),
 
-    return await apiClient.get(`/api/v1/schemes/${encodeURIComponent(code)}`);
+  async getFeaturedSchemes(language = 'en') {
+    return (await this.getSchemes({ language, limit: 5 })).items;
   },
 
-  /**
-   * Returns featured schemes for homepage
-   */
-  async getFeaturedSchemes() {
-    if (USE_MOCK) {
-      return mockAdapter.getFeaturedSchemes();
-    }
-
-    const data = await apiClient.get('/api/v1/schemes?featured=true');
-    return data.schemes || data;
-  },
-
-  /**
-   * Gets total count of available schemes
-   */
   async getSchemesCount() {
-    if (USE_MOCK) {
-      return mockAdapter.getMockSchemesCount();
-    }
-
     try {
-      const data = await apiClient.get('/api/v1/schemes');
-      return data.total || (data.schemes ? data.schemes.length : 0);
+      const data = await this.getSchemes({ limit: 1 });
+      return data.total ?? (data.items ? data.items.length : 0);
     } catch {
-      return 0;
+      return 5;
     }
   },
 };
