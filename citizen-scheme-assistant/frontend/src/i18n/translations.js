@@ -16,19 +16,23 @@ export const translations = {
     navCheckEligibility: "Check Eligibility",
     navClearData: "Clear My Data",
     
+    // Banner Disclaimer
+    bannerDisclaimer: "Independent project, not an official government website.",
+
     // Language Switcher
     langEn: "English",
     langHi: "हिंदी",
     
     // Hero Section
-    heroBadge: "Official Welfare Discovery Initiative",
+    heroBadge: "Independent scheme guide",
     heroHeading: "Government Schemes Made Simple for Everyone.",
     heroSubheading: "Discover government benefits, understand your eligibility, and find the right schemes for you — all in one place.",
     heroCtaStart: "Start Eligibility Check",
     heroCtaExplore: "Explore Schemes",
-    heroStat1: "100+ Welfare Schemes",
-    heroStat2: "28 States & 8 UTs Covered",
-    heroStat3: "100% Free & Ephemeral Privacy",
+    heroStatSchemes: "{count} Welfare Schemes",
+    heroStat1: "Welfare Schemes",
+    heroStat2: "Central & State Schemes",
+    heroStat3: "Nothing is saved after you close it",
     heroCitizenVoice: "Available in Hindi and English",
 
     // Search Section
@@ -147,9 +151,13 @@ export const translations = {
     // Results Page
     resultsTitle: "Screening Evaluation Results",
     resultsSubtitle: "Based on your preliminary responses, here is the eligibility breakdown for screened government schemes.",
-    statusPotentiallyEligible: "Potentially Eligible",
+    statusPotentiallyEligible: "You may qualify",
     statusIneligible: "Not Eligible Under Screened Rules",
     statusNeedsVerification: "Needs Verification",
+    statusNoCurrentRules: "No Current Rules",
+    statusUnknown: "Unknown status, please check the official source",
+    noCurrentRulesCardText: "We do not have current rules for this scheme. Please check the official source.",
+    staleRulesWarning: "These rules were last checked on {date} and may be out of date.",
     statusAll: "All Results",
     resultsDisclaimer: "Important Notice: This is a preliminary screening, not an official government decision. Final eligibility and approval are determined by the relevant government authority upon document verification and formal application.",
     decisiveRuleHeading: "Why this outcome:",
@@ -162,9 +170,10 @@ export const translations = {
     noResultsFound: "No screening results found. Please complete the questionnaire first.",
     startScreeningNow: "Start Questionnaire",
     summaryTitle: "Summary",
-    eligibleCount: "Potentially Eligible",
+    eligibleCount: "You may qualify",
     uncertainCount: "Needs Verification",
     ineligibleCount: "Not Eligible",
+    noCurrentRulesCount: "No Current Rules",
 
     // Scheme Details Page
     backToSchemes: "Back to Schemes",
@@ -241,19 +250,23 @@ export const translations = {
     navCheckEligibility: "पात्रता जांचें",
     navClearData: "डेटा मिटाएं",
     
+    // Banner Disclaimer
+    bannerDisclaimer: "स्वतंत्र परियोजना, आधिकारिक सरकारी वेबसाइट नहीं।",
+
     // Language Switcher
     langEn: "English",
     langHi: "हिंदी",
 
     // Hero Section
-    heroBadge: "सार्वजनिक कल्याण सूचना पहल",
+    heroBadge: "स्वतंत्र योजना मार्गदर्शिका",
     heroHeading: "सभी के लिए सरकारी योजनाएं हुईं आसान।",
     heroSubheading: "सरकारी योजनाओं के लाभ जानें, अपनी पात्रता समझें, और सही योजनाओं की जानकारी प्राप्त करें — सब कुछ एक ही जगह पर।",
     heroCtaStart: "पात्रता जांच शुरू करें",
     heroCtaExplore: "योजनाएं देखें",
-    heroStat1: "100+ जनकल्याणकारी योजनाएं",
-    heroStat2: "28 राज्य और 8 केंद्र शासित प्रदेश",
-    heroStat3: "100% निःशुल्क एवं सुरक्षित डेटा",
+    heroStatSchemes: "{count} जनकल्याणकारी योजनाएं",
+    heroStat1: "जनकल्याणकारी योजनाएं",
+    heroStat2: "केंद्र व राज्य सरकार की योजनाएं",
+    heroStat3: "ब्राउज़र बंद करने पर कुछ भी सुरक्षित नहीं रहता",
     heroCitizenVoice: "हिंदी और अंग्रेजी में उपलब्ध",
 
     // Search Section
@@ -329,7 +342,7 @@ export const translations = {
 
     // Explore Schemes Page
     exploreTitle: "सरकारी योजनाएं खोजें",
-    exploreSubtitle: "केंद्र और सभी 28 राज्यों व 8 केंद्र शासित प्रदेशों की योजनाओं को देखें और फ़िल्टर करें",
+    exploreSubtitle: "केंद्र और राज्य सरकारों के कल्याणकारी कार्यक्रमों को देखें और फ़िल्टर करें",
     filterTitle: "फ़िल्टर",
     filterGovernmentLevel: "सरकार का स्तर",
     filterAllLevels: "सभी स्तर",
@@ -372,9 +385,13 @@ export const translations = {
     // Results Page
     resultsTitle: "पात्रता मूल्यांकन परिणाम",
     resultsSubtitle: "आपके द्वारा दी गई प्राथमिक जानकारी के आधार पर सरकारी योजनाओं का पात्रता विश्लेषण:",
-    statusPotentiallyEligible: "संभावित रूप से पात्र",
+    statusPotentiallyEligible: "आप पात्र हो सकते हैं",
     statusIneligible: "जांचे गए नियमों के तहत अपात्र",
     statusNeedsVerification: "संशय / अधिक जानकारी आवश्यक",
+    statusNoCurrentRules: "वर्तमान में नियम उपलब्ध नहीं",
+    statusUnknown: "अज्ञात स्थिति, कृपया आधिकारिक स्रोत देखें",
+    noCurrentRulesCardText: "हमारे पास इस योजना के लिए वर्तमान नियम उपलब्ध नहीं हैं। कृपया आधिकारिक स्रोत देखें।",
+    staleRulesWarning: "इन नियमों की अंतिम जांच {date} को की गई थी और ये पुराने हो सकते हैं।",
     statusAll: "सभी परिणाम",
     resultsDisclaimer: "महत्वपूर्ण सूचना: यह एक प्रारंभिक जांच है, आधिकारिक सरकारी निर्णय नहीं। अंतिम पात्रता और स्वीकृति संबंधित सरकारी प्राधिकरण द्वारा दस्तावेज़ सत्यापन के बाद ही निर्धारित की जाती है।",
     decisiveRuleHeading: "इस परिणाम का मुख्य कारण:",
@@ -387,9 +404,10 @@ export const translations = {
     noResultsFound: "कोई परिणाम नहीं मिला। कृपया पहले पात्रता प्रश्नावली पूरी करें।",
     startScreeningNow: "प्रश्नावली शुरू करें",
     summaryTitle: "परिणाम सारांश",
-    eligibleCount: "संभावित पात्र",
+    eligibleCount: "आप पात्र हो सकते हैं",
     uncertainCount: "सत्यापन आवश्यक",
     ineligibleCount: "वर्तमान में अपात्र",
+    noCurrentRulesCount: "नियम उपलब्ध नहीं",
 
     // Scheme Details Page
     backToSchemes: "योजनाओं की सूची पर वापस जाएं",

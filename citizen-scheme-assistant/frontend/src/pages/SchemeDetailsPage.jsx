@@ -140,6 +140,7 @@ export const SchemeDetailsPage = () => {
     ? getLocalized(CATEGORY_LABELS[scheme.category])
     : scheme.category.replace('-', ' ');
 
+
   return (
     <div className="flex-1 py-10 sm:py-16">
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
