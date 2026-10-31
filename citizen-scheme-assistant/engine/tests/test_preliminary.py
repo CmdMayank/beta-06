@@ -117,7 +117,7 @@ class PreliminaryTests(unittest.IsolatedAsyncioTestCase):
         await self.post('questionnaire/next',dict(state=q['state']),422)
 
     async def test_informational_scheme_and_original_execution_provider_remain_unavailable(self):
-        await self.post('questionnaire/start',dict(scheme_id='in-cen-000004'),404)
+        await self.post('questionnaire/start',dict(scheme_id='in-cen-999999'),404)
         for scheme_id in IDS:self.assertIsNone(get_rule_provider().get_rule_set(scheme_id))
         response=await self.client.post('/api/v1/eligibility/evaluate',json=dict(scheme_id=IDS[0],answers={}))
         self.assertEqual(response.json()['status'],'NEEDS_VERIFICATION')
