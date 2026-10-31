@@ -1051,5 +1051,415 @@ export const MOCK_SCHEMES = [
       },
     ],
   },
+  {
+    id: 'mp-shaikshanik-chatravriti',
+    code: 'mp-shaikshanik-chatravriti',
+    name: {
+      en: 'Shaikshanik Chatravriti Yojana (MP Labour Welfare Board)',
+      hi: 'शैक्षणिक छात्रवृत्ति योजना (मध्य प्रदेश श्रम कल्याण मंडल)',
+    },
+    short_name: 'MP Labour Board Scholarship',
+    category: 'education',
+    level: 'state',
+    state_code: 'MP',
+    applicable_states: ['MP'],
+    featured: false,
+    description: {
+      en: 'Scholarship from the Madhya Pradesh Labour Welfare Board for children of workers in establishments covered by the Labour Welfare Fund Act, 1982, studying in Class 5 to 12 or in the listed college and technical courses.',
+      hi: 'मध्य प्रदेश श्रम कल्याण मंडल की छात्रवृत्ति, उन श्रमिकों/कर्मचारियों के बच्चों के लिए जो श्रम कल्याण निधि अधिनियम 1982 के दायरे में आने वाले संस्थान में काम करते हैं और कक्षा 5 से 12 या सूचीबद्ध कॉलेज व तकनीकी पाठ्यक्रमों में पढ़ रहे हैं।',
+    },
+    benefits: {
+      en: 'Scholarship at the amount fixed for each class, paid by e-payment to the student’s bank account after the Welfare Commissioner approves it.',
+      hi: 'हर कक्षा के लिए तय राशि की छात्रवृत्ति, कल्याण आयुक्त की मंज़ूरी के बाद ई-पेमेंट से छात्र के बैंक खाते में।',
+    },
+    official_source: {
+      url: 'https://scholarshipportal.mp.nic.in/ShramKalyan/Default.aspx',
+      // TODO: set this to the day a teammate actually verifies the rules on the official portal / guidelines page.
+      last_checked_date: '2026-10-31',
+      issuing_ministry: {
+        en: 'Madhya Pradesh Labour Welfare Board (Labour Department, Govt of Madhya Pradesh)',
+        hi: 'मध्य प्रदेश श्रम कल्याण मंडल (श्रम विभाग, मध्य प्रदेश शासन)',
+      },
+      gazette_or_order_ref: 'Labour Welfare Fund Act, 1982 (as named on the myScheme page; confirm exact title)',
+    },
+    criteria: [
+      {
+        // Source: "Applicant must be a permanent resident of Madhya Pradesh."
+        id: 'crit-mp-resident',
+        field: 'is_mp_resident',
+        operator: 'EQUALS',
+        target_value: true,
+        criticality: 'MANDATORY',
+        explanation_if_met: {
+          en: 'You are a permanent resident of Madhya Pradesh.',
+          hi: 'आप मध्य प्रदेश के स्थायी निवासी हैं।',
+        },
+        explanation_if_violated: {
+          en: 'Only permanent residents of Madhya Pradesh can apply.',
+          hi: 'केवल मध्य प्रदेश के स्थायी निवासी ही आवेदन कर सकते हैं।',
+        },
+      },
+      {
+        // Source: "The parents of the applicant must be working in a factory or institution established in
+        // Madhya Pradesh under the Labor Welfare Fund Act 1982."
+        id: 'crit-parent-lwf-establishment',
+        field: 'parent_works_in_lwf_establishment',
+        operator: 'EQUALS',
+        target_value: true,
+        criticality: 'MANDATORY',
+        explanation_if_met: {
+          en: 'Your parent works in a factory or institution in Madhya Pradesh that is covered by the Labour Welfare Fund Act, 1982.',
+          hi: 'आपके माता/पिता मध्य प्रदेश के ऐसे कारखाने या संस्थान में काम करते हैं जो श्रम कल्याण निधि अधिनियम 1982 के दायरे में आता है।',
+        },
+        explanation_if_violated: {
+          en: 'The scheme is only for children of workers in establishments covered by the Labour Welfare Fund Act, 1982.',
+          hi: 'यह योजना केवल श्रम कल्याण निधि अधिनियम 1982 के दायरे वाले संस्थानों में काम करने वालों के बच्चों के लिए है।',
+        },
+      },
+      {
+        // Source: "Children of officers and employees in managerial capacities working in institutions
+        // cannot be benefited from this regime."
+        id: 'crit-parent-not-managerial',
+        field: 'parent_is_managerial_employee',
+        operator: 'EQUALS',
+        target_value: false,
+        criticality: 'DISQUALIFIER',
+        explanation_if_met: {
+          en: 'Your parent does not work as an officer or in a managerial role.',
+          hi: 'आपके माता/पिता अधिकारी या प्रबंधकीय पद पर काम नहीं करते।',
+        },
+        explanation_if_violated: {
+          en: 'Children of officers and employees in managerial roles are not eligible.',
+          hi: 'अधिकारियों और प्रबंधकीय पद पर काम करने वाले कर्मचारियों के बच्चे इस योजना के पात्र नहीं हैं।',
+        },
+      },
+      {
+        // Source: "Only 2 children in a family are eligible to get the benefit of this scheme."
+        // NOTE: wording is ambiguous; confirm on the official guidelines. Uses a numeric operator:
+        // confirm the contract supports LESS_THAN before merging.
+        id: 'crit-max-two-children',
+        field: 'other_children_already_benefiting',
+        operator: 'LESS_THAN',
+        target_value: 2,
+        criticality: 'MANDATORY',
+        explanation_if_met: {
+          en: 'Fewer than 2 other children in your family are already receiving this scholarship.',
+          hi: 'आपके परिवार के 2 से कम अन्य बच्चे इस छात्रवृत्ति का लाभ ले रहे हैं।',
+        },
+        explanation_if_violated: {
+          en: 'Only 2 children in a family can receive this scholarship.',
+          hi: 'एक परिवार के केवल 2 बच्चों को ही यह छात्रवृत्ति मिल सकती है।',
+        },
+      },
+      {
+        // Source (Benefits): Class 5th to 12th, Graduation, Post Graduation, ITI, Polytechnic,
+        // PGDCA, DCA, B.E., M.B.B.S., M.Sc.
+        id: 'crit-covered-course',
+        field: 'studies_in_covered_course',
+        operator: 'EQUALS',
+        target_value: true,
+        criticality: 'MANDATORY',
+        explanation_if_met: {
+          en: 'You study in Class 5 to 12 or in a listed course (graduation, post graduation, ITI, polytechnic, PGDCA, DCA, B.E., M.B.B.S., M.Sc.).',
+          hi: 'आप कक्षा 5 से 12 में या सूचीबद्ध पाठ्यक्रम (स्नातक, स्नातकोत्तर, आईटीआई, पॉलिटेक्निक, पीजीडीसीए, डीसीए, बी.ई., एम.बी.बी.एस., एम.एससी.) में पढ़ रहे हैं।',
+        },
+        explanation_if_violated: {
+          en: 'The scholarship covers only Class 5 to 12 and the listed courses.',
+          hi: 'छात्रवृत्ति केवल कक्षा 5 से 12 और सूचीबद्ध पाठ्यक्रमों के लिए है।',
+        },
+      },
+    ],
+    required_documents: [
+      {
+        id: 'doc-mplwb-photo',
+        title: { en: 'Latest passport-size photograph (JPEG)', hi: 'हाल की पासपोर्ट साइज़ फ़ोटो (JPEG)' },
+        issuing_authority: { en: 'Self', hi: 'स्वयं' },
+        optional: false,
+        guidance: { en: 'Photograph of the student applying.', hi: 'आवेदन करने वाले छात्र की फ़ोटो।' },
+      },
+      {
+        id: 'doc-mplwb-marksheet',
+        title: { en: 'Previous year’s mark sheet (JPEG)', hi: 'पिछले वर्ष की अंकसूची (JPEG)' },
+        issuing_authority: { en: 'School / College / Institute', hi: 'स्कूल / कॉलेज / संस्थान' },
+        optional: false,
+        guidance: { en: 'Of the class or course the student has passed.', hi: 'उस कक्षा या पाठ्यक्रम की जो छात्र ने उत्तीर्ण किया है।' },
+      },
+      {
+        id: 'doc-mplwb-bank',
+        title: { en: 'First page of the student’s bank passbook', hi: 'छात्र की बैंक पासबुक का पहला पृष्ठ' },
+        issuing_authority: { en: 'Bank', hi: 'बैंक' },
+        optional: false,
+        guidance: {
+          en: 'Must clearly show the student’s name, account number and IFSC code.',
+          hi: 'इसमें छात्र का नाम, खाता संख्या और आईएफ़एससी कोड साफ़ दिखना चाहिए।',
+        },
+      },
+      {
+        id: 'doc-mplwb-aadhaar-numbers',
+        title: { en: 'Aadhaar numbers of the student and a parent', hi: 'छात्र और माता/पिता के आधार नंबर' },
+        issuing_authority: { en: 'UIDAI', hi: 'भारतीय विशिष्ट पहचान प्राधिकरण' },
+        optional: false,
+        // Source lists Aadhaar numbers for authentication, not under "Documents Required". Confirm.
+        guidance: {
+          en: 'Needed to confirm identity while applying online.',
+          hi: 'ऑनलाइन आवेदन के समय पहचान की पुष्टि के लिए ज़रूरी।',
+        },
+      },
+    ],
+    application_steps: [
+      {
+        step_number: 1,
+        title: { en: 'Register on the scholarship portal', hi: 'छात्रवृत्ति पोर्टल पर पंजीकरण करें' },
+        description: {
+          en: 'Go to the Shram Kalyan scholarship portal (scholarshipportal.mp.nic.in/ShramKalyan) and choose "Do Registration".',
+          hi: 'श्रम कल्याण छात्रवृत्ति पोर्टल (scholarshipportal.mp.nic.in/ShramKalyan) पर जाएं और "पंजीकरण करें" चुनें।',
+        },
+      },
+      {
+        step_number: 2,
+        title: { en: 'Fill the form and verify with Aadhaar', hi: 'फ़ॉर्म भरें और आधार से पहचान सत्यापित करें' },
+        description: {
+          en: 'Fill in the scholarship application and confirm identity using your own and your mother’s or father’s Aadhaar number.',
+          hi: 'छात्रवृत्ति आवेदन भरें और अपने तथा माता या पिता के आधार नंबर से पहचान की पुष्टि करें।',
+        },
+      },
+      {
+        step_number: 3,
+        title: { en: 'Upload documents before the last date', hi: 'अंतिम तिथि से पहले दस्तावेज़ जमा करें' },
+        description: {
+          en: 'Attach the required documents and apply within the time set by the board. Late applications are not considered.',
+          hi: 'ज़रूरी दस्तावेज़ लगाएं और मंडल द्वारा तय समय-सीमा में आवेदन करें। देर से आए आवेदनों पर विचार नहीं किया जाता।',
+        },
+      },
+    ],
+  },
+  {
+    id: 'mp-st-girl-literacy-class11',
+    code: 'mp-st-girl-literacy-class11',
+    name: {
+      en: 'ST Girl Child Literacy Incentive Amount - Class 11th',
+      hi: 'अनुसूचित जनजाति बालिका साक्षरता प्रोत्साहन राशि - कक्षा 11वीं',
+    },
+    short_name: 'ST Girl Literacy Incentive (Class 11)',
+    category: 'education',
+    level: 'state',
+    state_code: 'MP',
+    applicable_states: ['MP'],
+    featured: false,
+    description: {
+      en: 'Financial support from the Government of Madhya Pradesh for Scheduled Tribe girl students studying in Class 11, so they can continue their education without financial barriers.',
+      hi: 'मध्य प्रदेश शासन की ओर से कक्षा 11 में पढ़ रही अनुसूचित जनजाति की छात्राओं को आर्थिक सहायता, ताकि पैसों की कमी से उनकी पढ़ाई न रुके।',
+    },
+    benefits: {
+      en: 'Annual incentive of ₹3,000, credited directly to the student’s bank account after verification.',
+      hi: 'सत्यापन के बाद ₹3,000 की वार्षिक प्रोत्साहन राशि सीधे छात्रा के बैंक खाते में।',
+    },
+    official_source: {
+      url: 'https://shikshaportal.mp.gov.in/',
+      last_checked_date: null, // TODO: set when a teammate verifies on the portal
+      issuing_ministry: {
+        en: 'School Education Department, Government of Madhya Pradesh',
+        hi: 'स्कूल शिक्षा विभाग, मध्य प्रदेश शासन',
+      },
+      gazette_or_order_ref: null,
+    },
+    criteria: [
+      {
+        // CONFIRM (important): the source contradicts itself. Title, first sentence of Details,
+        // Documents ("Caste Certificate (ST)") and the FAQ say ST. The rest of Details, Benefits
+        // and Eligibility point 1 say SC / "Scheduled Caste". We used ST (title + documents +
+        // FAQ agree). Check the official guideline before this goes live: wrong category here
+        // tells an SC student she qualifies, or an ST student she does not.
+        id: 'crit-st-category',
+        field: 'social_category',
+        operator: 'EQUALS',
+        target_value: 'ST',
+        criticality: 'MANDATORY',
+        explanation_if_met: {
+          en: 'You belong to the Scheduled Tribe category.',
+          hi: 'आप अनुसूचित जनजाति वर्ग से हैं।',
+        },
+        explanation_if_violated: {
+          en: 'This scheme is only for girl students of the Scheduled Tribe category (our source also mentions Scheduled Caste, so please confirm with your school).',
+          hi: 'यह योजना केवल अनुसूचित जनजाति वर्ग की छात्राओं के लिए है (हमारे स्रोत में अनुसूचित जाति का भी ज़िक्र है, इसलिए अपने स्कूल से पुष्टि कर लें)।',
+        },
+      },
+      {
+        id: 'crit-girl-student',
+        field: 'is_female',
+        operator: 'EQUALS',
+        target_value: true,
+        criticality: 'MANDATORY',
+        explanation_if_met: {
+          en: 'The applicant is a girl student.',
+          hi: 'आवेदक एक छात्रा है।',
+        },
+        explanation_if_violated: {
+          en: 'This incentive is only for girl students.',
+          hi: 'यह प्रोत्साहन राशि केवल छात्राओं के लिए है।',
+        },
+      },
+      {
+        id: 'crit-mp-resident-st-girl',
+        field: 'is_mp_resident',
+        operator: 'EQUALS',
+        target_value: true,
+        criticality: 'MANDATORY',
+        explanation_if_met: {
+          en: 'You belong to Madhya Pradesh.',
+          hi: 'आप मध्य प्रदेश के निवासी हैं।',
+        },
+        explanation_if_violated: {
+          en: 'The scheme is for students of Madhya Pradesh.',
+          hi: 'यह योजना मध्य प्रदेश की छात्राओं के लिए है।',
+        },
+      },
+      {
+        // CONFIRM: "continuously studying" is not defined (no attendance rule given).
+        // We only ask which class she is in now.
+        id: 'crit-class-11',
+        field: 'current_class',
+        operator: 'EQUALS',
+        target_value: 11,
+        criticality: 'MANDATORY',
+        explanation_if_met: {
+          en: 'You are studying in Class 11.',
+          hi: 'आप कक्षा 11 में पढ़ रही हैं।',
+        },
+        explanation_if_violated: {
+          en: 'This version of the scheme is only for Class 11 students.',
+          hi: 'यह योजना केवल कक्षा 11 की छात्राओं के लिए है।',
+        },
+      },
+      {
+        // CONFIRM: Eligibility says "recognized institution", but the application process
+        // says to contact the Principal of "government schools/institutions". Unclear whether
+        // private recognized schools are covered. Not turned into a rule until confirmed.
+        id: 'crit-family-income-6lakh',
+        field: 'annual_family_income',
+        operator: 'LESS_THAN_OR_EQUAL',
+        target_value: 600000,
+        criticality: 'MANDATORY',
+        explanation_if_met: {
+          en: 'Your family’s yearly income is ₹6,00,000 or less.',
+          hi: 'आपके परिवार की वार्षिक आय ₹6,00,000 या उससे कम है।',
+        },
+        explanation_if_violated: {
+          en: 'Family yearly income must not be more than ₹6,00,000.',
+          hi: 'परिवार की वार्षिक आय ₹6,00,000 से अधिक नहीं होनी चाहिए।',
+        },
+      },
+      {
+        // Source: "self-declaration that the parent/guardian is not an income tax payer".
+        id: 'crit-parent-not-taxpayer',
+        field: 'parent_is_income_taxpayer',
+        operator: 'EQUALS',
+        target_value: false,
+        criticality: 'DISQUALIFIER',
+        explanation_if_met: {
+          en: 'Your parent or guardian does not pay income tax.',
+          hi: 'आपके माता-पिता या अभिभावक आयकर नहीं भरते।',
+        },
+        explanation_if_violated: {
+          en: 'The parent or guardian must not be an income tax payer.',
+          hi: 'माता-पिता या अभिभावक आयकर दाता नहीं होने चाहिए।',
+        },
+      },
+    ],
+    required_documents: [
+      {
+        id: 'doc-stg-aadhaar',
+        title: { en: 'Aadhaar Card', hi: 'आधार कार्ड' },
+        issuing_authority: { en: 'UIDAI', hi: 'भारतीय विशिष्ट पहचान प्राधिकरण' },
+        optional: false,
+        guidance: { en: 'Identity proof of the student.', hi: 'छात्रा की पहचान के लिए।' },
+      },
+      {
+        id: 'doc-stg-caste',
+        title: { en: 'Permanent Caste Certificate (ST)', hi: 'स्थायी जाति प्रमाण पत्र (अनुसूचित जनजाति)' },
+        issuing_authority: { en: 'Sub-Divisional Officer (Revenue)', hi: 'अनुविभागीय अधिकारी (राजस्व)' },
+        optional: false,
+        guidance: { en: 'A verified copy of the permanent certificate is needed.', hi: 'स्थायी प्रमाण पत्र की सत्यापित प्रति आवश्यक है।' },
+      },
+      {
+        id: 'doc-stg-domicile',
+        title: { en: 'Domicile Certificate', hi: 'मूल निवासी प्रमाण पत्र' },
+        issuing_authority: { en: 'Revenue Authority', hi: 'राजस्व विभाग' },
+        optional: false,
+        // CONFIRM: issuing authority not stated in source; "Revenue Authority" is our assumption.
+        guidance: { en: 'Proof that you live in Madhya Pradesh.', hi: 'मध्य प्रदेश के निवासी होने का प्रमाण।' },
+      },
+      {
+        id: 'doc-stg-class10-marksheet',
+        title: { en: 'Class 10 Marksheet', hi: 'कक्षा 10वीं की अंकसूची' },
+        issuing_authority: { en: 'School / Board', hi: 'विद्यालय / बोर्ड' },
+        optional: false,
+        guidance: { en: 'Shows you passed Class 10.', hi: 'कक्षा 10 उत्तीर्ण करने का प्रमाण।' },
+      },
+      {
+        id: 'doc-stg-bank',
+        title: { en: 'Bank Passbook', hi: 'बैंक पासबुक' },
+        issuing_authority: { en: 'Bank', hi: 'बैंक' },
+        optional: false,
+        guidance: { en: 'The ₹3,000 is credited to this account.', hi: '₹3,000 की राशि इसी खाते में आएगी।' },
+      },
+      {
+        id: 'doc-stg-admission',
+        title: { en: 'School Admission Proof', hi: 'विद्यालय में प्रवेश का प्रमाण' },
+        issuing_authority: { en: 'School', hi: 'विद्यालय' },
+        optional: false,
+        guidance: { en: 'Shows you are enrolled in Class 11.', hi: 'कक्षा 11 में प्रवेश का प्रमाण।' },
+      },
+      {
+        id: 'doc-stg-photo',
+        title: { en: 'Recent passport-size photograph', hi: 'हाल की पासपोर्ट साइज़ फ़ोटो' },
+        issuing_authority: { en: 'Self', hi: 'स्वयं' },
+        optional: false,
+        guidance: { en: 'Photograph of the student.', hi: 'छात्रा की फ़ोटो।' },
+      },
+      {
+        // Listed in Eligibility points 5 and 6, but NOT in the source's "Documents Required".
+        // CONFIRM and keep: without them the income and tax conditions cannot be shown.
+        id: 'doc-stg-income-cert',
+        title: { en: 'Income certificate or salary certificate', hi: 'आय प्रमाण पत्र या वेतन प्रमाण पत्र' },
+        issuing_authority: { en: 'Competent authority', hi: 'सक्षम प्राधिकारी' },
+        optional: false,
+        guidance: { en: 'Shows family income is within ₹6,00,000.', hi: 'परिवार की आय ₹6,00,000 के भीतर होने का प्रमाण।' },
+      },
+      {
+        id: 'doc-stg-selfdecl-tax',
+        title: { en: 'Self-declaration: parent/guardian is not an income tax payer', hi: 'स्व-घोषणा पत्र: माता-पिता/अभिभावक आयकर दाता नहीं हैं' },
+        issuing_authority: { en: 'Self (parent or guardian)', hi: 'स्वयं (माता-पिता या अभिभावक)' },
+        optional: false,
+        guidance: { en: 'A signed declaration.', hi: 'हस्ताक्षरित घोषणा पत्र।' },
+      },
+    ],
+    application_steps: [
+      {
+        step_number: 1,
+        title: { en: 'Meet the school Principal', hi: 'स्कूल के प्राचार्य से मिलें' },
+        description: {
+          en: 'Contact the Principal of your government school or institution with your documents.',
+          hi: 'अपने दस्तावेज़ लेकर सरकारी स्कूल/संस्थान के प्राचार्य से संपर्क करें।',
+        },
+      },
+      {
+        step_number: 2,
+        title: { en: 'School enters your details online', hi: 'स्कूल ऑनलाइन विवरण दर्ज करता है' },
+        description: {
+          en: 'A teacher enters your profile on shikshaportal.mp.gov.in from the records and certificates you give. You do not fill this online yourself.',
+          hi: 'शिक्षक आपके दिए प्रमाण पत्रों के आधार पर shikshaportal.mp.gov.in पर आपकी प्रोफ़ाइल दर्ज करते हैं। आपको स्वयं ऑनलाइन फॉर्म नहीं भरना है।',
+        },
+      },
+      {
+        step_number: 3,
+        title: { en: 'Track and receive the amount', hi: 'स्थिति देखें और राशि पाएं' },
+        description: {
+          en: 'You can track your status on shikshaportal.mp.gov.in. After verification, ₹3,000 is sent to your bank account.',
+          hi: 'shikshaportal.mp.gov.in पर अपनी स्थिति देख सकते हैं। सत्यापन के बाद ₹3,000 बैंक खाते में आएंगे।',
+        },
+      },
+    ],
+  },
 ];
 

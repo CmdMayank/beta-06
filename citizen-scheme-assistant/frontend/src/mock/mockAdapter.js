@@ -260,3 +260,4 @@ export const mockAdapter = {
     return MOCK_SCHEMES.length;
   },
 };
+

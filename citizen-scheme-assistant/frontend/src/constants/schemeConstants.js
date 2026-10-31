@@ -54,3 +54,4 @@ export const SCHEME_CATEGORIES = [
   { id: 'business', key: 'catBusiness', icon: 'Coins' },
   { id: 'social-welfare', key: 'catSocialWelfare', icon: 'Landmark' },
 ];
+

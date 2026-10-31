@@ -4,6 +4,7 @@ import { useLanguage } from '../i18n/LanguageContext';
 import { sessionApi } from '../services/sessionApi';
 import { QuestionInput } from '../components/questionnaire/QuestionInput';
 import { VoiceAssistant } from '../components/questionnaire/VoiceAssistant';
+import { SpeechConfirmModal } from '../components/common/SpeechConfirmModal';
 import { ProgressBar } from '../components/common/ProgressBar';
 import { LanguageSwitcher } from '../components/common/LanguageSwitcher';
 import { LoadingState } from '../components/common/LoadingState';

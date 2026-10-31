@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Volume2, VolumeX, Mic, MicOff } from 'lucide-react';
 import { useLanguage } from '../../i18n/LanguageContext';
 
@@ -7,6 +7,7 @@ export const VoiceAssistant = ({ textToRead = '', onSpeechResult }) => {
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [isListening, setIsListening] = useState(false);
   const [hasSpeechRecognition, setHasSpeechRecognition] = useState(false);
+  const recognitionRef = useRef(null);
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -20,6 +21,10 @@ export const VoiceAssistant = ({ textToRead = '', onSpeechResult }) => {
       if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
         window.speechSynthesis.cancel();
       }
+      if (recognitionRef.current) {
+        recognitionRef.current.abort();
+        recognitionRef.current = null;
+      }
     };
   }, []);
 
@@ -28,6 +33,11 @@ export const VoiceAssistant = ({ textToRead = '', onSpeechResult }) => {
     if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
       window.speechSynthesis.cancel();
       setIsSpeaking(false);
+    }
+    if (recognitionRef.current) {
+      recognitionRef.current.abort();
+      recognitionRef.current = null;
+      setIsListening(false);
     }
   }, [textToRead, language]);
 
@@ -55,9 +65,16 @@ export const VoiceAssistant = ({ textToRead = '', onSpeechResult }) => {
   const handleSpeechInput = () => {
     if (!hasSpeechRecognition) return;
 
+    // Stop any previous recognition before starting a new one
+    if (recognitionRef.current) {
+      recognitionRef.current.abort();
+      recognitionRef.current = null;
+    }
+
     const SpeechRecognition =
       window.SpeechRecognition || window.webkitSpeechRecognition;
     const recognition = new SpeechRecognition();
+    recognitionRef.current = recognition;
 
     recognition.lang = language === 'hi' ? 'hi-IN' : 'en-IN';
     recognition.interimResults = false;
@@ -68,7 +85,7 @@ export const VoiceAssistant = ({ textToRead = '', onSpeechResult }) => {
     recognition.onerror = () => setIsListening(false);
 
     recognition.onresult = (event) => {
-      const transcript = event.results[0][0].transcript;
+      const transcript = event.results[0][0].transcript.trim();
       if (onSpeechResult) {
         onSpeechResult(transcript);
       }
@@ -84,11 +101,10 @@ export const VoiceAssistant = ({ textToRead = '', onSpeechResult }) => {
       <button
         type="button"
         onClick={handleReadAloud}
-        className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition-all focus-visible:ring-2 focus-visible:ring-orange-400 focus-visible:outline-none ${
-          isSpeaking
+        className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition-all focus-visible:ring-2 focus-visible:ring-orange-400 focus-visible:outline-none ${isSpeaking
             ? 'bg-orange-500 text-white shadow-sm animate-pulse'
             : 'glass-card-subtle text-slate-700 hover:text-slate-900 hover:bg-white'
-        }`}
+          }`}
         title={isSpeaking ? t('voiceStop') : t('voiceReadAloud')}
       >
         {isSpeaking ? (
@@ -109,11 +125,10 @@ export const VoiceAssistant = ({ textToRead = '', onSpeechResult }) => {
         <button
           type="button"
           onClick={handleSpeechInput}
-          className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition-all ${
-            isListening
+          className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition-all ${isListening
               ? 'bg-rose-500 text-white shadow-sm animate-pulse'
               : 'glass-card-subtle text-slate-700 hover:text-slate-900 hover:bg-white'
-          }`}
+            }`}
           title={isListening ? t('voiceListening') : t('voiceInput')}
         >
           {isListening ? (
