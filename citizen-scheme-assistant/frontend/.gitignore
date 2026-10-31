@@ -1,0 +1,13 @@
+# Environment Files
+.env
+.env.*
+*.env
+.env.example
+
+# Dependencies & Build Output
+node_modules/
+dist/
+dist-ssr/
+build/
+.vite/
+

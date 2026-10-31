@@ -1,0 +1,84 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 380" width="100%" height="100%">
+  <defs>
+    <linearGradient id="cardBg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#fafafa"/>
+    </linearGradient>
+    <filter id="softShadow" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#000000" flood-opacity="0.08"/>
+    </filter>
+  </defs>
+
+  <rect width="600" height="380" fill="#f8fafc" />
+  
+  <!-- Outer Card Frame -->
+  <g filter="url(#softShadow)">
+    <rect x="20" y="32" width="560" height="328" rx="16" fill="url(#cardBg)" stroke="#e2e8f0" stroke-width="1.5" />
+  </g>
+
+  <!-- Tricolor Accent Bands -->
+  <rect x="20" y="32" width="560" height="5" fill="#f97316" rx="2" />
+  <rect x="20" y="37" width="560" height="4" fill="#ffffff" />
+  <rect x="20" y="41" width="560" height="5" fill="#16a34a" />
+
+  <!-- Header -->
+  <text x="300" y="68" text-anchor="middle" font-family="sans-serif" font-size="14" font-weight="bold" fill="#1e293b">भारत सरकार / Government of India</text>
+  <text x="300" y="84" text-anchor="middle" font-family="sans-serif" font-size="11" font-weight="500" fill="#64748b">Unique Identification Authority of India (Specimen)</text>
+
+  <!-- Photo Box -->
+  <rect x="50" y="110" width="100" height="125" rx="8" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1.5" />
+  <!-- Silhouette Portrait -->
+  <circle cx="100" cy="155" r="26" fill="#94a3b8" />
+  <path d="M 68 215 C 68 185, 132 185, 132 215 Z" fill="#94a3b8" />
+  <rect x="50" y="215" width="100" height="20" fill="#e2e8f0" rx="4" />
+  <text x="100" y="229" text-anchor="middle" font-family="sans-serif" font-size="9" font-weight="bold" fill="#475569">SPECIMEN</text>
+
+  <!-- Citizen Details -->
+  <text x="175" y="125" font-family="sans-serif" font-size="12" fill="#64748b">नाम / Name:</text>
+  <text x="175" y="145" font-family="sans-serif" font-size="16" font-weight="bold" fill="#0f172a">ANITA SHARMA / अनीता शर्मा</text>
+
+  <text x="175" y="172" font-family="sans-serif" font-size="12" fill="#64748b">जन्म तिथि / DOB:</text>
+  <text x="280" y="172" font-family="sans-serif" font-size="13" font-weight="600" fill="#1e293b">01/01/1990</text>
+
+  <text x="175" y="196" font-family="sans-serif" font-size="12" fill="#64748b">लिंग / Gender:</text>
+  <text x="280" y="196" font-family="sans-serif" font-size="13" font-weight="600" fill="#1e293b">Female / महिला</text>
+
+  <!-- Fictional QR Block -->
+  <g transform="translate(450, 110)">
+    <rect width="95" height="95" rx="8" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1" />
+    <rect x="10" y="10" width="24" height="24" fill="#334155" />
+    <rect x="61" y="10" width="24" height="24" fill="#334155" />
+    <rect x="10" y="61" width="24" height="24" fill="#334155" />
+    <rect x="15" y="15" width="14" height="14" fill="#f8fafc" />
+    <rect x="66" y="15" width="14" height="14" fill="#f8fafc" />
+    <rect x="15" y="66" width="14" height="14" fill="#f8fafc" />
+    <circle cx="47" cy="47" r="8" fill="#334155" />
+    <text x="47" y="112" text-anchor="middle" font-family="sans-serif" font-size="9" fill="#94a3b8">NON-SCAN DUMMY</text>
+  </g>
+
+  <!-- Aadhaar Number (Masked / Fictional) -->
+  <rect x="50" y="260" width="500" height="42" rx="8" fill="#fff7ed" stroke="#fed7aa" stroke-width="1" />
+  <text x="300" y="287" text-anchor="middle" font-family="monospace" font-size="20" font-weight="bold" fill="#ea580c" letter-spacing="4">
+    XXXX  XXXX  1234
+  </text>
+
+  <!-- Bottom slogan -->
+  <text x="300" y="335" text-anchor="middle" font-family="sans-serif" font-size="12" font-weight="600" fill="#475569">
+    मेरा आधार, मेरी पहचान (सूचनात्मक प्रारूप)
+  </text>
+
+  
+    <rect x="0" y="0" width="600" height="24" fill="#fef2f2" />
+    <text x="300" y="16" text-anchor="middle" font-family="sans-serif" font-size="11" font-weight="bold" fill="#b91c1c" letter-spacing="1">
+      FICTIONAL SPECIMEN ONLY • NOT A VALID OFFICIAL DOCUMENT • केवल उदाहरणार्थ नमूना
+    </text>
+  
+  
+    <!-- Prominent Watermark Overlay -->
+    <g transform="translate(300, 200) rotate(-25)">
+      <rect x="-240" y="-45" width="480" height="90" rx="12" fill="#ef4444" fill-opacity="0.12" stroke="#ef4444" stroke-opacity="0.35" stroke-dasharray="6,4" stroke-width="2" />
+      <text x="0" y="-8" text-anchor="middle" font-family="sans-serif" font-size="28" font-weight="900" fill="#dc2626" fill-opacity="0.55" letter-spacing="3">SAMPLE – NOT VALID</text>
+      <text x="0" y="26" text-anchor="middle" font-family="sans-serif" font-size="20" font-weight="bold" fill="#dc2626" fill-opacity="0.55">केवल नमूना - अमान्य</text>
+    </g>
+  
+</svg>
