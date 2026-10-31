@@ -6,6 +6,7 @@ import { SchemeCard } from '../components/schemes/SchemeCard';
 import { FilterSidebar } from '../components/schemes/FilterSidebar';
 import { LoadingState } from '../components/common/LoadingState';
 import { EmptyState } from '../components/common/EmptyState';
+import { ErrorState } from '../components/common/ErrorState';
 import { Search, Filter, X } from 'lucide-react';
 
 export const SchemesPage = () => {
@@ -22,6 +23,7 @@ export const SchemesPage = () => {
 
   const [schemes, setSchemes] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [mobileFilterOpen, setMobileFilterOpen] = useState(false);
 
   // Sync state with URL params
@@ -36,25 +38,24 @@ export const SchemesPage = () => {
   }, [searchParams]);
 
   // Fetch schemes whenever filters change
-  useEffect(() => {
-    let active = true;
+  const fetchSchemes = () => {
     setLoading(true);
+    setError(null);
 
     schemeApi
       .getSchemes(filters)
       .then((data) => {
-        if (active) {
-          setSchemes(data.schemes || []);
-          setLoading(false);
-        }
+        setSchemes(data.schemes || []);
+        setLoading(false);
       })
-      .catch(() => {
-        if (active) setLoading(false);
+      .catch((err) => {
+        setError(err.message || 'Failed to load schemes.');
+        setLoading(false);
       });
+  };
 
-    return () => {
-      active = false;
-    };
+  useEffect(() => {
+    fetchSchemes();
   }, [filters]);
 
   const updateFilter = (key, value) => {
@@ -211,6 +212,12 @@ export const SchemesPage = () => {
 
             {loading ? (
               <LoadingState />
+            ) : error ? (
+              <ErrorState
+                title={t('errorTitle', 'Something went wrong')}
+                message={error}
+                onRetry={fetchSchemes}
+              />
             ) : schemes.length === 0 ? (
               <EmptyState
                 title={t('noSchemesFound', 'No schemes match your criteria')}

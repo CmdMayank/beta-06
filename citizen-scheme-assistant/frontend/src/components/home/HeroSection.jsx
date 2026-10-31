@@ -1,10 +1,22 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useLanguage } from '../../i18n/LanguageContext';
+import { schemeApi } from '../../services/schemeApi';
 import { ArrowRight, Search, ShieldCheck, CheckCircle2 } from 'lucide-react';
 
 export const HeroSection = () => {
   const { t } = useLanguage();
+  const [schemeCount, setSchemeCount] = useState(5);
+
+  useEffect(() => {
+    let active = true;
+    schemeApi.getSchemesCount().then((count) => {
+      if (active && count > 0) setSchemeCount(count);
+    }).catch(() => {});
+    return () => {
+      active = false;
+    };
+  }, []);
 
   return (
     <section className="relative overflow-hidden pt-8 pb-4 md:pt-12 md:pb-6 flex flex-col justify-center">
@@ -27,7 +39,7 @@ export const HeroSection = () => {
         {/* Initiative Pill */}
         <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full glass-panel text-xs font-semibold text-slate-800 shadow-glass mb-4 md:mb-6">
           <span className="flex h-2 w-2 rounded-full bg-saffron-500 animate-ping" />
-          <span>{t('heroBadge', 'Official Welfare Discovery Initiative')}</span>
+          <span>{t('heroBadge', 'Independent scheme guide')}</span>
           <span className="text-slate-300">|</span>
           <span className="text-slate-500 font-normal">{t('heroCitizenVoice', 'Hindi & English')}</span>
         </div>
@@ -72,15 +84,17 @@ export const HeroSection = () => {
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 max-w-2xl mx-auto">
           <div className="glass-card-subtle px-4 py-2.5 rounded-2xl flex items-center justify-center gap-2.5">
             <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
-            <span className="text-xs font-semibold text-slate-700">{t('heroStat1', '100+ Welfare Schemes')}</span>
+            <span className="text-xs font-semibold text-slate-700">
+              {t('heroStatSchemes', `${schemeCount} Welfare Schemes`).replace('{count}', schemeCount)}
+            </span>
           </div>
           <div className="glass-card-subtle px-4 py-2.5 rounded-2xl flex items-center justify-center gap-2.5">
             <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
-            <span className="text-xs font-semibold text-slate-700">{t('heroStat2', '28 States & 8 UTs')}</span>
+            <span className="text-xs font-semibold text-slate-700">{t('heroStat2', 'Central & State Schemes')}</span>
           </div>
           <div className="glass-card-subtle px-4 py-2.5 rounded-2xl flex items-center justify-center gap-2.5">
             <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0" />
-            <span className="text-xs font-semibold text-slate-700">{t('heroStat3', 'Shared-Phone Privacy')}</span>
+            <span className="text-xs font-semibold text-slate-700">{t('heroStat3', 'Nothing is saved after you close it')}</span>
           </div>
         </div>
 

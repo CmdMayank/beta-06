@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { useLanguage } from '../../i18n/LanguageContext';
 import { StatusBadge } from '../common/StatusBadge';
+import { STALE_RULES_THRESHOLD_DAYS } from '../../config';
 import {
   ExternalLink,
   Calendar,
@@ -20,17 +21,47 @@ export const ResultCard = ({ result, className = '' }) => {
   const [showDocuments, setShowDocuments] = useState(true);
   const [selectedSample, setSelectedSample] = useState(null);
 
+  const isNoCurrentRules = (result.status || '').toUpperCase() === 'NO_CURRENT_RULES';
   const schemeName = getLocalized(result.scheme_name);
-  const explanation = getLocalized(result.explanation);
-  const missingInfo = result.missing_information ? getLocalized(result.missing_information) : null;
+  const explanation = result.explanation
+    ? getLocalized(result.explanation)
+    : (result.decisive_rule ? getLocalized(result.decisive_rule) : '');
+  const missingInfo = !isNoCurrentRules
+    ? (result.missing_information
+        ? getLocalized(result.missing_information)
+        : (result.uncertainty_details?.reason ? getLocalized(result.uncertainty_details.reason) : null))
+    : null;
   const officialSource = result.official_source || {};
-  const documents = result.required_documents || [];
+  const documents = (!isNoCurrentRules && (result.required_documents || result.document_checklist)) || [];
+
+  // 1.8 Stale rules check (> 90 days)
+  const isStale = useMemo(() => {
+    if (!officialSource.last_checked_date) return false;
+    const checked = new Date(officialSource.last_checked_date);
+    if (isNaN(checked.getTime())) return false;
+    const now = new Date();
+    const diffDays = (now.getTime() - checked.getTime()) / (1000 * 60 * 60 * 24);
+    return diffDays > STALE_RULES_THRESHOLD_DAYS;
+  }, [officialSource.last_checked_date]);
 
   return (
     <div
       className={`glass-panel rounded-[28px] p-6 sm:p-8 shadow-glass flex flex-col justify-between ${className}`}
     >
       <div>
+        {/* 1.8 Visible amber banner if rules were checked > 90 days ago */}
+        {isStale && (
+          <div className="bg-amber-100/90 border border-amber-300 text-amber-950 px-4 py-2.5 rounded-2xl mb-4 flex items-center gap-2.5 text-xs font-semibold shadow-2xs">
+            <AlertTriangle className="w-4 h-4 text-amber-700 shrink-0" aria-hidden="true" />
+            <span>
+              {t(
+                'staleRulesWarning',
+                `These rules were last checked on ${officialSource.last_checked_date} and may be out of date.`
+              ).replace('{date}', officialSource.last_checked_date)}
+            </span>
+          </div>
+        )}
+
         {/* Top Status & Meta */}
         <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
           <StatusBadge status={result.status} />
@@ -57,17 +88,22 @@ export const ResultCard = ({ result, className = '' }) => {
           </Link>
         </h3>
 
-        {/* Plain Language Explanation (Decisive Rule) */}
+        {/* Plain Language Explanation (Decisive Rule) - visible on every card */}
         <div className="glass-card-subtle rounded-2xl p-4 sm:p-5 border border-white/90 mb-4">
           <h4 className="text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">
             {t('decisiveRuleHeading', 'Why this outcome:')}
           </h4>
           <p className="text-xs sm:text-sm text-slate-800 leading-relaxed font-medium">
-            {explanation}
+            {isNoCurrentRules
+              ? t(
+                  'noCurrentRulesCardText',
+                  'We do not have current rules for this scheme. Please check the official source.'
+                )
+              : (explanation || t('decisiveRuleFallback', 'Evaluation based on citizen criteria responses.'))}
           </p>
         </div>
 
-        {/* Missing Information / Verification Required notice */}
+        {/* Missing Information / Verification Required notice (only when not NO_CURRENT_RULES) */}
         {missingInfo && (
           <div className="bg-amber-500/10 rounded-2xl p-4 sm:p-5 border border-amber-300/60 mb-4 flex items-start gap-3 text-amber-950">
             <AlertTriangle className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />

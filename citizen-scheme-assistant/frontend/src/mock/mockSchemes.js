@@ -1,3 +1,5 @@
+// TEMPORARY MOCK. Delete at engine integration. Frontend must not contain eligibility rules.
+
 /**
  * Mock Schemes Data for YojanaMitra
  * Structure conforms to contracts/scheme.schema.json

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { useLanguage } from '../i18n/LanguageContext';
 import { sessionApi } from '../services/sessionApi';
@@ -6,6 +6,7 @@ import { ResultCard } from '../components/results/ResultCard';
 import { DocumentChecklist } from '../components/results/DocumentChecklist';
 import { Disclaimer } from '../components/common/Disclaimer';
 import { LoadingState } from '../components/common/LoadingState';
+import { ErrorState } from '../components/common/ErrorState';
 import {
   CheckCircle2,
   HelpCircle,
@@ -13,34 +14,36 @@ import {
   RotateCcw,
   Sparkles,
   Compass,
+  FileQuestion,
 } from 'lucide-react';
 
 export const ResultsPage = () => {
   const { t } = useLanguage();
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [data, setData] = useState(null);
   const [activeTab, setActiveTab] = useState('ALL');
 
-  useEffect(() => {
-    let active = true;
+  const fetchResults = useCallback(() => {
+    setLoading(true);
+    setError(null);
     const sid = sessionApi.getSessionId() || 'demo_session';
 
     sessionApi
       .getResults(sid)
       .then((res) => {
-        if (active) {
-          setData(res);
-          setLoading(false);
-        }
+        setData(res);
+        setLoading(false);
       })
-      .catch(() => {
-        if (active) setLoading(false);
+      .catch((err) => {
+        setError(err.message || 'Failed to retrieve screening results.');
+        setLoading(false);
       });
-
-    return () => {
-      active = false;
-    };
   }, []);
+
+  useEffect(() => {
+    fetchResults();
+  }, [fetchResults]);
 
   if (loading) {
     return (
@@ -50,30 +53,70 @@ export const ResultsPage = () => {
     );
   }
 
+  // 1.5 Show ErrorState with Retry button when real API fails
+  if (error) {
+    return (
+      <div className="flex-1 py-16 px-4">
+        <ErrorState
+          title={t('errorTitle', 'Something went wrong')}
+          message={error}
+          onRetry={fetchResults}
+        />
+      </div>
+    );
+  }
+
   const results = data?.results || [];
 
-  const eligibleCount = results.filter((r) => r.status === 'POTENTIALLY_ELIGIBLE').length;
-  const uncertainCount = results.filter((r) => r.status === 'NEEDS_VERIFICATION').length;
-  const ineligibleCount = results.filter(
-    (r) =>
-      r.status === 'NOT_ELIGIBLE_UNDER_SCREENED_RULES' ||
-      r.status === 'INELIGIBLE' ||
-      r.status === 'NOT_ELIGIBLE'
-  ).length;
+  const eligibleCount = results.filter((r) => {
+    const s = (r.status || '').toUpperCase();
+    return s === 'POTENTIALLY_ELIGIBLE' || s === 'ELIGIBLE';
+  }).length;
+
+  const uncertainCount = results.filter((r) => {
+    const s = (r.status || '').toUpperCase();
+    return s === 'NEEDS_VERIFICATION' || s === 'UNCERTAIN' || s === 'MAYBE';
+  }).length;
+
+  const ineligibleCount = results.filter((r) => {
+    const s = (r.status || '').toUpperCase();
+    return (
+      s === 'NOT_ELIGIBLE_UNDER_SCREENED_RULES' ||
+      s === 'INELIGIBLE' ||
+      s === 'NOT_ELIGIBLE'
+    );
+  }).length;
+
+  const noCurrentRulesCount = results.filter((r) => {
+    const s = (r.status || '').toUpperCase();
+    return s === 'NO_CURRENT_RULES';
+  }).length;
 
   const filteredResults = results.filter((item) => {
+    const s = (item.status || '').toUpperCase();
     if (activeTab === 'ALL') return true;
-    if (activeTab === 'ELIGIBLE') return item.status === 'POTENTIALLY_ELIGIBLE';
-    if (activeTab === 'NEEDS_VERIFICATION') return item.status === 'NEEDS_VERIFICATION';
+    if (activeTab === 'ELIGIBLE') return s === 'POTENTIALLY_ELIGIBLE' || s === 'ELIGIBLE';
+    if (activeTab === 'NEEDS_VERIFICATION') return s === 'NEEDS_VERIFICATION' || s === 'UNCERTAIN' || s === 'MAYBE';
     if (activeTab === 'INELIGIBLE') {
       return (
-        item.status === 'NOT_ELIGIBLE_UNDER_SCREENED_RULES' ||
-        item.status === 'INELIGIBLE' ||
-        item.status === 'NOT_ELIGIBLE'
+        s === 'NOT_ELIGIBLE_UNDER_SCREENED_RULES' ||
+        s === 'INELIGIBLE' ||
+        s === 'NOT_ELIGIBLE'
       );
     }
+    if (activeTab === 'NO_CURRENT_RULES') return s === 'NO_CURRENT_RULES';
     return true;
   });
+
+  const tabs = [
+    { id: 'ALL', labelKey: 'statusAll', defaultLabel: 'All Results' },
+    { id: 'ELIGIBLE', labelKey: 'statusPotentiallyEligible', defaultLabel: 'You may qualify' },
+    { id: 'NEEDS_VERIFICATION', labelKey: 'statusNeedsVerification', defaultLabel: 'Needs Verification' },
+    { id: 'INELIGIBLE', labelKey: 'statusIneligible', defaultLabel: 'Not Eligible' },
+  ];
+  if (noCurrentRulesCount > 0) {
+    tabs.push({ id: 'NO_CURRENT_RULES', labelKey: 'statusNoCurrentRules', defaultLabel: 'No Current Rules' });
+  }
 
   return (
     <div className="flex-1 py-10 sm:py-16 relative">
@@ -122,8 +165,8 @@ export const ResultsPage = () => {
         </div>
 
         {/* Outcome Summary Glass Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6 mb-8">
-          {/* Eligible card */}
+        <div className={`grid grid-cols-1 ${noCurrentRulesCount > 0 ? 'sm:grid-cols-2 lg:grid-cols-4' : 'sm:grid-cols-3'} gap-4 sm:gap-6 mb-8`}>
+          {/* Eligible card (1.9 'You may qualify') */}
           <div
             onClick={() => setActiveTab('ELIGIBLE')}
             className={`p-6 rounded-[28px] transition-all cursor-pointer border ${
@@ -134,7 +177,7 @@ export const ResultsPage = () => {
           >
             <div className="flex items-center justify-between mb-2">
               <span className="text-[11px] font-bold text-emerald-900 uppercase tracking-wider">
-                {t('eligibleCount', 'Potentially Eligible')}
+                {t('eligibleCount', 'You may qualify')}
               </span>
               <CheckCircle2 className="w-5 h-5 text-emerald-600" />
             </div>
@@ -179,16 +222,32 @@ export const ResultsPage = () => {
             <div className="text-3xl font-black text-rose-950">{ineligibleCount}</div>
             <p className="text-xs text-rose-900 mt-1 font-medium">Excluded under screened rules</p>
           </div>
+
+          {/* No Current Rules card (if any present) */}
+          {noCurrentRulesCount > 0 && (
+            <div
+              onClick={() => setActiveTab('NO_CURRENT_RULES')}
+              className={`p-6 rounded-[28px] transition-all cursor-pointer border ${
+                activeTab === 'NO_CURRENT_RULES'
+                  ? 'bg-slate-500/15 border-slate-400 shadow-glass ring-2 ring-slate-300/60'
+                  : 'glass-panel hover:bg-white/90 border-white/80'
+              }`}
+            >
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-[11px] font-bold text-slate-900 uppercase tracking-wider">
+                  {t('noCurrentRulesCount', 'No Current Rules')}
+                </span>
+                <FileQuestion className="w-5 h-5 text-slate-600" />
+              </div>
+              <div className="text-3xl font-black text-slate-950">{noCurrentRulesCount}</div>
+              <p className="text-xs text-slate-700 mt-1 font-medium">Rules pending from official source</p>
+            </div>
+          )}
         </div>
 
         {/* Tab Filters */}
         <div className="no-print flex items-center gap-2 border-b border-white/60 mb-6 pb-2 overflow-x-auto">
-          {[
-            { id: 'ALL', labelKey: 'statusAll', defaultLabel: 'All Results' },
-            { id: 'ELIGIBLE', labelKey: 'statusPotentiallyEligible', defaultLabel: 'Potentially Eligible' },
-            { id: 'NEEDS_VERIFICATION', labelKey: 'statusNeedsVerification', defaultLabel: 'Needs Verification' },
-            { id: 'INELIGIBLE', labelKey: 'statusIneligible', defaultLabel: 'Not Eligible' },
-          ].map((tab) => (
+          {tabs.map((tab) => (
             <button
               key={tab.id}
               type="button"

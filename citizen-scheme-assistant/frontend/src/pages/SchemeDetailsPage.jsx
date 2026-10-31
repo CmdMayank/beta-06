@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useLanguage } from '../i18n/LanguageContext';
 import { schemeApi } from '../services/schemeApi';
+import { STALE_RULES_THRESHOLD_DAYS } from '../config';
 import { LoadingState } from '../components/common/LoadingState';
 import { ErrorState } from '../components/common/ErrorState';
 import { Disclaimer } from '../components/common/Disclaimer';
@@ -19,6 +20,7 @@ import {
   ArrowRight,
   ShieldCheck,
   Share2,
+  AlertTriangle,
 } from 'lucide-react';
 
 export const SchemeDetailsPage = () => {
@@ -94,6 +96,16 @@ export const SchemeDetailsPage = () => {
   const documents = scheme.required_documents || [];
   const applicationSteps = scheme.application_steps || [];
 
+  // 1.8 Stale rules check (> 90 days)
+  const isStale = useMemo(() => {
+    if (!officialSource.last_checked_date) return false;
+    const checked = new Date(officialSource.last_checked_date);
+    if (isNaN(checked.getTime())) return false;
+    const now = new Date();
+    const diffDays = (now.getTime() - checked.getTime()) / (1000 * 60 * 60 * 24);
+    return diffDays > STALE_RULES_THRESHOLD_DAYS;
+  }, [officialSource.last_checked_date]);
+
   return (
     <div className="flex-1 py-10 sm:py-16">
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -117,6 +129,19 @@ export const SchemeDetailsPage = () => {
             <span>{copied ? t('linkCopied', 'Copied!') : t('copyLink', 'Share')}</span>
           </button>
         </div>
+
+        {/* 1.8 Stale Rules Warning Amber Banner */}
+        {isStale && (
+          <div className="bg-amber-100/90 border border-amber-300 text-amber-950 px-5 py-3.5 rounded-2xl mb-6 flex items-center gap-3 text-xs sm:text-sm font-semibold shadow-2xs">
+            <AlertTriangle className="w-5 h-5 text-amber-700 shrink-0" aria-hidden="true" />
+            <span>
+              {t(
+                'staleRulesWarning',
+                `These rules were last checked on ${officialSource.last_checked_date} and may be out of date.`
+              ).replace('{date}', officialSource.last_checked_date)}
+            </span>
+          </div>
+        )}
 
         {/* Main Scheme Hero Card */}
         <div className="glass-panel rounded-[36px] shadow-glass-lg p-6 sm:p-10 mb-8 border border-white/80">

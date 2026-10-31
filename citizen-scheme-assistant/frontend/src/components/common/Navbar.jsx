@@ -15,8 +15,9 @@ export const Navbar = () => {
   };
 
   return (
-    <header className="sticky top-0 z-40 px-3 sm:px-6 pt-3 pb-2 transition-all">
-      <div className="max-w-7xl mx-auto">
+    <>
+      <header className="sticky top-0 z-40 px-3 sm:px-6 pt-3 pb-2 transition-all">
+        <div className="max-w-7xl mx-auto">
         <div className="glass-panel rounded-full px-4 sm:px-6 py-2.5 sm:py-3 flex items-center justify-between shadow-glass">
           
           {/* Logo & Platform Name */}
@@ -28,7 +29,7 @@ export const Navbar = () => {
             <div className="relative">
               <img
                 src="/logo.svg"
-                alt="Scheme Sahayak Emblem"
+                alt="Scheme Sahayak logo"
                 className="w-8 h-8 sm:w-10 sm:h-10 transition-transform group-hover:scale-105"
               />
               <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-emerald-500 ring-2 ring-white" />
@@ -37,9 +38,6 @@ export const Navbar = () => {
               <div className="flex items-center gap-2">
                 <span className="font-extrabold text-base sm:text-lg text-slate-900 tracking-tight">
                   {language === 'hi' ? 'योजना सहायक' : 'Scheme Sahayak'}
-                </span>
-                <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-orange-100/80 text-orange-800 border border-orange-200/60 uppercase tracking-wider hidden sm:inline-block">
-                  Citizen AI
                 </span>
               </div>
               <p className="text-[10px] text-slate-500 font-medium tracking-tight hidden md:block">
@@ -167,5 +165,12 @@ export const Navbar = () => {
         </div>
       )}
     </header>
+    {/* 1.2 Independent disclaimer strip directly under navbar on EVERY page */}
+    <div className="bg-amber-50/90 border-y border-amber-200/80 text-amber-950 py-1 px-4 text-center text-[11px] sm:text-xs font-medium tracking-wide">
+      <p className="max-w-7xl mx-auto">
+        {t('bannerDisclaimer', 'Independent project, not an official government website.')}
+      </p>
+    </div>
+  </>
   );
 };

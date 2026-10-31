@@ -7,6 +7,7 @@ import { VoiceAssistant } from '../components/questionnaire/VoiceAssistant';
 import { ProgressBar } from '../components/common/ProgressBar';
 import { LanguageSwitcher } from '../components/common/LanguageSwitcher';
 import { LoadingState } from '../components/common/LoadingState';
+import { ErrorState } from '../components/common/ErrorState';
 import { ArrowLeft, ArrowRight, CheckCircle2, RotateCcw, HelpCircle } from 'lucide-react';
 
 export const ScreeningPage = () => {
@@ -23,6 +24,8 @@ export const ScreeningPage = () => {
   const [loading, setLoading] = useState(true);
   const [evaluating, setEvaluating] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+  const [sessionError, setSessionError] = useState(null);
+  const [evalError, setEvalError] = useState(null);
 
   // 1. Scroll to very top of window and document on step change
   useEffect(() => {
@@ -45,6 +48,7 @@ export const ScreeningPage = () => {
     let active = true;
 
     async function init() {
+      setSessionError(null);
       try {
         let sid = sessionApi.getSessionId();
         if (!sid) {
@@ -59,7 +63,10 @@ export const ScreeningPage = () => {
         }
       } catch (err) {
         console.error('Session init error:', err);
-        if (active) setLoading(false);
+        if (active) {
+          setSessionError(err.message || 'Failed to initialize session');
+          setLoading(false);
+        }
       }
     }
 
@@ -179,12 +186,14 @@ export const ScreeningPage = () => {
 
   const triggerEvaluation = async () => {
     setEvaluating(true);
+    setEvalError(null);
     try {
       await sessionApi.evaluateSession(sessionId);
       navigate('/results');
     } catch (err) {
       console.error('Evaluation error:', err);
-      navigate('/results');
+      // 1.5 Never navigate to /results after a failed evaluation. Show ErrorState with Retry button.
+      setEvalError(err.message || 'Evaluation request failed. Please check connection and try again.');
     } finally {
       setEvaluating(false);
     }
@@ -199,15 +208,56 @@ export const ScreeningPage = () => {
       setAnswers({});
       setCurrentAnswer(null);
       setCurrentIndex(0);
+      setSessionError(null);
+      setEvalError(null);
       sessionApi.createSession(language).then((res) => {
         setSessionId(res.session_id);
         loadQuestion(res.session_id, 0, {});
+      }).catch((err) => {
+        setSessionError(err.message || 'Failed to create new session');
       });
     }
   };
 
   const questionTitle = currentQuestion ? getLocalized(currentQuestion.title) : '';
   const helpText = currentQuestion ? getLocalized(currentQuestion.help_text) : '';
+
+  if (sessionError) {
+    return (
+      <div className="flex-1 py-16 px-4">
+        <ErrorState
+          title={t('errorTitle', 'Something went wrong')}
+          message={sessionError}
+          onRetry={() => {
+            setSessionError(null);
+            setLoading(true);
+            sessionApi
+              .createSession(language)
+              .then((res) => {
+                setSessionId(res.session_id);
+                loadQuestion(res.session_id, 0, {});
+              })
+              .catch((err) => {
+                setSessionError(err.message || 'Failed to initialize session');
+                setLoading(false);
+              });
+          }}
+        />
+      </div>
+    );
+  }
+
+  if (evalError) {
+    return (
+      <div className="flex-1 py-16 px-4">
+        <ErrorState
+          title={t('errorTitle', 'Something went wrong')}
+          message={evalError}
+          onRetry={triggerEvaluation}
+        />
+      </div>
+    );
+  }
 
   if (evaluating) {
     return (
