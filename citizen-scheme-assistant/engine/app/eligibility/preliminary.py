@@ -17,6 +17,7 @@ from app.schemas.eligibility import AnswerField, SourceReference
 from app.schemas.questionnaire import QuestionnaireState
 
 CATALOG = Path(__file__).resolve().parents[3] / 'data/schemes/preliminary-screening.json'
+ADDITIONS = Path(__file__).resolve().parent / 'data/preliminary-additions.json'
 MESSAGES = {
     'en': {
         'ELIGIBLE_LIKELY': 'Your answers meet the listed entry conditions. You are likely to be eligible to apply; the provider must verify your documents and enrolment.',
@@ -25,6 +26,7 @@ MESSAGES = {
         'notice': 'Preliminary guidance only — not government approval, enrolment or guaranteed payment. The official provider makes the final decision.',
         'information': 'Information from official sources. Confirm current requirements with the provider.',
         'unavailable': 'This information is not yet confirmed. Ask the official implementing agency.',
+        'partial_documents': 'This is a partial checklist. Ask the official provider for its current document requirements.',
         'matched': 'This entry condition is met by your answer.',
         'failed': 'This entry condition is not met by your answer.',
         'unknown': 'Confirm this condition with the provider or update your answer.',
@@ -36,6 +38,7 @@ MESSAGES = {
         'notice': 'केवल प्रारंभिक मार्गदर्शन — सरकारी मंज़ूरी, नामांकन या भुगतान की गारंटी नहीं। अंतिम निर्णय आधिकारिक संस्था करती है।',
         'information': 'आधिकारिक स्रोतों पर आधारित जानकारी। वर्तमान आवश्यकताएँ संस्था से पुष्ट करें।',
         'unavailable': 'इस जानकारी की अभी पुष्टि नहीं हुई है। आधिकारिक कार्यान्वयन संस्था से पूछें।',
+        'partial_documents': 'यह आंशिक सूची है। वर्तमान दस्तावेज़ आवश्यकताओं के लिए आधिकारिक संस्था से पूछें।',
         'matched': 'आपके उत्तर के अनुसार यह प्रवेश शर्त पूरी होती है।',
         'failed': 'आपके उत्तर के अनुसार यह प्रवेश शर्त पूरी नहीं होती।',
         'unknown': 'संस्था से इस शर्त की पुष्टि करें या अपना उत्तर बदलें।',
@@ -47,22 +50,43 @@ def localized(text, language):
     return text[language]
 
 
-@lru_cache(maxsize=1)
-def catalog():
+@lru_cache(maxsize=2)
+def catalog(*, include_additions=False):
+    """Preserve five-guide inventory callers; runtime explicitly loads all fifteen."""
     data = json.loads(CATALOG.read_text(encoding='utf-8'))
     if data['format'] != 'preliminary-screening-v1':
         raise ValueError('Unsupported preliminary content')
     date.fromisoformat(data['checked_on'])
+    # Preserve the original five guides verbatim, including their fingerprints.
+    if len(data['schemes']) != 5:
+        raise ValueError('Incomplete original preliminary content')
+    if include_additions:
+        extra = json.loads(ADDITIONS.read_text(encoding='utf-8'))
+        if (extra['format'] != 'preliminary-screening-extension-v1' or len(extra['schemes']) != 10
+                or set(data['sources']) & set(extra['sources'])):
+            raise ValueError('Invalid preliminary extension')
+        for policy in extra['schemes']:
+            # These are deliberately incomplete screens, never positive approvals.
+            if policy.get('preliminary_complete') is not False or not policy.get('verification_requirements'):
+                raise ValueError('Incomplete guides require explicit verification gates')
+            date.fromisoformat(policy['checked_on'])
+        data = data | {'sources': data['sources'] | extra['sources'], 'schemes': data['schemes'] + extra['schemes']}
     policies = {p['scheme_id']: p for p in data['schemes']}
-    if len(policies) != len(data['schemes']) or len(policies) != 5:
+    expected_ids = ({f'in-cen-{i:06}' for i in range(1,16)} if include_additions else
+                    {'in-cen-000001','in-cen-000002','in-cen-000003','in-cen-000007','in-cen-000008'})
+    if len(policies) != len(data['schemes']) or set(policies) != expected_ids:
         raise ValueError('Duplicate or incomplete preliminary content')
     for policy in policies.values():
         if policy['scope'] != 'new_enrolment_preliminary' or policy['human_publication_approved'] is not False:
             raise ValueError('This feature cannot supply publication approval')
         keys = set()
         for field in policy['fields']:
-            if field['key'] in keys or not field['source_ids']:
+            if field['key'] in keys or not field['source_ids'] or not field['predicates']:
                 raise ValueError('Duplicate or uncited question')
+            if field.get('failure_outcome', 'fail') not in ('fail', 'verify'):
+                raise ValueError('Unsupported failure outcome')
+            if field.get('failure_outcome') == 'verify' and not field.get('manual_reason'):
+                raise ValueError('Manual checks require explanations')
             keys.add(field['key'])
             typed = answer_field(field)
             for condition in field['predicates']:
@@ -83,8 +107,9 @@ def answer_field(field):
         # Reuse strict answer typing, without creating translation attestations
         # that could later be mistaken for published-policy question approval.
         question_reviewed_languages=(),
+        choices=tuple(field.get('choices', ())),
         reference_basis='Completed years on planned enrolment day' if field['kind'] == 'age' else None,
-        unit='INR' if field['kind'] == 'income' else None,
+        unit='INR' if field['kind'] == 'income' else field.get('unit'),
         period='monthly' if field['kind'] == 'income' else None,
         scope='individual' if field['kind'] == 'income' else None)
 
@@ -95,23 +120,23 @@ def source_ids(policy):
 
 
 def policy_for(scheme_id, as_of=None):
-    data, policies = catalog()
+    data, policies = catalog(include_additions=True)
     policy = policies.get(scheme_id)
     if policy is not None and as_of is not None:
-        checked = date.fromisoformat(data['checked_on'])
+        checked = date.fromisoformat(policy.get('checked_on', data['checked_on']))
         if not checked <= as_of <= checked + timedelta(days=90):
             raise APIError(503, 'PRELIMINARY_REVIEW_REQUIRED', 'The source-based guide needs a fresh review.')
     return policy
 
 
 def fingerprint(policy):
-    data, _ = catalog()
+    data, _ = catalog(include_additions=True)
     bound = {'policy': policy, 'sources': {key: data['sources'][key] for key in source_ids(policy)}}
     return sha256(json.dumps(bound, sort_keys=True, ensure_ascii=False).encode()).hexdigest()
 
 
 def sources_for(policy):
-    data, _ = catalog()
+    data, _ = catalog(include_additions=True)
     return [{k: source[k] for k in SourceReference.model_fields if k in source}
             for key in source_ids(policy) for source in [data['sources'][key]]]
 
@@ -182,19 +207,24 @@ def render(state, *, as_of):
     if failed or manual:
         candidates = []
     unknown = [c for c in conditions if c['result'] == 'UNKNOWN']
+    complete = policy.get('preliminary_complete', True)
     status = ('NOT_ELIGIBLE_LIKELY' if failed else 'ELIGIBLE_LIKELY'
-              if not unknown and not manual else 'NEEDS_VERIFICATION')
+              if complete and not unknown and not manual else 'NEEDS_VERIFICATION')
     current = None
     if candidates:
         field = candidates[0]
         current = dict(question_id=field['key'], attribute=field['key'], rule_ids=['preliminary-' + field['key']],
-            text=localized(field['question'], language), kind=field['kind'], choices=[], unit=None,
+            text=localized(field['question'], language), kind=field['kind'], choices=field.get('choices', []), unit=field.get('unit'),
             period=None, scope=None, reference_basis=None, content_language=language, translation_fallback=False,
-            answer_type={'age': 'integer', 'income': 'decimal', 'boolean': 'boolean'}[field['kind']],
-            allowed_values=[True, False] if field['kind'] == 'boolean' else [], source_ids=field['source_ids'])
+            answer_type={'age': 'integer', 'income': 'decimal', 'number': 'number', 'category': 'category',
+                         'boolean': 'boolean'}[field['kind']],
+            allowed_values=[True, False] if field['kind'] == 'boolean' else field.get('choices', []), source_ids=field['source_ids'])
     unknown_fields = [k for k, v in state.answers.items() if v is None]
     missing = dict(unanswered_fields=[f['key'] for f in candidates], unknown_fields=unknown_fields,
-                   skipped_fields=list(state.skipped), unreviewed_question_fields=[], review_blockers=[])
+                   skipped_fields=list(state.skipped), unreviewed_question_fields=[],
+                   review_blockers=[] if complete else ['INCOMPLETE_PRELIMINARY_CRITERIA'])
+    if not candidates and not failed and not complete:
+        manual.extend(localized(reason, language) for reason in policy['verification_requirements'])
     evaluation = dict(scheme_id=state.scheme_id, status=status, language=language,
         rule_set_version=fingerprint(policy), evaluated_conditions=conditions,
         sources=sources_for(policy), explanation=MESSAGES[language][status], scope='preliminary_only',
@@ -256,7 +286,7 @@ def detail_content(policy, language):
             url=policy['application']['url'],link_kind=policy['application']['link_kind']),
         manual_notes=[localized(t,language) for t in policy['manual_notes']],
         assessment_notice=MESSAGES[language]['notice'], sources=distinct_sources(sources_for(policy)),
-        last_checked_date=catalog()[0]['checked_on'])
+        last_checked_date=policy.get('checked_on', catalog()[0]['checked_on']))
 
 
 def explain(state, *, as_of):
@@ -265,10 +295,11 @@ def explain(state, *, as_of):
         raise APIError(409, 'QUESTIONNAIRE_INCOMPLETE', 'Finish the remaining questions before requesting results.')
     policy = policy_for(state.scheme_id, as_of)
     language = state.language
-    checked = catalog()[0]['checked_on']
-    def section(items):
-        return dict(status='available' if items else 'unavailable',
-            message=shown({k:MESSAGES[k]['information' if items else 'unavailable'] for k in ('en','hi')},language), items=items)
+    checked = policy.get('checked_on', catalog()[0]['checked_on'])
+    def section(items, *, complete=True):
+        message = 'partial_documents' if items and not complete else 'information' if items else 'unavailable'
+        return dict(status=('available' if complete else 'partial') if items else 'unavailable',
+            message=shown({k:MESSAGES[k][message] for k in ('en','hi')},language), items=items)
     def common(row):
         return dict(item_id=row['item_key'],item_key=row['item_key'],source_ids=row['source_ids'],last_verified_date=checked)
     app = policy['application']
@@ -282,7 +313,9 @@ def explain(state, *, as_of):
         manual_notes=[localized(t,language) for t in policy['manual_notes']],
         benefits=section([dict(**common(b),description=shown(b['text'],language,b['source_ids'])) for b in policy['benefits']]),
         required_documents=section([dict(**common(d),title=shown(d['text'],language,d['source_ids']),requirement=d['requirement'],
-            condition=shown(d['text'],language,d['source_ids']) if d['requirement']=='conditional' else dict(text=None)) for d in policy['documents']]),
+            condition=shown(d['text'],language,d['source_ids']) if d['requirement']=='conditional' else dict(text=None)) for d in policy['documents']],
+            complete=policy.get('documents_complete',True)),
         application_guidance=section([dict(item_id='enrolment',mode=app['mode'],steps=[shown(t,language,app['source_ids']) for t in app['steps']],source_ids=app['source_ids'])]),
-        official_application_urls=section([dict(route_id='enrolment',url=app['url'],link_kind=app['link_kind'],source_ids=app['source_ids'])]),
+        official_application_urls=section([dict(route_id='enrolment',url=app['url'],link_kind=app['link_kind'],source_ids=app['source_ids'])]
+                                         if app['url'] else []),
         sources=distinct_sources(sources_for(policy)),last_verification_date=checked,evaluation=q['evaluation'])

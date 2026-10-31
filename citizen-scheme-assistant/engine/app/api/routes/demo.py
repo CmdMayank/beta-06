@@ -6,6 +6,8 @@ from pathlib import Path
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, Path as URLPath, Query, Request, Response
+from fastapi.encoders import jsonable_encoder
+from fastapi.responses import JSONResponse
 
 from app.core.errors import APIError
 from app.schemas.schemes import Language, Level
@@ -18,11 +20,26 @@ router=APIRouter(prefix='/api/v1/demo',tags=['Development demo catalogue'])
 COLLECTION=Path(__file__).resolve().parents[3]/'.phase3-output/catalog15/collection.json'
 
 
+def is_local_demo(request:Request) -> bool:
+    """One shared gate for explicit previews and the local public-path bridge."""
+    return (os.getenv('SCHEME_DEMO_ENABLED')=='1' and os.getenv('SCHEME_APP_ENV')=='development'
+            and request.client is not None and request.client.host in {'127.0.0.1','::1','testclient','test'}
+            and request.url.hostname in {'localhost','127.0.0.1','::1','testserver','test'})
+
+
 def demo_guard(request:Request):
-    if (os.getenv('SCHEME_DEMO_ENABLED')!='1' or os.getenv('SCHEME_APP_ENV')!='development'
-            or not request.client or request.client.host not in {'127.0.0.1','::1','testclient','test'}
-            or request.url.hostname not in {'localhost','127.0.0.1','::1','testserver','test'}):
+    if not is_local_demo(request):
         raise APIError(404,'DEMO_UNAVAILABLE','Demo catalogue is unavailable.')
+
+
+def local_response(payload, response:Response) -> JSONResponse:
+    """Keep the existing advisory DTO, never coerce it to a published/approved DTO.
+
+    The public paths use this only after is_local_demo. Production response models
+    remain strict; in local demo mode the response is the existing /demo contract.
+    """
+    headers(response)
+    return JSONResponse(content=jsonable_encoder(payload),headers=dict(response.headers))
 
 
 @lru_cache(maxsize=1)
@@ -63,11 +80,13 @@ def item(rows,lang,detail=False):
             content={k:v for k,v in content.items() if k in ('name','description','language','translation_fallback',
                 'benefit_highlight','audience','screening_available','screening_scope','translation_origin','last_checked_date')}
         result.update(content)
+    result['preliminary_screening_enabled']=result['screening_available']
     return result
 
 
 def headers(response):
     response.headers['Cache-Control']='no-store'
+    response.headers['Pragma']='no-cache'
     response.headers['X-Scheme-Catalog']='DEMO-UNVERIFIED'
 
 
@@ -87,7 +106,8 @@ def schemes(response:Response,lang:Language='en',search:Annotated[str|None,Query
         records=[r for r in records if term in r['name'].casefold() or term in r['description'].casefold() or term in r['id']]
     headers(response)
     return dict(items=records[offset:offset+limit],total=len(records),limit=limit,offset=offset,
-                has_more=offset+limit<len(records),catalog_mode='DEMO_UNVERIFIED',eligibility_execution_enabled=False)
+                has_more=offset+limit<len(records),catalog_mode='DEMO_UNVERIFIED',eligibility_execution_enabled=False,
+                preliminary_screening_enabled=any(r['screening_available'] for r in records))
 
 
 @router.get('/schemes/{scheme_id}',dependencies=[Depends(demo_guard)])
