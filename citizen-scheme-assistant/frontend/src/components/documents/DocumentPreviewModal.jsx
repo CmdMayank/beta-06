@@ -1,5 +1,5 @@
-import React, { useEffect } from 'react';
-import { X, Eye, AlertTriangle, CheckCircle2, MapPin, Building2, HelpCircle } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { X, Eye, AlertTriangle, CheckCircle2, MapPin, Building2, HelpCircle, FileText } from 'lucide-react';
 import { useLanguage } from '../../i18n/LanguageContext';
 
 /**
@@ -8,6 +8,12 @@ import { useLanguage } from '../../i18n/LanguageContext';
  */
 export default function DocumentPreviewModal({ sample, isOpen, onClose }) {
   const { currentLanguage, t } = useLanguage();
+  const [imgError, setImgError] = useState(false);
+
+  // Reset image error state when sample changes
+  useEffect(() => {
+    setImgError(false);
+  }, [sample]);
 
   // Helper for localized strings
   const getLocalized = (field) => {
@@ -113,13 +119,24 @@ export default function DocumentPreviewModal({ sample, isOpen, onClose }) {
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
             {/* Left: Specimen Preview Card */}
             <div className="lg:col-span-6 space-y-3">
-              <div className="relative rounded-2xl overflow-hidden border border-slate-200/80 shadow-md bg-slate-50 group">
-                <img
-                  src={sample.sampleImage}
-                  alt={`${docName} Specimen`}
-                  className="w-full h-auto object-contain block select-none pointer-events-none"
-                  loading="eager"
-                />
+              <div className="relative rounded-2xl overflow-hidden border border-slate-200/80 shadow-md bg-slate-50 group min-h-[220px] flex items-center justify-center">
+                {imgError ? (
+                  <div className="w-full py-16 px-6 flex flex-col items-center justify-center text-center bg-slate-100 text-slate-500">
+                    <FileText className="w-12 h-12 text-slate-400 mb-3" />
+                    <p className="text-sm font-bold text-slate-700">{docName}</p>
+                    <p className="text-xs text-slate-500 mt-1">
+                      {t('specimenWatermarkNotice', 'Fictional specimen for informational reference.')}
+                    </p>
+                  </div>
+                ) : (
+                  <img
+                    src={sample.sampleImage}
+                    alt={`${docName} Specimen`}
+                    onError={() => setImgError(true)}
+                    className="w-full h-auto object-contain block select-none pointer-events-none"
+                    loading="lazy"
+                  />
+                )}
                 
                 {/* Floating Watermark Banner */}
                 <div className="absolute top-2 left-2 bg-red-600/90 backdrop-blur-sm text-white text-[10px] font-black uppercase tracking-wider px-2.5 py-1 rounded-md shadow-sm">

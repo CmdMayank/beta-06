@@ -29,16 +29,20 @@ export const schemeApi = {
       let filtered = [...MOCK_SCHEMES];
 
       if (params.search) {
-        const s = params.search.toLowerCase().trim();
-        filtered = filtered.filter(
-          (sch) =>
-            sch.name.en.toLowerCase().includes(s) ||
-            sch.name.hi.toLowerCase().includes(s) ||
-            sch.description.en.toLowerCase().includes(s) ||
-            sch.description.hi.toLowerCase().includes(s) ||
-            sch.category.toLowerCase().includes(s) ||
-            (sch.short_name && sch.short_name.toLowerCase().includes(s))
-        );
+        const s = (params.search || '').toLowerCase().trim();
+        if (s.length > 0) {
+          filtered = filtered.filter(
+            (sch) =>
+              sch.name?.en?.toLowerCase().includes(s) ||
+              sch.name?.hi?.toLowerCase().includes(s) ||
+              sch.description?.en?.toLowerCase().includes(s) ||
+              sch.description?.hi?.toLowerCase().includes(s) ||
+              sch.category?.toLowerCase().includes(s) ||
+              (sch.short_name && sch.short_name.toLowerCase().includes(s)) ||
+              (sch.id && sch.id.toLowerCase().includes(s)) ||
+              (sch.code && sch.code.toLowerCase().includes(s))
+          );
+        }
       }
 
       if (params.category && params.category !== 'all') {

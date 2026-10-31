@@ -199,6 +199,11 @@ export const translations = {
     sampleWatermarkBadge: "SAMPLE – NOT VALID",
 
     // Common
+    optional: "Optional",
+    noSchemesMatchFilter: "No schemes match the selected filter.",
+    noEligibleSchemesFound: "No schemes found matching all your criteria.",
+    tryAdjustingAnswers: "You can retake the eligibility check with updated answers or explore all government schemes directly.",
+    resetFilters: "Show All Results",
     loading: "Loading information...",
     errorTitle: "Something went wrong",
     retry: "Try Again",
@@ -401,6 +406,11 @@ export const translations = {
     sampleWatermarkBadge: "केवल नमूना - अमान्य",
 
     // Common
+    optional: "वैकल्पिक",
+    noSchemesMatchFilter: "चयनित फ़िल्टर के अनुसार कोई योजना नहीं मिली।",
+    noEligibleSchemesFound: "आपकी दी गई जानकारी से मेल खाती कोई योजना नहीं मिली।",
+    tryAdjustingAnswers: "आप पात्रता जांच दोबारा कर सकते हैं या सभी योजनाएं सीधे देख सकते हैं।",
+    resetFilters: "सभी परिणाम देखें",
     loading: "जानकारी लोड हो रही है...",
     errorTitle: "कुछ गड़बड़ी हुई",
     retry: "पुनः प्रयास करें",

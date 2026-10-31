@@ -16,7 +16,20 @@ export const VoiceAssistant = ({ textToRead = '', onSpeechResult }) => {
         setHasSpeechRecognition(true);
       }
     }
+    return () => {
+      if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+      }
+    };
   }, []);
+
+  // Cancel speech whenever the question text or language changes
+  useEffect(() => {
+    if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+      window.speechSynthesis.cancel();
+      setIsSpeaking(false);
+    }
+  }, [textToRead, language]);
 
   const handleReadAloud = () => {
     if (!('speechSynthesis' in window)) return;
@@ -71,7 +84,7 @@ export const VoiceAssistant = ({ textToRead = '', onSpeechResult }) => {
       <button
         type="button"
         onClick={handleReadAloud}
-        className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition-all ${
+        className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition-all focus-visible:ring-2 focus-visible:ring-orange-400 focus-visible:outline-none ${
           isSpeaking
             ? 'bg-orange-500 text-white shadow-sm animate-pulse'
             : 'glass-card-subtle text-slate-700 hover:text-slate-900 hover:bg-white'

@@ -31,6 +31,15 @@ export const ScreeningPage = () => {
     document.body.scrollTop = 0;
   }, [currentIndex]);
 
+  // Cancel any active speech synthesis on unmount
+  useEffect(() => {
+    return () => {
+      if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+      }
+    };
+  }, []);
+
   // Initialize or resume session
   useEffect(() => {
     let active = true;
@@ -97,7 +106,15 @@ export const ScreeningPage = () => {
       e.currentTarget?.blur();
     }
 
+    // Debounce / race-condition guard
+    if (loading || evaluating) return;
+
     if (!currentQuestion) return;
+
+    // Cancel any active voice read-aloud immediately on navigation
+    if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+      window.speechSynthesis.cancel();
+    }
 
     // Validation for required fields
     if (
@@ -138,8 +155,25 @@ export const ScreeningPage = () => {
       e.currentTarget?.blur();
     }
 
+    // Debounce / race-condition guard
+    if (loading || evaluating) return;
+
+    // Cancel any active voice read-aloud immediately on navigation
+    if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+      window.speechSynthesis.cancel();
+    }
+
+    // Preserve any edits made on current step before moving back
+    const updatedAnswers = {
+      ...answers,
+      ...(currentQuestion && currentAnswer !== null && currentAnswer !== undefined
+        ? { [currentQuestion.id]: currentAnswer }
+        : {}),
+    };
+    setAnswers(updatedAnswers);
+
     if (currentIndex > 0) {
-      loadQuestion(sessionId, currentIndex - 1);
+      loadQuestion(sessionId, currentIndex - 1, updatedAnswers);
     }
   };
 
@@ -158,6 +192,9 @@ export const ScreeningPage = () => {
 
   const handleClear = () => {
     if (window.confirm(t('clearSessionConfirm'))) {
+      if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+      }
       sessionApi.clearSession();
       setAnswers({});
       setCurrentAnswer(null);
@@ -285,12 +322,11 @@ export const ScreeningPage = () => {
                 <button
                   type="button"
                   onClick={(e) => {
-                    e.currentTarget?.blur();
                     handleBack(e);
                   }}
-                  disabled={currentIndex === 0}
-                  className={`inline-flex items-center gap-2 px-5 py-3 rounded-full text-xs font-semibold transition ${
-                    currentIndex === 0
+                  disabled={currentIndex === 0 || loading || evaluating}
+                  className={`inline-flex items-center gap-2 px-5 py-3 rounded-full text-xs font-semibold transition focus-visible:ring-2 focus-visible:ring-orange-400 focus-visible:outline-none ${
+                    currentIndex === 0 || loading || evaluating
                       ? 'text-slate-300 cursor-not-allowed bg-transparent'
                       : 'glass-card-subtle text-slate-700 hover:bg-white'
                   }`}
@@ -303,10 +339,10 @@ export const ScreeningPage = () => {
                 <button
                   type="button"
                   onClick={(e) => {
-                    e.currentTarget?.blur();
                     handleNext(e);
                   }}
-                  className="glass-dark-pill inline-flex items-center gap-3 px-6 py-3.5 rounded-full text-xs font-semibold tracking-wide hover:bg-black transition-all shadow-md active:scale-95"
+                  disabled={loading || evaluating}
+                  className="glass-dark-pill inline-flex items-center gap-3 px-6 py-3.5 rounded-full text-xs font-semibold tracking-wide hover:bg-black transition-all shadow-md active:scale-95 focus-visible:ring-2 focus-visible:ring-orange-400 focus-visible:outline-none disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <span>
                     {currentIndex === totalQuestions - 1

@@ -12,11 +12,13 @@ export const QuestionInput = ({ question, value, onChange }) => {
   // 1. BOOLEAN TYPE (Tactile Glass Yes / No Cards)
   if (type === 'BOOLEAN') {
     return (
-      <div className="grid grid-cols-2 gap-4 max-w-md mx-auto">
+      <div className="grid grid-cols-2 gap-4 max-w-md mx-auto" role="radiogroup" aria-label={question.title ? getLocalized(question.title) : 'Yes or No'}>
         <button
           type="button"
+          role="radio"
+          aria-checked={value === true}
           onClick={() => onChange(true)}
-          className={`p-6 rounded-[24px] font-bold text-base transition-all flex flex-col items-center justify-center gap-3 border ${
+          className={`p-6 rounded-[24px] font-bold text-base transition-all flex flex-col items-center justify-center gap-3 border focus-visible:ring-2 focus-visible:ring-emerald-400 focus-visible:outline-none ${
             value === true
               ? 'bg-emerald-500/15 border-emerald-500 text-emerald-950 shadow-md ring-2 ring-emerald-300/60'
               : 'glass-card-subtle text-slate-700 hover:bg-white/80 hover:border-slate-300'
@@ -34,8 +36,10 @@ export const QuestionInput = ({ question, value, onChange }) => {
 
         <button
           type="button"
+          role="radio"
+          aria-checked={value === false}
           onClick={() => onChange(false)}
-          className={`p-6 rounded-[24px] font-bold text-base transition-all flex flex-col items-center justify-center gap-3 border ${
+          className={`p-6 rounded-[24px] font-bold text-base transition-all flex flex-col items-center justify-center gap-3 border focus-visible:ring-2 focus-visible:ring-rose-400 focus-visible:outline-none ${
             value === false
               ? 'bg-rose-500/15 border-rose-500 text-rose-950 shadow-md ring-2 ring-rose-300/60'
               : 'glass-card-subtle text-slate-700 hover:bg-white/80 hover:border-slate-300'
@@ -57,7 +61,7 @@ export const QuestionInput = ({ question, value, onChange }) => {
   // 2. SINGLE_SELECT TYPE (Frosted Glass Option Pills)
   if (type === 'SINGLE_SELECT') {
     return (
-      <div className="space-y-3 max-w-xl mx-auto">
+      <div className="space-y-3 max-w-xl mx-auto" role="radiogroup" aria-label={question.title ? getLocalized(question.title) : 'Select one'}>
         {options.map((opt) => {
           const isSelected = value === opt.value;
           const label = getLocalized(opt.label);
@@ -65,8 +69,10 @@ export const QuestionInput = ({ question, value, onChange }) => {
             <button
               key={opt.value}
               type="button"
+              role="radio"
+              aria-checked={isSelected}
               onClick={() => onChange(opt.value)}
-              className={`w-full p-4 sm:p-4.5 rounded-2xl border text-left transition-all flex items-center justify-between ${
+              className={`w-full p-4 sm:p-4.5 rounded-2xl border text-left transition-all flex items-center justify-between focus-visible:ring-2 focus-visible:ring-orange-400 focus-visible:outline-none ${
                 isSelected
                   ? 'bg-white text-slate-900 shadow-glass border-orange-400 ring-2 ring-orange-200/50 font-bold'
                   : 'glass-card-subtle text-slate-700 hover:bg-white/80 hover:border-white'
@@ -102,7 +108,7 @@ export const QuestionInput = ({ question, value, onChange }) => {
     };
 
     return (
-      <div className="space-y-3 max-w-xl mx-auto">
+      <div className="space-y-3 max-w-xl mx-auto" role="group" aria-label={question.title ? getLocalized(question.title) : 'Select multiple'}>
         {options.map((opt) => {
           const isChecked = selectedValues.includes(opt.value);
           const label = getLocalized(opt.label);
@@ -110,8 +116,10 @@ export const QuestionInput = ({ question, value, onChange }) => {
             <button
               key={opt.value}
               type="button"
+              role="checkbox"
+              aria-checked={isChecked}
               onClick={() => handleToggle(opt.value)}
-              className={`w-full p-4 sm:p-4.5 rounded-2xl border text-left transition-all flex items-center justify-between ${
+              className={`w-full p-4 sm:p-4.5 rounded-2xl border text-left transition-all flex items-center justify-between focus-visible:ring-2 focus-visible:ring-emerald-400 focus-visible:outline-none ${
                 isChecked
                   ? 'bg-white text-slate-900 shadow-glass border-emerald-500 ring-2 ring-emerald-200/50 font-bold'
                   : 'glass-card-subtle text-slate-700 hover:bg-white/80 hover:border-white'
@@ -147,10 +155,11 @@ export const QuestionInput = ({ question, value, onChange }) => {
           }}
           min={question.min}
           max={question.max}
+          aria-label={question.title ? getLocalized(question.title) : 'Number'}
           placeholder={
             getLocalized(placeholder) || t('typeNumberPlaceholder', 'Enter number...')
           }
-          className="w-full text-center text-xl sm:text-2xl font-black py-4 px-6 rounded-full glass-input text-slate-900 focus:outline-none"
+          className="w-full text-center text-xl sm:text-2xl font-black py-4 px-6 rounded-full glass-input text-slate-900 focus-visible:ring-2 focus-visible:ring-orange-400 focus:outline-none"
         />
       </div>
     );
@@ -164,7 +173,8 @@ export const QuestionInput = ({ question, value, onChange }) => {
           type="date"
           value={value || ''}
           onChange={(e) => onChange(e.target.value)}
-          className="w-full text-center text-sm sm:text-base font-bold py-3.5 px-6 rounded-full glass-input text-slate-900 focus:outline-none"
+          aria-label={question.title ? getLocalized(question.title) : 'Date'}
+          className="w-full text-center text-sm sm:text-base font-bold py-3.5 px-6 rounded-full glass-input text-slate-900 focus-visible:ring-2 focus-visible:ring-orange-400 focus:outline-none"
         />
       </div>
     );
@@ -177,8 +187,9 @@ export const QuestionInput = ({ question, value, onChange }) => {
         type="text"
         value={value || ''}
         onChange={(e) => onChange(e.target.value)}
+        aria-label={question.title ? getLocalized(question.title) : 'Text answer'}
         placeholder={getLocalized(placeholder) || t('typeTextPlaceholder', 'Type your answer...')}
-        className="w-full text-center text-sm sm:text-base font-semibold py-3.5 px-6 rounded-full glass-input text-slate-900 focus:outline-none"
+        className="w-full text-center text-sm sm:text-base font-semibold py-3.5 px-6 rounded-full glass-input text-slate-900 focus-visible:ring-2 focus-visible:ring-orange-400 focus:outline-none"
       />
     </div>
   );

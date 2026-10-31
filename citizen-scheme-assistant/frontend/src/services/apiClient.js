@@ -3,7 +3,9 @@
  * Configured with VITE_API_BASE_URL (defaults to http://localhost:8000)
  */
 
-const BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
+const BASE_URL =
+  (typeof import.meta !== 'undefined' && import.meta.env?.VITE_API_BASE_URL) ||
+  'http://localhost:8000';
 
 class ApiClient {
   constructor(baseUrl = BASE_URL) {

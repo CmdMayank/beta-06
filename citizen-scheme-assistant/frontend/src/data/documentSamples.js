@@ -670,12 +670,13 @@ export function resolveDocumentType(doc) {
     return SUPPORTED_DOCUMENT_TYPES.BANK_PASSBOOK;
   }
 
-  // Check Aadhaar Card: MUST strictly be an Aadhaar Card / Number
+  // Check Aadhaar Card: MUST strictly be an Aadhaar Card / Number or Age Proof using Aadhaar
   const isAadhaarDoc =
     combined.includes('aadhaar card') ||
     combined.includes('आधार कार्ड') ||
     combined.includes('aadhaar number') ||
     combined.includes('आधार नंबर') ||
+    (combined.includes('aadhaar') && (combined.includes('age proof') || combined.includes('आयु प्रमाण'))) ||
     (combined.startsWith('doc-aadhaar') && !combined.includes('mobile'));
 
   if (isAadhaarDoc) {

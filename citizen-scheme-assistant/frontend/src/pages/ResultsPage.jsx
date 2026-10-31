@@ -205,11 +205,53 @@ export const ResultsPage = () => {
         </div>
 
         {/* Results List */}
-        <div className="space-y-6">
-          {filteredResults.map((result) => (
-            <ResultCard key={result.scheme_id} result={result} />
-          ))}
-        </div>
+        {filteredResults.length === 0 ? (
+          <div className="p-8 sm:p-12 text-center rounded-[28px] glass-panel border border-white/80 max-w-lg mx-auto my-8 shadow-glass">
+            <div className="w-14 h-14 rounded-full bg-slate-100 flex items-center justify-center mx-auto mb-4 text-slate-400">
+              <Compass className="w-7 h-7" />
+            </div>
+            <h3 className="text-base sm:text-lg font-bold text-slate-900 mb-1.5">
+              {activeTab === 'ALL'
+                ? t('noEligibleSchemesFound', 'No schemes found matching all your criteria')
+                : t('noSchemesMatchFilter', 'No schemes match the selected filter')}
+            </h3>
+            <p className="text-xs sm:text-sm text-slate-600 mb-6 max-w-sm mx-auto leading-relaxed">
+              {t(
+                'tryAdjustingAnswers',
+                'You can retake the eligibility check with updated answers or explore all government schemes directly.'
+              )}
+            </p>
+            <div className="flex flex-wrap items-center justify-center gap-3">
+              {activeTab !== 'ALL' && (
+                <button
+                  type="button"
+                  onClick={() => setActiveTab('ALL')}
+                  className="px-4 py-2 rounded-full text-xs font-bold bg-white text-slate-800 border border-slate-200/80 hover:bg-slate-50 transition shadow-2xs focus-visible:ring-2 focus-visible:ring-orange-400"
+                >
+                  {t('resetFilters', 'Show All Results')}
+                </button>
+              )}
+              <Link
+                to="/screening"
+                className="px-4 py-2 rounded-full text-xs font-bold bg-orange-600 text-white hover:bg-orange-700 transition shadow-xs focus-visible:ring-2 focus-visible:ring-orange-400"
+              >
+                {t('retakeScreening', 'Retake Screening')}
+              </Link>
+              <Link
+                to="/schemes"
+                className="px-4 py-2 rounded-full text-xs font-bold glass-dark-pill hover:bg-black transition shadow-xs focus-visible:ring-2 focus-visible:ring-orange-400"
+              >
+                {t('navSchemes', 'Explore All Schemes')}
+              </Link>
+            </div>
+          </div>
+        ) : (
+          <div className="space-y-6">
+            {filteredResults.map((result) => (
+              <ResultCard key={result.scheme_id} result={result} />
+            ))}
+          </div>
+        )}
 
         {/* Consolidated Actionable Document Checklist */}
         <DocumentChecklist results={results} />
