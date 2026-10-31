@@ -10,4 +10,5 @@ dist/
 dist-ssr/
 build/
 .vite/
+backend-openapi.json
 

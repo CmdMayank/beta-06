@@ -7,19 +7,19 @@ export const StatusBadge = ({ status, className = '' }) => {
 
   const normalized = (status || '').toUpperCase();
 
-  if (normalized === 'POTENTIALLY_ELIGIBLE' || normalized === 'ELIGIBLE') {
+  if (normalized === 'ELIGIBLE_LIKELY' || normalized === 'POTENTIALLY_ELIGIBLE' || normalized === 'ELIGIBLE') {
     return (
       <span
         className={`inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full text-xs font-bold bg-emerald-100/80 text-emerald-900 border border-emerald-300/70 shadow-2xs ${className}`}
       >
         <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" aria-hidden="true" />
-        <span>{t('statusPotentiallyEligible', 'Potentially Eligible')}</span>
+        <span>{t(normalized==='ELIGIBLE_LIKELY'?'likelyEligible':'statusPotentiallyEligible', 'Potentially Eligible')}</span>
       </span>
     );
   }
 
   if (
-    normalized === 'NOT_ELIGIBLE_UNDER_SCREENED_RULES' ||
+    normalized === 'NOT_ELIGIBLE_LIKELY' || normalized === 'NOT_ELIGIBLE_UNDER_SCREENED_RULES' ||
     normalized === 'INELIGIBLE' ||
     normalized === 'NOT_ELIGIBLE'
   ) {
@@ -28,7 +28,7 @@ export const StatusBadge = ({ status, className = '' }) => {
         className={`inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full text-xs font-bold bg-rose-100/80 text-rose-900 border border-rose-300/70 shadow-2xs ${className}`}
       >
         <XCircle className="w-4 h-4 text-rose-600 shrink-0" aria-hidden="true" />
-        <span>{t('statusIneligible', 'Not Eligible Under Screened Rules')}</span>
+        <span>{t(normalized==='NOT_ELIGIBLE_LIKELY'?'likelyIneligible':'statusIneligible', 'Not Eligible Under Screened Rules')}</span>
       </span>
     );
   }

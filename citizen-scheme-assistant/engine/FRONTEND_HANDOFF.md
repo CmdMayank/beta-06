@@ -33,6 +33,10 @@ Backend tests additionally use `requirements-test.txt` and
 
 ## Contracts
 
+For the local hackathon **unverified draft preview**, see [LOCAL_DEMO.md](docs/LOCAL_DEMO.md).
+It requires explicit development flags on both servers; ordinary startup remains
+published-only. No database status or eligibility approval is changed.
+
 | Endpoint | Request / response |
 | --- | --- |
 | `GET /health` | Database-independent liveness JSON |
