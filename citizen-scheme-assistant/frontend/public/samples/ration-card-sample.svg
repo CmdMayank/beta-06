@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 380" width="100%" height="100%">
+  <rect width="600" height="380" fill="#f8fafc" />
+  
+  <rect x="20" y="32" width="560" height="328" rx="14" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5" />
+  
+  <!-- Header Bar -->
+  <rect x="20" y="32" width="560" height="46" rx="14" fill="#15803d" />
+  <text x="300" y="52" text-anchor="middle" font-family="sans-serif" font-size="13" font-weight="bold" fill="#ffffff">खाद्य, नागरिक आपूर्ति एवं उपभोक्ता संरक्षण विभाग</text>
+  <text x="300" y="68" text-anchor="middle" font-family="sans-serif" font-size="10" font-weight="500" fill="#bbf7d0">National Food Security Act (NFSA) — Ration Card (Specimen)</text>
+
+  <!-- Card Info -->
+  <g transform="translate(45, 92)">
+    <rect width="510" height="54" rx="8" fill="#f0fdf4" stroke="#86efac" stroke-width="1" />
+    <text x="15" y="22" font-family="sans-serif" font-size="11" font-weight="bold" fill="#166534">राशन कार्ड नंबर / Ration Card No:</text>
+    <text x="15" y="44" font-family="monospace" font-size="17" font-weight="bold" fill="#15803d" letter-spacing="2">NFSA-23-XXXX-9901</text>
+    
+    <text x="320" y="22" font-family="sans-serif" font-size="11" font-weight="bold" fill="#166534">कार्ड श्रेणी / Category:</text>
+    <text x="320" y="44" font-family="sans-serif" font-size="14" font-weight="bold" fill="#15803d">BPL / PHH (प्राथमिकता परिवार)</text>
+  </g>
+
+  <!-- Details -->
+  <g transform="translate(45, 160)">
+    <text x="10" y="20" font-family="sans-serif" font-size="12" fill="#475569">परिवार मुखिया का नाम:</text>
+    <text x="180" y="20" font-family="sans-serif" font-size="13" font-weight="bold" fill="#0f172a">अनीता शर्मा (ANITA SHARMA)</text>
+
+    <text x="10" y="48" font-family="sans-serif" font-size="12" fill="#475569">उचित मूल्य दुकान (FPS) क्र.:</text>
+    <text x="180" y="48" font-family="sans-serif" font-size="13" font-weight="bold" fill="#1e293b">FPS-4021 (वार्ड क्र. 5)</text>
+
+    <text x="10" y="76" font-family="sans-serif" font-size="12" fill="#475569">कुल दर्ज सदस्य (Units):</text>
+    <text x="180" y="76" font-family="sans-serif" font-size="13" font-weight="bold" fill="#1e293b">4 सदस्य</text>
+
+    <text x="10" y="104" font-family="sans-serif" font-size="12" fill="#475569">गैस कनेक्शन स्थिति:</text>
+    <text x="180" y="104" font-family="sans-serif" font-size="13" font-weight="600" fill="#15803d">उज्ज्वला योजना से संबद्ध (Yes)</text>
+  </g>
+
+  <!-- Footer Tip -->
+  <rect x="45" y="288" width="510" height="42" rx="8" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1" />
+  <text x="300" y="314" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#475569">
+    राशन कार्ड का उपयोग कई योजनाओं में परिवार की पात्रता व आय सत्यापन के लिए किया जाता है।
+  </text>
+
+  
+    <rect x="0" y="0" width="600" height="24" fill="#fef2f2" />
+    <text x="300" y="16" text-anchor="middle" font-family="sans-serif" font-size="11" font-weight="bold" fill="#b91c1c" letter-spacing="1">
+      FICTIONAL SPECIMEN ONLY • NOT A VALID OFFICIAL DOCUMENT • केवल उदाहरणार्थ नमूना
+    </text>
+  
+  
+    <!-- Prominent Watermark Overlay -->
+    <g transform="translate(300, 200) rotate(-25)">
+      <rect x="-240" y="-45" width="480" height="90" rx="12" fill="#ef4444" fill-opacity="0.12" stroke="#ef4444" stroke-opacity="0.35" stroke-dasharray="6,4" stroke-width="2" />
+      <text x="0" y="-8" text-anchor="middle" font-family="sans-serif" font-size="28" font-weight="900" fill="#dc2626" fill-opacity="0.55" letter-spacing="3">SAMPLE – NOT VALID</text>
+      <text x="0" y="26" text-anchor="middle" font-family="sans-serif" font-size="20" font-weight="bold" fill="#dc2626" fill-opacity="0.55">केवल नमूना - अमान्य</text>
+    </g>
+  
+</svg>

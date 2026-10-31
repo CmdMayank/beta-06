@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="none">
+  <defs>
+    <linearGradient id="glassGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.9"/>
+      <stop offset="100%" stop-color="#F5EFEA" stop-opacity="0.6"/>
+    </linearGradient>
+    <linearGradient id="saffronOrb" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FB923C"/>
+      <stop offset="100%" stop-color="#EA580C"/>
+    </linearGradient>
+    <filter id="shadow" x="-10%" y="-10%" width="130%" height="130%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#000000" flood-opacity="0.08"/>
+    </filter>
+  </defs>
+
+  <!-- Outer Glass Circle with soft bevel -->
+  <circle cx="50" cy="50" r="44" fill="url(#glassGrad)" stroke="rgba(255,255,255,0.9)" stroke-width="2" filter="url(#shadow)"/>
+  
+  <!-- Saffron glowing crescent/orb arc -->
+  <path d="M22 42 C30 22, 70 22, 78 42" stroke="url(#saffronOrb)" stroke-width="5" stroke-linecap="round"/>
+  
+  <!-- Subtle emerald welfare foundation arc -->
+  <path d="M24 60 C32 76, 68 76, 76 60" stroke="#16A34A" stroke-width="4.5" stroke-linecap="round"/>
+  
+  <!-- Central dark obsidian core pill -->
+  <circle cx="50" cy="51" r="10" fill="#121216"/>
+  <circle cx="50" cy="51" r="4.5" fill="#FFFFFF"/>
+</svg>
