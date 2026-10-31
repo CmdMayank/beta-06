@@ -291,7 +291,7 @@ export const ScreeningPage = () => {
   return (
     <div className="flex-1 py-6 md:py-8 relative">
       <div className="max-w-3xl mx-auto px-4 sm:px-6">
-        
+
         {/* Navigation Action Bar */}
         <div className="flex flex-wrap items-center justify-between gap-3 mb-5">
           <div className="flex items-center gap-2">
@@ -500,8 +500,8 @@ export const ScreeningPage = () => {
                   )}
                   {(question.translation_fallback ||
                     question.content_language !== language) && (
-                    <p className="text-amber-700 text-xs font-medium">{t('fallbackEnglish')}</p>
-                  )}
+                      <p className="text-amber-700 text-xs font-medium">{t('fallbackEnglish')}</p>
+                    )}
                   <p className="text-xs text-slate-500 font-medium">
                     {[
                       question.unit,
@@ -525,11 +525,10 @@ export const ScreeningPage = () => {
                           key={String(v)}
                           role="radio"
                           aria-checked={value === v}
-                          className={`glass-card-subtle rounded-[24px] p-6 text-sm font-bold transition-all ${
-                            value === v
+                          className={`glass-card-subtle rounded-[24px] p-6 text-sm font-bold transition-all ${value === v
                               ? 'ring-2 ring-orange-500 bg-white/95 text-slate-900 shadow-md scale-[1.01]'
                               : 'text-slate-700 hover:bg-white/80 active:scale-95'
-                          }`}
+                            }`}
                           disabled={busy}
                           onClick={() => setValue(v)}
                         >
