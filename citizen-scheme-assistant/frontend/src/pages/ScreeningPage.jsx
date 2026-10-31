@@ -14,19 +14,39 @@ import { profileToAnswers } from '../profile/profileToAnswers';
 export const ScreeningPage = () => {
   const { t, language } = useLanguage(); const navigate = useNavigate(); const [params] = useSearchParams();
   const { user, profileDetails } = useAuth();
-  const [schemes,setSchemes] = useState([]), [selected,setSelected] = useState(params.get('scheme_id') || '');
-  const [q,setQ] = useState(()=>!params.get('scheme_id')||flow.current?.state?.scheme_id===params.get('scheme_id')?flow.current:null), [value,setValue] = useState(''), [error,setError] = useState(''), [busy,setBusy] = useState(false);
+  const SCHEME_ALIASES = {
+    'pmjjby': 'in-cen-000001',
+    'pmsby': 'in-cen-000002',
+    'pm-sym': 'in-cen-000003',
+    'apy': 'in-cen-000007',
+    'ssy': 'in-cen-000008',
+    'sukanya-samriddhi': 'in-cen-000008',
+  };
+  const rawRequested = params.get('scheme_id') || '';
+  const initialSchemeId = SCHEME_ALIASES[rawRequested.toLowerCase()] || rawRequested;
+  const [schemes,setSchemes] = useState([]), [selected,setSelected] = useState(initialSchemeId);
+  const [q,setQ] = useState(()=>!initialSchemeId||flow.current?.state?.scheme_id===initialSchemeId?flow.current:null), [value,setValue] = useState(''), [error,setError] = useState(''), [busy,setBusy] = useState(false);
   const [loading,setLoading] = useState(true), [reload,setReload] = useState(0); const lock = useRef(false); const generation = useRef(0); const prefilled = useRef(new Set());
   const profileAnswers = useMemo(() => user ? profileToAnswers(profileDetails?.answers || {}) : {}, [user, profileDetails]);
   useEffect(() => {
     let active=true; setLoading(true); setError('');
     schemeApi.getSchemes({language,limit:100}).then(async data => {
-      const items=data.items || []; const requested=params.get('scheme_id');
+      const items=data.items || [];
+      const requested = SCHEME_ALIASES[(params.get('scheme_id') || '').toLowerCase()] || params.get('scheme_id');
       if(requested && !items.some(s=>s.id===requested)) {
-        const detail=await schemeApi.getSchemeByCode(requested,language);
-        items.push(detail);
+        try {
+          const detail=await schemeApi.getSchemeByCode(requested,language);
+          if (detail) items.push(detail);
+        } catch {
+          // Keep existing catalogue items if individual scheme lookup fails
+        }
       }
-      if(active) setSchemes(items);
+      if(active) {
+        setSchemes(items);
+        if (requested && items.some(s=>s.id===requested)) {
+          setSelected(requested);
+        }
+      }
     })
       .catch(e => { if(active) setError(t(errorKey(e))); }).finally(() => {if(active)setLoading(false);});
     return () => {active=false;};
