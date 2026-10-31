@@ -198,6 +198,20 @@ export const translations = {
     closeModal: "Close Preview",
     sampleWatermarkBadge: "SAMPLE – NOT VALID",
 
+    // Authentication & Profile additions
+    authUnavailable: "Login is not available right now. You can continue as a guest.",
+    loginTitle: "Log in", signupTitle: "Create an account", emailLabel: "Email", passwordLabel: "Password", fullNameLabel: "Full name",
+    preferredLanguageLabel: "Preferred language", stateLabel: "State or Union Territory", selectStatePlaceholder: "Select your state",
+    rememberMe: "This is my own phone, keep me signed in", loginButton: "Login", signupButton: "Sign up", profileMenu: "Profile", logoutButton: "Logout",
+    showPassword: "Show password", passwordHint: "Use at least 8 characters.", passwordMinError: "Password must be at least 8 characters.",
+    noAccount: "Don't have an account?", hasAccount: "Already have an account?", signupLink: "Sign up", loginLink: "Login", working: "Please wait...",
+    checkEmail: "Check your email to confirm your account.", profileTitle: "Profile", saveProfile: "Save", profileSaved: "Profile saved.",
+    profilePrivacy: "We only save your name, language and state. We never save your income, caste, Aadhaar or your answers.",
+    deleteProfile: "Delete my profile data", deleteProfileConfirm: "Delete your profile data and log out?", deleteProfileHint: "This cannot be undone.",
+    authInvalidCredentials: "The email or password is incorrect.", authAlreadyRegistered: "This email is already registered.",
+    authWeakPassword: "Choose a stronger password with at least 8 characters.", authRateLimit: "Too many attempts. Please try again later.",
+    authNetworkError: "We could not connect. Please check your internet connection.", authGenericError: "Something went wrong. Please try again.",
+
     // Common
     optional: "Optional",
     noSchemesMatchFilter: "No schemes match the selected filter.",
@@ -404,6 +418,20 @@ export const translations = {
     formatVariationHeading: "राज्य प्रारूप भिन्नता संबंधी जानकारी",
     closeModal: "पूर्वावलोकन बंद करें",
     sampleWatermarkBadge: "केवल नमूना - अमान्य",
+
+    // Authentication & Profile additions
+    authUnavailable: "लॉगिन अभी उपलब्ध नहीं है। आप अतिथि के रूप में ऐप चला सकते हैं।",
+    loginTitle: "लॉगिन करें", signupTitle: "खाता बनाएं", emailLabel: "ईमेल", passwordLabel: "पासवर्ड", fullNameLabel: "पूरा नाम",
+    preferredLanguageLabel: "पसंदीदा भाषा", stateLabel: "राज्य या केंद्र शासित प्रदेश", selectStatePlaceholder: "अपना राज्य चुनें",
+    rememberMe: "यह मेरा अपना फ़ोन है, मुझे लॉगिन रखें", loginButton: "लॉगिन", signupButton: "खाता बनाएं", profileMenu: "प्रोफ़ाइल", logoutButton: "लॉगआउट",
+    showPassword: "पासवर्ड दिखाएं", passwordHint: "कम से कम 8 अक्षर रखें।", passwordMinError: "पासवर्ड कम से कम 8 अक्षरों का होना चाहिए।",
+    noAccount: "खाता नहीं है?", hasAccount: "पहले से खाता है?", signupLink: "खाता बनाएं", loginLink: "लॉगिन", working: "कृपया प्रतीक्षा करें...",
+    checkEmail: "खाता सत्यापित करने के लिए अपना ईमेल देखें।", profileTitle: "प्रोफ़ाइल", saveProfile: "सहेजें", profileSaved: "प्रोफ़ाइल सहेजी गई।",
+    profilePrivacy: "हम केवल आपका नाम, भाषा और राज्य सहेजते हैं। आपकी आय, जाति, आधार या आपके उत्तर कभी सहेजे नहीं जाते।",
+    deleteProfile: "मेरी प्रोफ़ाइल जानकारी मिटाएं", deleteProfileConfirm: "क्या आप प्रोफ़ाइल जानकारी मिटाकर लॉगआउट करना चाहते हैं?", deleteProfileHint: "यह वापस नहीं किया जा सकता।",
+    authInvalidCredentials: "ईमेल या पासवर्ड गलत है।", authAlreadyRegistered: "इस ईमेल से पहले खाता बना हुआ है।",
+    authWeakPassword: "कम से कम 8 अक्षरों का मजबूत पासवर्ड चुनें।", authRateLimit: "बहुत अधिक प्रयास हुए हैं। बाद में फिर प्रयास करें।",
+    authNetworkError: "कनेक्शन नहीं हो सका। अपना इंटरनेट जांचें।", authGenericError: "कुछ गड़बड़ी हुई। कृपया फिर प्रयास करें।",
 
     // Common
     optional: "वैकल्पिक",

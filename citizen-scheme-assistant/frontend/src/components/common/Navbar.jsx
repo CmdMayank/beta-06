@@ -3,15 +3,22 @@ import { Link, useLocation } from 'react-router-dom';
 import { useLanguage } from '../../i18n/LanguageContext';
 import { LanguageSwitcher } from './LanguageSwitcher';
 import { Menu, X, ArrowRight } from 'lucide-react';
+import { useAuth } from '../../auth/AuthContext';
 
 export const Navbar = () => {
   const { t, language } = useLanguage();
   const location = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const { user, profile, signOut } = useAuth();
 
   const isActive = (path) => {
     if (path === '/') return location.pathname === '/';
     return location.pathname.startsWith(path);
+  };
+
+  const handleLogout = async () => {
+    await signOut();
+    setMobileMenuOpen(false);
   };
 
   return (
@@ -92,16 +99,13 @@ export const Navbar = () => {
             {/* Language Switcher */}
             <LanguageSwitcher />
 
-            {/* Dark Capsule Button */}
-            <Link
-              to="/screening"
-              className="glass-dark-pill inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-xs font-semibold tracking-wide hover:bg-black transition-all shadow-md active:scale-95"
-            >
-              <span>{t('navCheckEligibility', 'Check Eligibility')}</span>
-              <div className="w-5 h-5 rounded-full bg-white/20 flex items-center justify-center">
-                <ArrowRight className="w-3 h-3 text-white" />
+            {user ? (
+              <div className="flex items-center gap-3 text-xs font-semibold">
+                <span className="max-w-32 truncate text-slate-800">{profile?.full_name || user.email}</span>
+                <Link to="/profile" className="text-slate-600 hover:text-slate-900">{t('profileMenu', 'Profile')}</Link>
+                <button type="button" onClick={handleLogout} className="text-slate-600 hover:text-slate-900">{t('logoutButton', 'Logout')}</button>
               </div>
-            </Link>
+            ) : <Link to="/login" className="glass-dark-pill inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-xs font-semibold tracking-wide hover:bg-black transition-all shadow-md active:scale-95"><span>{t('loginButton', 'Login')}</span><ArrowRight className="w-3 h-3 text-white" /></Link>}
           </div>
 
           {/* Mobile Menu Button & Lang Switcher */}
@@ -154,14 +158,7 @@ export const Navbar = () => {
             </a>
 
             <div className="pt-3 border-t border-slate-200/50">
-              <Link
-                to="/screening"
-                onClick={() => setMobileMenuOpen(false)}
-                className="glass-dark-pill w-full flex items-center justify-center gap-2 px-4 py-3 rounded-full text-xs font-semibold tracking-wide"
-              >
-                <span>{t('navCheckEligibility', 'Check Eligibility')}</span>
-                <ArrowRight className="w-3.5 h-3.5" />
-              </Link>
+              {user ? <div className="flex items-center justify-between gap-3 px-4 text-sm font-semibold"><Link to="/profile" onClick={() => setMobileMenuOpen(false)} className="text-slate-800">{t('profileMenu', 'Profile')}</Link><button type="button" onClick={handleLogout} className="text-slate-800">{t('logoutButton', 'Logout')}</button></div> : <Link to="/login" onClick={() => setMobileMenuOpen(false)} className="glass-dark-pill w-full flex items-center justify-center gap-2 px-4 py-3 rounded-full text-xs font-semibold tracking-wide"><span>{t('loginButton', 'Login')}</span><ArrowRight className="w-3.5 h-3.5" /></Link>}
             </div>
           </div>
         </div>
