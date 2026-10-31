@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useLanguage } from '../i18n/LanguageContext';
 import { errorKey } from '../i18n/integration.js';
@@ -8,12 +8,16 @@ import { speechValue } from '../services/adapters.js';
 import { VoiceAssistant } from '../components/questionnaire/VoiceAssistant';
 import { LanguageSwitcher } from '../components/common/LanguageSwitcher';
 import { LoadingState } from '../components/common/LoadingState';
+import { useAuth } from '../auth/AuthContext';
+import { profileToAnswers } from '../profile/profileToAnswers';
 
 export const ScreeningPage = () => {
   const { t, language } = useLanguage(); const navigate = useNavigate(); const [params] = useSearchParams();
+  const { user, profileDetails } = useAuth();
   const [schemes,setSchemes] = useState([]), [selected,setSelected] = useState(params.get('scheme_id') || '');
   const [q,setQ] = useState(()=>!params.get('scheme_id')||flow.current?.state?.scheme_id===params.get('scheme_id')?flow.current:null), [value,setValue] = useState(''), [error,setError] = useState(''), [busy,setBusy] = useState(false);
-  const [loading,setLoading] = useState(true), [reload,setReload] = useState(0); const lock = useRef(false); const generation = useRef(0);
+  const [loading,setLoading] = useState(true), [reload,setReload] = useState(0); const lock = useRef(false); const generation = useRef(0); const prefilled = useRef(new Set());
+  const profileAnswers = useMemo(() => user ? profileToAnswers(profileDetails?.answers || {}) : {}, [user, profileDetails]);
   useEffect(() => {
     let active=true; setLoading(true); setError('');
     schemeApi.getSchemes({language,limit:100}).then(async data => {
@@ -28,6 +32,12 @@ export const ScreeningPage = () => {
     return () => {active=false;};
   },[language,reload]);
   useEffect(() => { flow.api.clearSession?.(); return () => { generation.current++; window.speechSynthesis?.cancel(); }; },[]);
+  useEffect(() => {
+    const key = q?.current_question?.question_id;
+    if (!key || !user || profileAnswers[key] === undefined || prefilled.current.has(key) || busy) return;
+    prefilled.current.add(key);
+    run(() => flow.update(key, 'answer', profileAnswers[key]));
+  }, [q?.current_question?.question_id, user, profileAnswers, busy]);
   async function run(action, navigateAfter=false) {
     if(lock.current) return; lock.current=true; setBusy(true); setError(''); const ticket=generation.current;
     try {
@@ -41,7 +51,8 @@ export const ScreeningPage = () => {
   },[language,busy,q?.state?.language,error]);
   const question=q?.current_question;
   const validSelection=schemes.some(s=>s.id===selected&&(!s.is_demo||s.screening_available===true));
-  const clear=()=>{generation.current++;flow.clear();setQ(null);setValue('');setError('');window.speechSynthesis?.cancel();};
+  const clear=()=>{generation.current++;prefilled.current.clear();flow.clear();setQ(null);setValue('');setError('');window.speechSynthesis?.cancel();};
+  const changePrefill = (key) => { prefilled.current.delete(key); run(() => flow.update(key, 'clear')); };
   const submit=(action,input=value)=>run(()=>flow.update(question.question_id,action,input));
   return <div className="flex-1 py-6 md:py-8 relative"><div className="max-w-3xl mx-auto px-4 sm:px-6">
     <div className="flex justify-between mb-5"><button type="button" className="glass-card-subtle rounded-full px-4 py-2" onClick={clear} disabled={busy}>{t('clearData')}</button><LanguageSwitcher/></div>
@@ -65,6 +76,7 @@ export const ScreeningPage = () => {
           <VoiceAssistant contentLanguage={question.content_language} textToRead={question.text} onSpeechResult={text=>{try{setValue(speechValue(question,text));setError('');}catch{setError(t('invalidAnswer'));}}}/>
           <p className="text-xs text-slate-500">{t('voiceConfirm')} {t('voiceFallback')}</p>
           <h2 id="current-question" data-question-id={question.question_id} lang={question.content_language} className="text-xl sm:text-2xl font-black text-slate-900">{question.text}</h2>
+          {profileAnswers[question.question_id] !== undefined && <p className="text-xs text-emerald-700">{t('fromProfile', 'From your saved details')} <button type="button" className="ml-2 underline" onClick={() => changePrefill(question.question_id)}>{t('changeAnswer', 'Change')}</button></p>}
           {(question.translation_fallback || question.content_language!==language) && <p className="text-amber-700 text-xs">{t('fallbackEnglish')}</p>}
           <p className="text-xs">{[question.unit,question.period,question.scope,question.reference_basis].filter(Boolean).join(' · ')}</p>
           {question.answer_type==='boolean' ? <div role="radiogroup" aria-labelledby="current-question" className="grid grid-cols-2 gap-4">{[true,false].map(v=><button type="button" key={String(v)} role="radio" aria-checked={value===v} className={`glass-card-subtle rounded-[24px] p-6 ${value===v?'ring-2 ring-orange-400':''}`} disabled={busy} onClick={()=>setValue(v)}>{t(v?'yes':'no')}</button>)}</div>

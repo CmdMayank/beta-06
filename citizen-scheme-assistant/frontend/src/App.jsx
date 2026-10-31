@@ -14,6 +14,7 @@ import { SignupPage } from './pages/SignupPage';
 import { ProfilePage } from './pages/ProfilePage';
 import { AuthProvider } from './auth/AuthContext';
 import { ProtectedRoute } from './auth/ProtectedRoute';
+import { ProfileDetailsPage } from './profile/ProfileDetailsPage';
 
 export const App = () => {
   return (
@@ -32,6 +33,7 @@ export const App = () => {
               <Route path="/login" element={<LoginPage />} />
               <Route path="/signup" element={<SignupPage />} />
               <Route path="/profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
+              <Route path="/profile/details" element={<ProtectedRoute><ProfileDetailsPage /></ProtectedRoute>} />
               <Route path="*" element={<NotFoundPage />} />
             </Routes>
           </main>

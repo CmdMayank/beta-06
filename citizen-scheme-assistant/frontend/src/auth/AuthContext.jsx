@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { supabase, setRememberDevice } from '../lib/supabaseClient';
 import { useLanguage } from '../i18n/LanguageContext';
+import { uploadDocument as uploadFile, signedDocumentUrl } from '../documents/documentService';
 
 const AuthContext = createContext(null);
 
@@ -11,6 +12,29 @@ const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(Boolean(supabase));
+  const [profileDetails, setProfileDetails] = useState(null);
+  const [documents, setDocuments] = useState([]);
+
+  const loadPrivateData = async (userId) => {
+    const now = new Date().toISOString();
+    // Cleanup runs on sign-in: remove private Storage objects first, then their database rows.
+    const expiredDocs = await supabase.from('user_documents').select('id, storage_path').eq('user_id', userId).lt('expires_at', now);
+    if (expiredDocs.error) throw expiredDocs.error;
+    const paths = (expiredDocs.data || []).map((document) => document.storage_path).filter(Boolean);
+    if (paths.length) {
+      const removed = await supabase.storage.from('user-documents').remove(paths);
+      if (removed.error) throw removed.error;
+    }
+    const deletedDocs = await supabase.from('user_documents').delete().eq('user_id', userId).lt('expires_at', now);
+    if (deletedDocs.error) throw deletedDocs.error;
+    const deletedDetails = await supabase.from('profile_details').delete().eq('user_id', userId).lt('expires_at', now);
+    if (deletedDetails.error) throw deletedDetails.error;
+    const details = await supabase.from('profile_details').select('user_id, answers, consent_at, updated_at, expires_at').eq('user_id', userId).maybeSingle();
+    if (details.error) throw details.error;
+    const docs = await supabase.from('user_documents').select('id, user_id, doc_type, storage_path, file_name, size_bytes, mime_type, confirmed_values, issued_on, uploaded_at, expires_at').eq('user_id', userId).order('uploaded_at', { ascending: false });
+    if (docs.error) throw docs.error;
+    setProfileDetails(details.data || null); setDocuments(docs.data || []);
+  };
 
   const ensureProfile = async (currentUser, defaults = {}) => {
     const { data, error } = await supabase.from('profiles').select(profileFields).eq('id', currentUser.id).maybeSingle();
@@ -18,7 +42,7 @@ const AuthProvider = ({ children }) => {
     if (data) {
       setProfile(data);
       if (data.preferred_language) setLanguage(data.preferred_language);
-      return data;
+      await loadPrivateData(currentUser.id); return data;
     }
     const values = {
       id: currentUser.id,
@@ -30,7 +54,7 @@ const AuthProvider = ({ children }) => {
     if (result.error) throw result.error;
     setProfile(result.data);
     setLanguage(result.data.preferred_language);
-    return result.data;
+    await loadPrivateData(currentUser.id); return result.data;
   };
 
   useEffect(() => {
@@ -76,7 +100,7 @@ const AuthProvider = ({ children }) => {
     try { if (supabase) await supabase.auth.signOut(); }
     finally {
       ['yojanamitra_session_id', 'yojanamitra_answers', 'yojanamitra_results'].forEach((key) => sessionStorage.removeItem(key));
-      setUser(null); setProfile(null);
+      setUser(null); setProfile(null); setProfileDetails(null); setDocuments([]);
     }
   };
 
@@ -88,12 +112,44 @@ const AuthProvider = ({ children }) => {
   };
 
   const deleteProfileData = async () => {
-    const { error } = await supabase.from('profiles').delete().eq('id', user.id);
-    if (error) throw error;
+    const rows = await supabase.from('user_documents').select('storage_path').eq('user_id', user.id);
+    if (rows.error) throw rows.error;
+    if (rows.data?.length) await supabase.storage.from('user-documents').remove(rows.data.map((row) => row.storage_path));
+    const docs = await supabase.from('user_documents').delete().eq('user_id', user.id);
+    if (docs.error) throw docs.error;
+    const details = await supabase.from('profile_details').delete().eq('user_id', user.id);
+    if (details.error) throw details.error;
+    const profileRow = await supabase.from('profiles').delete().eq('id', user.id);
+    if (profileRow.error) throw profileRow.error;
     await signOut();
   };
 
-  return <AuthContext.Provider value={{ user, profile, loading, available: Boolean(supabase), signUp, signIn, signOut, updateProfile, deleteProfileData }}>{children}</AuthContext.Provider>;
+  const saveProfileDetails = async (answers, consentAt) => {
+    const expires = new Date(Date.now() + 90 * 86400000).toISOString();
+    const result = await supabase.from('profile_details').upsert({ user_id: user.id, answers, consent_at: consentAt, updated_at: new Date().toISOString(), expires_at: expires }, { onConflict: 'user_id' }).select('user_id, answers, consent_at, updated_at, expires_at').single();
+    if (result.error) throw result.error; setProfileDetails(result.data); return result.data;
+  };
+
+  const uploadDocument = async (type, file) => { const document = await uploadFile(user.id, type, file); setDocuments((current) => [document, ...current]); return document; };
+  const refreshDocuments = async () => { const result = await supabase.from('user_documents').select('*').eq('user_id', user.id).order('uploaded_at', { ascending: false }); if (result.error) throw result.error; setDocuments(result.data || []); };
+  const deleteDocument = async (document) => { await supabase.storage.from('user-documents').remove([document.storage_path]); const result = await supabase.from('user_documents').delete().eq('id', document.id).eq('user_id', user.id); if (result.error) throw result.error; setDocuments((current) => current.filter((item) => item.id !== document.id)); };
+  const getDocumentUrl = (path) => signedDocumentUrl(path);
+  const confirmDocument = async (document, confirmedValues, issuedOn) => {
+    const expires = new Date(Date.now() + 90 * 86400000).toISOString();
+    const result = await supabase.from('user_documents').update({ confirmed_values: confirmedValues, issued_on: issuedOn || null, expires_at: expires }).eq('id', document.id).eq('user_id', user.id).select('*').single();
+    if (result.error) throw result.error; setDocuments((current) => current.map((item) => item.id === document.id ? result.data : item)); return result.data;
+  };
+  const markDocument = async (docType, checked) => {
+    if (checked) {
+      const result = await supabase.from('user_documents').insert({ user_id: user.id, doc_type: docType, confirmed_values: { tick_only: true }, expires_at: new Date(Date.now() + 90 * 86400000).toISOString() }).select('*').single();
+      if (result.error) throw result.error; setDocuments((current) => [result.data, ...current]);
+    } else {
+      const current = documents.find((item) => item.doc_type === docType && !item.storage_path);
+      if (current) await deleteDocument(current);
+    }
+  };
+
+  return <AuthContext.Provider value={{ user, profile, profileDetails, documents, loading, available: Boolean(supabase), signUp, signIn, signOut, updateProfile, deleteProfileData, saveProfileDetails, uploadDocument, refreshDocuments, deleteDocument, getDocumentUrl, confirmDocument, markDocument }}>{children}</AuthContext.Provider>;
 };
 
 export { AuthProvider };
