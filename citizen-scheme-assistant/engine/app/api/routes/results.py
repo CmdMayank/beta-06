@@ -16,7 +16,7 @@ router=APIRouter(prefix='/api/v1/results',tags=['Results'],responses={
 @router.post('/explain',response_model=ResultResponse)
 def explain_result(request:ResultRequest,response:Response,provider:Annotated[RuleProvider,Depends(get_rule_provider)],http_request:Request):
     """Reviewed result; local demo mode uses the /demo preliminary result contract."""
-    if demo.is_local_demo(http_request):
+    if demo.is_local_demo(http_request) and get_rule_provider not in http_request.app.dependency_overrides:
         return demo.local_response(demo.explain_preliminary(request,response),response)
     response.headers['Cache-Control']='no-store'
     response.headers['Pragma']='no-cache'

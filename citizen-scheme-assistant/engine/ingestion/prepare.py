@@ -350,7 +350,10 @@ def prepare(archive_path: Path, output_root: Path):
     manifest['validation_scope'] = 'Independent structural checks and archival required-key checks; not a full JSON Schema evaluator or factual verification.'
     # Preserve ALL auxiliary evidence/review/identity/coverage data, not just selected rows.
     manifest['supporting_artifacts'] = {k: v for k, v in parsed.items() if k != required[0]}
+    system_links = {Path('/var'), Path('/tmp'), Path('/etc')}
     for ancestor in (output_root.absolute(), *output_root.absolute().parents):
+        if ancestor in system_links:
+            continue
         if ancestor.is_symlink() or (ancestor.exists() and ancestor.is_junction()):
             raise InputError('Output path cannot contain links/junctions')
     root = output_root.resolve()

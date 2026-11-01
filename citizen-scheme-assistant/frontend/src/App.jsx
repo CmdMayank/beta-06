@@ -15,12 +15,14 @@ import { ProfilePage } from './pages/ProfilePage';
 import { AuthProvider } from './auth/AuthContext';
 import { ProtectedRoute } from './auth/ProtectedRoute';
 import { ProfileDetailsPage } from './profile/ProfileDetailsPage';
+import { NotificationProvider } from './notifications';
 
 export const App = () => {
   return (
     <LanguageProvider>
       <AuthProvider>
-        <Router>
+        <NotificationProvider>
+          <Router>
         <div className="min-h-screen flex flex-col selection:bg-orange-200 selection:text-orange-950">
           <Navbar />
           <main className="flex-1 flex flex-col">
@@ -40,6 +42,7 @@ export const App = () => {
           <Footer />
         </div>
         </Router>
+        </NotificationProvider>
       </AuthProvider>
     </LanguageProvider>
   );

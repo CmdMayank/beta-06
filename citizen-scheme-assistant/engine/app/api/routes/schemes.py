@@ -26,7 +26,7 @@ def list_schemes(repository: Repository, request: Request, response: Response, l
     Demo results keep draft/unverified labels and null publication dates. Pagination
     and language parameters are identical; no PostgreSQL access occurs in that mode.
     """
-    if demo.is_local_demo(request):
+    if demo.is_local_demo(request) and get_repository not in request.app.dependency_overrides:
         return demo.local_response(demo.schemes(response,lang,search,level,limit,offset),response)
     return repository.list_schemes(lang, search, level, limit, offset)
 
@@ -37,7 +37,7 @@ def get_scheme(repository: Repository, request: Request, response: Response,
                scheme_id: Annotated[str, Path(pattern=r"^[a-z0-9]+(-[a-z0-9]+)*$", max_length=200)],
                lang: Language = "en") -> SchemeDetail:
     """Published details, or the existing /demo details under the shared local gate."""
-    if demo.is_local_demo(request):
+    if demo.is_local_demo(request) and get_repository not in request.app.dependency_overrides:
         return demo.local_response(demo.detail(response,scheme_id,lang),response)
     scheme = repository.get_scheme(scheme_id, lang)
     if scheme is None:

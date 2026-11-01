@@ -29,7 +29,7 @@ const AuthProvider = ({ children }) => {
     if (deletedDocs.error) throw deletedDocs.error;
     const deletedDetails = await supabase.from('profile_details').delete().eq('user_id', userId).lt('expires_at', now);
     if (deletedDetails.error) throw deletedDetails.error;
-    const details = await supabase.from('profile_details').select('user_id, answers, consent_at, updated_at, expires_at').eq('user_id', userId).maybeSingle();
+    const details = await supabase.from('profile_details').select('user_id, answers, consent_at, updated_at, expires_at, notified_scheme_ids, last_checked_at').eq('user_id', userId).maybeSingle();
     if (details.error) throw details.error;
     const docs = await supabase.from('user_documents').select('id, user_id, doc_type, storage_path, file_name, size_bytes, mime_type, confirmed_values, issued_on, uploaded_at, expires_at').eq('user_id', userId).order('uploaded_at', { ascending: false });
     if (docs.error) throw docs.error;
@@ -126,8 +126,37 @@ const AuthProvider = ({ children }) => {
 
   const saveProfileDetails = async (answers, consentAt) => {
     const expires = new Date(Date.now() + 90 * 86400000).toISOString();
-    const result = await supabase.from('profile_details').upsert({ user_id: user.id, answers, consent_at: consentAt, updated_at: new Date().toISOString(), expires_at: expires }, { onConflict: 'user_id' }).select('user_id, answers, consent_at, updated_at, expires_at').single();
+    const result = await supabase.from('profile_details').upsert({ user_id: user.id, answers, consent_at: consentAt, updated_at: new Date().toISOString(), expires_at: expires }, { onConflict: 'user_id' }).select('user_id, answers, consent_at, updated_at, expires_at, notified_scheme_ids, last_checked_at').single();
     if (result.error) throw result.error; setProfileDetails(result.data); return result.data;
+  };
+
+  const updateNotifiedSchemes = async (notifiedSchemeIds, lastCheckedAt) => {
+    if (!supabase || !user) return;
+    const expires = profileDetails?.expires_at || new Date(Date.now() + 90 * 86400000).toISOString();
+    try {
+      const result = await supabase
+        .from('profile_details')
+        .update({
+          notified_scheme_ids: notifiedSchemeIds,
+          last_checked_at: lastCheckedAt,
+          expires_at: expires,
+        })
+        .eq('user_id', user.id)
+        .select('user_id, answers, consent_at, updated_at, expires_at, notified_scheme_ids, last_checked_at')
+        .maybeSingle();
+
+      if (!result.error && result.data) {
+        setProfileDetails(result.data);
+        return result.data;
+      }
+    } catch {
+      // Graceful fallback
+    }
+    setProfileDetails((current) => current ? ({
+      ...current,
+      notified_scheme_ids: notifiedSchemeIds,
+      last_checked_at: lastCheckedAt,
+    }) : null);
   };
 
   const uploadDocument = async (type, file) => { const document = await uploadFile(user.id, type, file); setDocuments((current) => [document, ...current]); return document; };
@@ -149,7 +178,7 @@ const AuthProvider = ({ children }) => {
     }
   };
 
-  return <AuthContext.Provider value={{ user, profile, profileDetails, documents, loading, available: Boolean(supabase), signUp, signIn, signOut, updateProfile, deleteProfileData, saveProfileDetails, uploadDocument, refreshDocuments, deleteDocument, getDocumentUrl, confirmDocument, markDocument }}>{children}</AuthContext.Provider>;
+  return <AuthContext.Provider value={{ user, profile, profileDetails, documents, loading, available: Boolean(supabase), signUp, signIn, signOut, updateProfile, deleteProfileData, saveProfileDetails, updateNotifiedSchemes, uploadDocument, refreshDocuments, deleteDocument, getDocumentUrl, confirmDocument, markDocument }}>{children}</AuthContext.Provider>;
 };
 
 export { AuthProvider };

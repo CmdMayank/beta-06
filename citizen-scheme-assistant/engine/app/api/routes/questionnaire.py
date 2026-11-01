@@ -24,20 +24,20 @@ def context(response):
 @router.post('/start', response_model=QuestionnaireResponse)
 def start(request: StartRequest, response: Response, provider: Provider, http_request: Request):
     """Reviewed questionnaire; local demo mode returns the /demo preliminary DTO."""
-    if demo.is_local_demo(http_request):
+    if demo.is_local_demo(http_request) and get_rule_provider not in http_request.app.dependency_overrides:
         return demo.local_response(demo.start_preliminary(request,response),response)
     return questionnaire.start(request, provider, as_of=context(response))
 
 
 @router.post('/next', response_model=QuestionnaireResponse)
 def next_question(request: NextRequest, response: Response, provider: Provider, http_request: Request):
-    if demo.is_local_demo(http_request):
+    if demo.is_local_demo(http_request) and get_rule_provider not in http_request.app.dependency_overrides:
         return demo.local_response(demo.next_preliminary(request,response),response)
     return questionnaire.next_question(request.state, provider, as_of=context(response))
 
 
 @router.post('/answer', response_model=QuestionnaireResponse)
 def answer(request: AnswerRequest, response: Response, provider: Provider, http_request: Request):
-    if demo.is_local_demo(http_request):
+    if demo.is_local_demo(http_request) and get_rule_provider not in http_request.app.dependency_overrides:
         return demo.local_response(demo.answer_preliminary(request,response),response)
     return questionnaire.answer(request, provider, as_of=context(response))

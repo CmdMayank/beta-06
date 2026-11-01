@@ -4,10 +4,12 @@ import { useLanguage } from '../i18n/LanguageContext';
 import { getAuthErrorKey, useAuth } from '../auth/AuthContext';
 import { STATES } from '../constants/states';
 import { DOCUMENT_TYPES } from '../config/documentTypes';
+import { useNotifications } from '../notifications';
 
 export const ProfilePage = () => {
   const { t, language, setLanguage } = useLanguage();
   const { user, profile, updateProfile, signOut, deleteProfileData, documents, uploadDocument, deleteDocument, getDocumentUrl, confirmDocument, markDocument } = useAuth();
+  const { lastCheckedAt, checking, checkStatus, recheck } = useNotifications();
   const navigate = useNavigate();
   const [form, setForm] = useState({ full_name: '', preferred_language: language, state_code: '' });
   const [documentType, setDocumentType] = useState(DOCUMENT_TYPES[0].id); const [uploading, setUploading] = useState(false); const [documentError, setDocumentError] = useState(''); const [confirming, setConfirming] = useState({});
@@ -31,6 +33,21 @@ export const ProfilePage = () => {
       <p className="text-xs text-slate-600 leading-relaxed">{t('profilePrivacy', 'We only save your name, language and state. We never save your income, caste, Aadhaar or your answers.')}</p>
       {saved && <p role="status" className="text-sm text-emerald-700">{t('profileSaved', 'Profile saved.')}</p>}{error && <p role="alert" className="text-sm text-rose-700">{t(error, 'Something went wrong. Please try again.')}</p>}
       <div className="flex flex-wrap gap-3"><button type="submit" disabled={saving} className="glass-dark-pill rounded-full px-5 py-3 text-sm font-semibold disabled:opacity-60">{saving ? t('working', 'Please wait...') : t('saveProfile', 'Save')}</button><button type="button" onClick={logout} className="glass-card-subtle rounded-full px-5 py-3 text-sm font-semibold text-slate-700">{t('logoutButton', 'Logout')}</button></div>
+      <div className="glass-card-subtle rounded-2xl p-4 border border-slate-200/60 space-y-2">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <span className="block text-xs font-bold text-slate-800">{t('recheckEligibility', 'Check again')}</span>
+            <p className="text-[11px] text-slate-500">
+              {t('lastCheckedLabel', 'Last checked')}: <span className="font-semibold text-slate-700">{lastCheckedAt ? new Date(lastCheckedAt).toLocaleString(language === 'hi' ? 'hi-IN' : 'en-IN', { dateStyle: 'medium', timeStyle: 'short' }) : t('lastCheckedNever', 'Not checked yet')}</span>
+            </p>
+          </div>
+          <button type="button" onClick={recheck} disabled={checking} className="px-4 py-2 rounded-full text-xs font-bold bg-white text-orange-800 border border-orange-200 hover:bg-orange-50 transition shadow-xs disabled:opacity-60 cursor-pointer">
+            {checking ? t('checkingEligibility', 'Checking eligibility...') : t('recheckEligibility', 'Check again')}
+          </button>
+        </div>
+        {checkStatus === 'no_new' && <p role="status" className="text-xs text-slate-600">{t('noNewMatches', 'No new matches since you last checked.')}</p>}
+        {checkStatus === 'new_found' && <p role="status" className="text-xs text-emerald-700 font-semibold">{t('newMatchesFound', 'Found newly matching schemes based on your profile.')}</p>}
+      </div>
       <Link to="/profile/details" className="block text-sm font-semibold text-orange-700 hover:underline">{t('profileDetailsLink', 'Add optional profile details')}</Link>
       <button type="button" onClick={remove} disabled={deleting} className="text-xs font-semibold text-rose-700 hover:underline disabled:opacity-60">{deleting ? t('working', 'Please wait...') : t('deleteProfile', 'Delete my profile data')}</button><p className="text-[11px] text-slate-500">{t('deleteProfileHint', 'This cannot be undone.')}</p>
     </form>

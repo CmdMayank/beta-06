@@ -1,5 +1,7 @@
 # Scheme Navigator Phase 2 API
 
+> *Added for the notification feature: `POST /api/v1/eligibility/scan` performs a stateless batch evaluation of a citizen profile against all known schemes using the existing evaluation functions.*
+
 Run all commands from `citizen-scheme-assistant/engine`:
 
 ```powershell
@@ -23,6 +25,7 @@ required by those older contracts. No shared contract or frontend was changed.
 | `GET /api/v1/meta/languages` | English and Hindi interface language metadata |
 | `GET /api/v1/schemes` | Latest currently effective published version per scheme |
 | `GET /api/v1/schemes/{scheme_id}` | Detail by stable slug (`id` in list output), not the database UUID |
+| `POST /api/v1/eligibility/scan` | Stateless batch evaluation of answers against all schemes; returns status per scheme |
 | `GET /api/v1/meta/health/db` | Minimal read-only connectivity/view-access check; 503 on failure |
 
 Listing parameters:

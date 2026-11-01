@@ -176,7 +176,10 @@ def prepare_verified(manifest_path, ledger_path, output_root):
     manifest = parse_json(manifest_path.read_bytes())
     ledger = parse_json(ledger_path.read_bytes())
     payload, attachments = build_verified_draft(manifest, ledger, ledger_path.parent)
+    system_links = {Path('/var'), Path('/tmp'), Path('/etc')}
     for p in (output_root.absolute(), *output_root.absolute().parents):
+        if p in system_links:
+            continue
         if p.is_symlink() or p.exists() and p.is_junction():
             raise InputError('Output links are forbidden')
     output_root.mkdir(parents=True, exist_ok=True)

@@ -32,6 +32,16 @@ def demo_guard(request:Request):
         raise APIError(404,'DEMO_UNAVAILABLE','Demo catalogue is unavailable.')
 
 
+def local_response(payload, response:Response) -> JSONResponse:
+    """Keep the existing advisory DTO, never coerce it to a published/approved DTO.
+
+    The public paths use this only after is_local_demo. Production response models
+    remain strict; in local demo mode the response is the existing /demo contract.
+    """
+    headers(response)
+    return JSONResponse(content=jsonable_encoder(payload),headers=dict(response.headers))
+
+
 def _offline_demo_records():
     import json
     data_dir = Path(__file__).resolve().parents[4] / 'data/schemes/preliminary-screening.json'

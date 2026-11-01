@@ -1460,7 +1460,7 @@ export const MOCK_SCHEMES = [
         },
       },
     ],
-  },,
+  },
   {
     id: 'ksb-home-loan-interest-subsidy',
     code: 'ksb-home-loan-interest-subsidy',
