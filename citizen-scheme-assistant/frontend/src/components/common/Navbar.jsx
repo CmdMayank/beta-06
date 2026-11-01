@@ -4,6 +4,7 @@ import { useLanguage } from '../../i18n/LanguageContext';
 import { LanguageSwitcher } from './LanguageSwitcher';
 import { Menu, X, UserRound, LogIn, LogOut, ArrowRight, Sparkles } from 'lucide-react';
 import { useAuth } from '../../auth/AuthContext';
+import { NotificationBell } from '../../notifications';
 
 export const Navbar = () => {
   const { t, language } = useLanguage();
@@ -122,6 +123,7 @@ export const Navbar = () => {
               {/* User Profile / Auth Button */}
               {user ? (
                 <div className="flex items-center gap-1 text-xs font-semibold">
+                  <NotificationBell />
                   <Link
                     to="/profile"
                     className="min-w-[40px] min-h-[40px] inline-flex items-center justify-center rounded-full text-slate-600 hover:text-slate-900 hover:bg-white/60 transition"
@@ -162,6 +164,7 @@ export const Navbar = () => {
             {/* Mobile Menu Button & Lang Switcher */}
             <div className="flex md:hidden items-center gap-2">
               <LanguageSwitcher />
+              {user && <NotificationBell />}
               <button
                 type="button"
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}

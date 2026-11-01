@@ -227,6 +227,18 @@ export const translations = {
     incomeBelow1Lakh: "Below ₹1 lakh", income1To2_5Lakh: "₹1–2.5 lakh", income2_5To3_5Lakh: "₹2.5–3.5 lakh", income3_5To6Lakh: "₹3.5–6 lakh", income6To8Lakh: "₹6–8 lakh", incomeAbove8Lakh: "Above ₹8 lakh", incomeDontKnow: "I don't know", documentsTitle: "My documents", documentPrivacyNote: "Documents are private and removed after 90 days of inactivity.", documentUploadLimit: "JPG, PNG or PDF · up to 3 MB", uploadDocument: "Upload document", uploading: "Uploading...", documentUploadError: "Could not upload this document.", documentPreview: "View", deleteDocument: "Delete", confirmDocument: "Confirm", confirmedValue: "Enter the value you confirmed", documentConfirmed: "Confirmed", tickOnly: "tick only", documentAlreadyHave: "Already added", documentStillNeeded: "Still needed", fromProfile: "From your saved details", fromDocument: "From a confirmed document", changeAnswer: "Change", docCaste: "Caste certificate", docIncome: "Income certificate", docDomicile: "Domicile certificate", docRationCard: "Ration card", docLandRecord: "Land record", docMarksheet: "Marksheet", docDisability: "Disability certificate", docWorkerRegistration: "Worker registration", docExServicemen: "Ex-servicemen ID", docSchoolProof: "School admission proof", docAadhaarTick: "Aadhaar available", docBankPassbookTick: "Bank passbook available",
 
     // Common
+    notificationsTitle: "Notifications",
+    recheckEligibility: "Check again",
+    lastCheckedLabel: "Last checked",
+    lastCheckedJustNow: "Checked just now",
+    lastCheckedNever: "Not checked yet",
+    checkingEligibility: "Checking eligibility...",
+    noNewMatches: "No new matches since you last checked.",
+    newMatchesFound: "Found newly matching schemes based on your profile.",
+    notificationSchemeEligible: "Based on your profile, you may qualify for {name}.",
+    markAllAsRead: "Mark as read",
+    dismissNotification: "Dismiss",
+    viewSchemeDetails: "View Details",
     optional: "Optional",
     noSchemesMatchFilter: "No schemes match the selected filter.",
     noEligibleSchemesFound: "No schemes found matching all your criteria.",
@@ -237,6 +249,10 @@ export const translations = {
     retry: "Try Again",
     copyLink: "Copy Link",
     linkCopied: "Link copied to clipboard!",
+    findAuthorityNearMe: "Find {authority} near me",
+    issuingAuthorityLabel: "Issuing authority",
+    documentGuidanceLabel: "Guidance",
+    mapSearchDisclaimer: "We link to a map search for this office type. We do not confirm exact addresses or hours — please call ahead.",
   },
 
   hi: {
@@ -460,6 +476,18 @@ export const translations = {
     profileOption_female: "महिला", profileOption_male: "पुरुष", profileOption_other: "अन्य", profileOption_prefer_not_to_say: "बताना नहीं चाहते", profileOption_yes: "हाँ", profileOption_no: "नहीं", profileOption_dont_know: "पता नहीं", profileOption_unmarried: "अविवाहित", profileOption_married: "विवाहित", profileOption_widowed: "विधवा/विधुर", profileOption_divorced_separated: "तलाकशुदा या अलग", profileOption_ex_servicemen: "पूर्व सैनिक", profileOption_freedom_fighter_family: "स्वतंत्रता सेनानी परिवार", profileOption_registered_worker: "पंजीकृत श्रमिक", profileOption_none: "कोई नहीं", profileOption_rural: "ग्रामीण", profileOption_urban: "शहरी", profileOption_central: "केंद्र सरकार", profileOption_state: "राज्य सरकार", profileOption_both: "दोनों", profileOption_government: "सरकारी", profileOption_government_aided: "सरकारी सहायता प्राप्त", profileOption_private: "निजी", profileOption_general_ews: "सामान्य / EWS", profileOption_obc: "OBC", profileOption_sc: "SC", profileOption_st: "ST", profileOption_central_list: "केंद्रीय सूची", profileOption_state_list: "राज्य सूची", profileOption_apl: "APL", profileOption_bpl: "BPL", profileOption_antyodaya: "अंत्योदय", profileOption_priority_nfsa: "प्राथमिकता NFSA", profileOption_up_to_2_5: "2.5 एकड़ तक", profileOption_2_5_to_5: "2.5 से 5 एकड़", profileOption_above_5: "5 एकड़ से अधिक", profileOption_kutcha: "कच्चा", profileOption_semi_pucca: "अर्ध-पक्का", profileOption_pucca: "पक्का", profileOption_no_house: "घर नहीं", incomeBelow1Lakh: "₹1 लाख से कम", income1To2_5Lakh: "₹1–2.5 लाख", income2_5To3_5Lakh: "₹2.5–3.5 लाख", income3_5To6Lakh: "₹3.5–6 लाख", income6To8Lakh: "₹6–8 लाख", incomeAbove8Lakh: "₹8 लाख से अधिक", incomeDontKnow: "पता नहीं", documentsTitle: "मेरे दस्तावेज़", documentPrivacyNote: "दस्तावेज़ निजी हैं और 90 दिन की निष्क्रियता के बाद हटा दिए जाते हैं।", documentUploadLimit: "JPG, PNG या PDF · अधिकतम 3 MB", uploadDocument: "दस्तावेज़ अपलोड करें", uploading: "अपलोड हो रहा है...", documentUploadError: "दस्तावेज़ अपलोड नहीं हो सका।", documentPreview: "देखें", deleteDocument: "हटाएं", confirmDocument: "पुष्टि करें", confirmedValue: "पुष्टि किया गया विवरण लिखें", documentConfirmed: "पुष्टि हो गई", tickOnly: "केवल टिक", documentAlreadyHave: "पहले से जोड़ा गया", documentStillNeeded: "अभी चाहिए", fromProfile: "आपकी सहेजी जानकारी से", fromDocument: "पुष्टि किए गए दस्तावेज़ से", changeAnswer: "बदलें", docCaste: "जाति प्रमाणपत्र", docIncome: "आय प्रमाणपत्र", docDomicile: "निवास प्रमाणपत्र", docRationCard: "राशन कार्ड", docLandRecord: "भूमि रिकॉर्ड", docMarksheet: "अंकपत्र", docDisability: "दिव्यांगता प्रमाणपत्र", docWorkerRegistration: "श्रमिक पंजीकरण", docExServicemen: "पूर्व सैनिक पहचान पत्र", docSchoolProof: "स्कूल प्रवेश प्रमाण", docAadhaarTick: "आधार उपलब्ध है", docBankPassbookTick: "बैंक पासबुक उपलब्ध है",
 
     // Common
+    notificationsTitle: "सूचनाएं",
+    recheckEligibility: "फिर से जाँचें",
+    lastCheckedLabel: "पिछली जाँच",
+    lastCheckedJustNow: "अभी जाँच की गई",
+    lastCheckedNever: "अब तक जाँच नहीं की गई",
+    checkingEligibility: "पात्रता जाँची जा रही है...",
+    noNewMatches: "पिछली जाँच के बाद कोई नई योजना नहीं मिली।",
+    newMatchesFound: "आपकी प्रोफ़ाइल के अनुसार नई उपयुक्त योजनाएं मिलीं।",
+    notificationSchemeEligible: "आपकी प्रोफ़ाइल के अनुसार, आप {name} के लिए पात्र हो सकते हैं।",
+    markAllAsRead: "पढ़ा हुआ चिह्नित करें",
+    dismissNotification: "खारिज करें",
+    viewSchemeDetails: "विवरण देखें",
     optional: "वैकल्पिक",
     noSchemesMatchFilter: "चयनित फ़िल्टर के अनुसार कोई योजना नहीं मिली।",
     noEligibleSchemesFound: "आपकी दी गई जानकारी से मेल खाती कोई योजना नहीं मिली।",
@@ -470,5 +498,9 @@ export const translations = {
     retry: "पुनः प्रयास करें",
     copyLink: "लिंक कॉपी करें",
     linkCopied: "लिंक कॉपी हो गया!",
+    findAuthorityNearMe: "नजदीकी {authority} खोजें",
+    issuingAuthorityLabel: "जारीकर्ता प्राधिकरण",
+    documentGuidanceLabel: "मार्गदर्शन",
+    mapSearchDisclaimer: "हम केवल संबंधित कार्यालय के प्रकार के लिए मानचित्र खोज का लिंक प्रदान करते हैं। सटीक पते या खुलने के समय की पुष्टि हम नहीं करते — कृपया जाने से पहले पता कर लें।",
   }
 };

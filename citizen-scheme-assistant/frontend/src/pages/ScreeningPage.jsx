@@ -10,10 +10,11 @@ import { LanguageSwitcher } from '../components/common/LanguageSwitcher';
 import { LoadingState } from '../components/common/LoadingState';
 import { useAuth } from '../auth/AuthContext';
 import { profileToAnswers } from '../profile/profileToAnswers';
+import { mockAdapter } from '../mock/mockAdapter';
 import { ArrowLeft, ArrowRight, RotateCcw, Shuffle, Sparkles, CheckCircle2 } from 'lucide-react';
 
 export const ScreeningPage = () => {
-  const { t, language } = useLanguage();
+  const { t, language, getLocalized } = useLanguage();
   const navigate = useNavigate();
   const [params, setParams] = useSearchParams();
   const { user, profileDetails } = useAuth();
@@ -135,17 +136,33 @@ export const ScreeningPage = () => {
     (rawId, list = []) => {
       if (!rawId) return '';
       const lower = rawId.toLowerCase().trim();
-      if (SCHEME_ALIASES[lower]) return SCHEME_ALIASES[lower];
-      const found = list.find(
+      const directMatch = list.find(
         (s) =>
           (s.id && s.id.toLowerCase() === lower) ||
           (s.code && s.code.toLowerCase() === lower) ||
-          (s.key && s.key.toLowerCase() === lower) ||
-          (s.name && typeof s.name === 'string' && s.name.toLowerCase().includes(lower))
+          (s.key && s.key.toLowerCase() === lower)
+      );
+      if (directMatch) return directMatch.id;
+
+      if (SCHEME_ALIASES[lower]) {
+        const canonical = SCHEME_ALIASES[lower];
+        const inList = list.find((s) => s.id === canonical || s.code === canonical);
+        if (inList) return inList.id;
+        const aliasMatch = list.find(
+          (s) =>
+            SCHEME_ALIASES[(s.id || '').toLowerCase()] === canonical ||
+            SCHEME_ALIASES[(s.code || '').toLowerCase()] === canonical
+        );
+        if (aliasMatch) return aliasMatch.id;
+        return canonical;
+      }
+
+      const found = list.find(
+        (s) => getLocalized(s.name) && getLocalized(s.name).toLowerCase().includes(lower)
       );
       return found?.id || rawId;
     },
-    [SCHEME_ALIASES]
+    [SCHEME_ALIASES, getLocalized]
   );
 
   // Load available schemes for selection or metadata lookup
@@ -174,7 +191,24 @@ export const ScreeningPage = () => {
           }
         }
       })
-      .catch((e) => {
+      .catch(async (e) => {
+        if (!active) return;
+        // In preview or offline development mode, fallback to mock schemes so user is not blocked
+        try {
+          const mockRes = await mockAdapter.getSchemes({ language });
+          if (active && mockRes?.schemes?.length) {
+            setSchemes(mockRes.schemes);
+            const raw = params.get('scheme_id');
+            const targetId = resolveSchemeId(raw, mockRes.schemes);
+            if (targetId) {
+              setSelected(targetId);
+            }
+            setError('');
+            return;
+          }
+        } catch {
+          // If mockAdapter fails as well, show the network error
+        }
         if (active) setError(t(errorKey(e)));
       })
       .finally(() => {
@@ -183,7 +217,7 @@ export const ScreeningPage = () => {
     return () => {
       active = false;
     };
-  }, [language, reload, params, SCHEME_ALIASES]);
+  }, [language, reload, params, SCHEME_ALIASES, resolveSchemeId]);
 
   // Clean session cleanup on unmount
   useEffect(() => {
@@ -229,17 +263,23 @@ export const ScreeningPage = () => {
 
     setSelected(targetId);
 
+    const canonicalId = SCHEME_ALIASES[(targetId || '').toLowerCase()] || targetId;
+
     // If flow is already actively evaluating this scheme, keep it
-    if (flow.current?.state?.scheme_id === targetId && q) {
+    if (
+      flow.current?.state?.scheme_id &&
+      (flow.current.state.scheme_id === canonicalId || flow.current.state.scheme_id === targetId) &&
+      q
+    ) {
       return;
     }
 
     // Auto-start questionnaire automatically
-    if (autoStarted.current !== targetId) {
-      autoStarted.current = targetId;
-      run(() => flow.start(targetId, language));
+    if (autoStarted.current !== canonicalId) {
+      autoStarted.current = canonicalId;
+      run(() => flow.start(canonicalId, language));
     }
-  }, [params, language, resolveSchemeId, schemes]);
+  }, [params, language, resolveSchemeId, schemes, SCHEME_ALIASES, q]);
 
   // Pre-fill profile answers
   useEffect(() => {
@@ -258,9 +298,23 @@ export const ScreeningPage = () => {
 
   const question = q?.current_question;
   const currentActiveSchemeId = q?.state?.scheme_id || selected;
-  const currentScheme = schemes.find((s) => s.id === currentActiveSchemeId);
-  const validSelection = schemes.some(
-    (s) => s.id === selected && (!s.is_demo || s.screening_available === true)
+  const currentScheme = schemes.find(
+    (s) =>
+      s.id === currentActiveSchemeId ||
+      s.code === currentActiveSchemeId ||
+      SCHEME_ALIASES[(s.id || '').toLowerCase()] === currentActiveSchemeId ||
+      SCHEME_ALIASES[(currentActiveSchemeId || '').toLowerCase()] === s.id
+  );
+  const selectedScheme = schemes.find(
+    (s) =>
+      s.id === selected ||
+      s.code === selected ||
+      SCHEME_ALIASES[(s.id || '').toLowerCase()] === selected ||
+      SCHEME_ALIASES[(selected || '').toLowerCase()] === s.id
+  );
+  const currentSelectValue = selectedScheme?.id || selected;
+  const validSelection = Boolean(
+    selectedScheme && (!selectedScheme.is_demo || selectedScheme.screening_available === true)
   );
 
   const clear = () => {
@@ -348,7 +402,7 @@ export const ScreeningPage = () => {
                     {t('evaluatingScheme', 'Eligibility Check for')}
                   </span>
                   <h3 className="text-sm sm:text-base font-extrabold text-slate-900 leading-tight">
-                    {currentScheme.name || currentScheme.id}
+                    {getLocalized(currentScheme?.name) || currentScheme?.id}
                   </h3>
                 </div>
               </div>
@@ -373,7 +427,10 @@ export const ScreeningPage = () => {
               <span>{error}</span>
               <button
                 type="button"
-                onClick={() => setReload((n) => n + 1)}
+                onClick={() => {
+                  autoStarted.current = null;
+                  setReload((n) => n + 1);
+                }}
                 className="text-xs font-bold underline hover:text-rose-950"
               >
                 {t('retry', 'Retry')}
@@ -398,7 +455,7 @@ export const ScreeningPage = () => {
                   <select
                     id="scheme-select"
                     className="glass-input rounded-2xl w-full p-4 text-sm font-semibold text-slate-800 focus:outline-none cursor-pointer"
-                    value={selected}
+                    value={currentSelectValue}
                     onChange={(e) => setSelected(e.target.value)}
                     disabled={busy}
                   >
@@ -407,7 +464,7 @@ export const ScreeningPage = () => {
                       .filter((s) => !s.is_demo || s.screening_available === true)
                       .map((s) => (
                         <option key={s.id} value={s.id}>
-                          {s.name || s.id}
+                          {getLocalized(s.name) || s.id}
                           {s.translation_fallback
                             ? ` (${t(s.language === 'en' ? 'fallbackEnglish' : 'languageFallback')})`
                             : ''}
@@ -426,7 +483,11 @@ export const ScreeningPage = () => {
                   type="button"
                   className="glass-dark-pill w-full sm:w-auto inline-flex items-center justify-center gap-3 rounded-full px-7 py-3.5 text-sm font-semibold tracking-wide hover:bg-black transition-all shadow-lg active:scale-95 disabled:opacity-40"
                   disabled={!validSelection || busy}
-                  onClick={() => run(() => flow.start(selected, language))}
+                  onClick={() => {
+                    const targetId = resolveSchemeId(selected, schemes) || selected;
+                    const canonicalId = SCHEME_ALIASES[(targetId || '').toLowerCase()] || targetId;
+                    run(() => flow.start(canonicalId, language));
+                  }}
                 >
                   <span>{t('startScheme', 'Start my eligibility check')}</span>
                   <ArrowRight className="w-4 h-4 text-white" />

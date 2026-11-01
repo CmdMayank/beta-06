@@ -9,9 +9,33 @@ export class ApiClient {
     const abort = () => controller.abort();
     options.signal?.addEventListener('abort', abort, { once: true });
     const timer = setTimeout(abort, 15000);
+    const fetchOptions = {
+      ...options,
+      signal: controller.signal,
+      cache: 'no-store',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+        ...options.headers,
+      },
+    };
     try {
-      const response = await fetch(`${this.baseUrl}${endpoint}`, { ...options, signal: controller.signal,
-        cache: 'no-store', headers: { Accept: 'application/json', 'Content-Type': 'application/json', ...options.headers } });
+      let response;
+      try {
+        response = await fetch(`${this.baseUrl}${endpoint}`, fetchOptions);
+      } catch (err) {
+        // If an absolute baseUrl failed due to network error and wasn't aborted,
+        // retry using relative path (e.g. Vite dev proxy or same origin)
+        if (this.baseUrl && !controller.signal.aborted) {
+          try {
+            response = await fetch(endpoint, fetchOptions);
+          } catch {
+            throw err;
+          }
+        } else {
+          throw err;
+        }
+      }
       const data = await response.json().catch(() => { throw new ApiError('INVALID_RESPONSE', response.status); });
       if (!response.ok) throw new ApiError(data?.error?.code || 'HTTP_ERROR', response.status, data?.error?.fields || []);
       return data;

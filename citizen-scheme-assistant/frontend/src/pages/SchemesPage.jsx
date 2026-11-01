@@ -106,7 +106,7 @@ export const SchemesPage = () => {
           setData(r);
         } else {
           // If response has no items, try fallback mock schemes for rich local preview
-          mockAdapter.getSchemes(filters).then((mockRes) => {
+          return mockAdapter.getSchemes(filters).then((mockRes) => {
             if (active) {
               setData({ items: mockRes.schemes, total: mockRes.total });
             }
@@ -116,7 +116,7 @@ export const SchemesPage = () => {
       .catch((e) => {
         if (!active) return;
         // In local development or preview when engine is offline, fallback to mock schemes
-        mockAdapter
+        return mockAdapter
           .getSchemes(filters)
           .then((mockRes) => {
             if (active && mockRes?.schemes?.length) {
@@ -179,13 +179,15 @@ export const SchemesPage = () => {
   // Client-side filtering on items for category and state
   const filteredItems = useMemo(() => {
     if (!data?.items) return [];
-    let items = [...data.items];
+    let items = data.items.filter(Boolean);
 
     if (filters.category && filters.category !== 'all') {
       items = items.filter((item) => {
         if (item.category) return item.category === filters.category;
         // Keyword heuristic if item comes from engine without category tag
-        const text = `${item.name || ''} ${item.description || ''}`.toLowerCase();
+        const nameText = typeof item.name === 'object' ? `${item.name?.en || ''} ${item.name?.hi || ''}` : String(item.name || '');
+        const descText = typeof item.description === 'object' ? `${item.description?.en || ''} ${item.description?.hi || ''}` : String(item.description || '');
+        const text = `${nameText} ${descText}`.toLowerCase();
         if (filters.category === 'agriculture') return /kisan|farmer|crop|land|agri/.test(text);
         if (filters.category === 'women-child') return /women|mahila|child|ladli|girl|sukanya|maternity/.test(text);
         if (filters.category === 'education') return /education|scholarship|student|school|merit/.test(text);

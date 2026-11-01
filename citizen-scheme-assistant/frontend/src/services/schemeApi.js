@@ -1,8 +1,8 @@
 import { apiClient } from './apiClient.js';
 
 export const isDemoCatalog =
-  import.meta.env?.DEV === true &&
-  import.meta.env?.VITE_SCHEME_CATALOG_MODE === 'demo';
+  import.meta.env?.VITE_SCHEME_CATALOG_MODE === 'demo' ||
+  (import.meta.env?.DEV === true && import.meta.env?.VITE_SCHEME_CATALOG_MODE !== 'published');
 
 const catalogPath = isDemoCatalog ? '/api/v1/demo/schemes' : '/api/v1/schemes';
 

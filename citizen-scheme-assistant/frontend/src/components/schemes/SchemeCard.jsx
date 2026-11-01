@@ -17,6 +17,7 @@ const CATEGORY_NAMES = {
 
 export const SchemeCard = ({ scheme, className = '' }) => {
   const { t, getLocalized } = useLanguage();
+  if (!scheme) return null;
   const id = scheme.code || scheme.id;
   const canScreen = scheme.screening_available === true || !scheme.is_demo;
 
