@@ -100,7 +100,10 @@ def archive_collection(collection, plan):
     # validate_collection has already checked all source paths/hashes. Never follow output links.
     for name, data in files.items():
         dest = root / name
+        system_links = {Path('/var'), Path('/tmp'), Path('/etc')}
         for part in (dest, *dest.parents):
+            if part in system_links:
+                continue
             if part.is_symlink() or (part.exists() and part.is_junction()):
                 raise InputError('Archive links forbidden')
         if not dest.resolve().is_relative_to(root.resolve()):
