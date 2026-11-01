@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useLanguage } from '../../i18n/LanguageContext';
 import { LanguageSwitcher } from './LanguageSwitcher';
-import { Menu, X, UserRound, LogIn, LogOut } from 'lucide-react';
+import { Menu, X, ArrowRight } from 'lucide-react';
 import { useAuth } from '../../auth/AuthContext';
 
 export const Navbar = () => {
@@ -22,8 +22,7 @@ export const Navbar = () => {
   };
 
   return (
-    <>
-      <header className="sticky top-0 z-40 px-3 sm:px-6 pt-3 pb-2 transition-all">
+    <header className="sticky top-0 z-40 px-3 sm:px-6 pt-3 pb-2 transition-all">
       <div className="max-w-7xl mx-auto">
         <div className="glass-panel rounded-full px-4 sm:px-6 py-2.5 sm:py-3 flex items-center justify-between shadow-glass">
 
@@ -36,7 +35,7 @@ export const Navbar = () => {
             <div className="relative">
               <img
                 src="/logo.svg"
-                alt="Scheme Sahayak logo"
+                alt="Scheme Sahayak Emblem"
                 className="w-8 h-8 sm:w-10 sm:h-10 transition-transform group-hover:scale-105"
               />
               <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-emerald-500 ring-2 ring-white" />
@@ -45,6 +44,9 @@ export const Navbar = () => {
               <div className="flex items-center gap-2">
                 <span className="font-extrabold text-base sm:text-lg text-slate-900 tracking-tight">
                   {language === 'hi' ? 'योजना सहायक' : 'Scheme Sahayak'}
+                </span>
+                <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-orange-100/80 text-orange-800 border border-orange-200/60 uppercase tracking-wider hidden sm:inline-block">
+                  Citizen AI
                 </span>
               </div>
               <p className="text-[10px] text-slate-500 font-medium tracking-tight hidden md:block">
@@ -57,20 +59,22 @@ export const Navbar = () => {
           <nav className="hidden md:flex items-center gap-1 bg-white/40 p-1 rounded-full border border-white/60">
             <Link
               to="/"
-              className={`px-4 py-1.5 rounded-full text-xs font-semibold transition-all ${isActive('/') && location.pathname === '/'
+              className={`px-4 py-1.5 rounded-full text-xs font-semibold transition-all ${
+                isActive('/') && location.pathname === '/'
                   ? 'bg-white text-slate-900 shadow-xs'
                   : 'text-slate-600 hover:text-slate-900 hover:bg-white/50'
-                }`}
+              }`}
             >
               {t('navHome', 'Home')}
             </Link>
 
             <Link
               to="/schemes"
-              className={`px-4 py-1.5 rounded-full text-xs font-semibold transition-all ${isActive('/schemes')
+              className={`px-4 py-1.5 rounded-full text-xs font-semibold transition-all ${
+                isActive('/schemes')
                   ? 'bg-white text-slate-900 shadow-xs'
                   : 'text-slate-600 hover:text-slate-900 hover:bg-white/50'
-                }`}
+              }`}
             >
               {t('navSchemes', 'Explore Schemes')}
             </Link>
@@ -96,11 +100,12 @@ export const Navbar = () => {
             <LanguageSwitcher />
 
             {user ? (
-              <div className="flex items-center gap-1 text-xs font-semibold">
-                <Link to="/profile" className="min-w-[44px] min-h-[44px] inline-flex items-center justify-center rounded-full text-slate-600 hover:text-slate-900 hover:bg-white/60" title={profile?.full_name || user.email} aria-label={`${t('profileMenu', 'Profile')}: ${profile?.full_name || user.email}`}><UserRound className="w-4 h-4" /></Link>
-                <button type="button" onClick={handleLogout} className="min-w-[44px] min-h-[44px] inline-flex items-center justify-center rounded-full text-slate-600 hover:text-slate-900 hover:bg-white/60" title={t('logoutButton', 'Logout')} aria-label={t('logoutButton', 'Logout')}><LogOut className="w-4 h-4" /></button>
+              <div className="flex items-center gap-3 text-xs font-semibold">
+                <span className="max-w-32 truncate text-slate-800">{profile?.full_name || user.email}</span>
+                <Link to="/profile" className="text-slate-600 hover:text-slate-900">{t('profileMenu', 'Profile')}</Link>
+                <button type="button" onClick={handleLogout} className="text-slate-600 hover:text-slate-900">{t('logoutButton', 'Logout')}</button>
               </div>
-            ) : <Link to="/login" className="glass-dark-pill inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-xs font-semibold tracking-wide hover:bg-black transition-all shadow-md active:scale-95"><span>{t('loginButton', 'Login')}</span><LogIn className="w-3 h-3 text-white" /></Link>}
+            ) : <Link to="/login" className="glass-dark-pill inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-xs font-semibold tracking-wide hover:bg-black transition-all shadow-md active:scale-95"><span>{t('loginButton', 'Login')}</span><ArrowRight className="w-3 h-3 text-white" /></Link>}
           </div>
 
           {/* Mobile Menu Button & Lang Switcher */}
@@ -153,18 +158,11 @@ export const Navbar = () => {
             </a>
 
             <div className="pt-3 border-t border-slate-200/50">
-              {user ? <div className="flex items-center justify-between gap-3 px-4 text-sm font-semibold"><Link to="/profile" onClick={() => setMobileMenuOpen(false)} className="inline-flex items-center gap-2 text-slate-800"><UserRound className="w-4 h-4" />{t('profileMenu', 'Profile')}</Link><button type="button" onClick={handleLogout} className="inline-flex items-center gap-2 text-slate-800"><LogOut className="w-4 h-4" />{t('logoutButton', 'Logout')}</button></div> : <Link to="/login" onClick={() => setMobileMenuOpen(false)} className="glass-dark-pill w-full flex items-center justify-center gap-2 px-4 py-3 rounded-full text-xs font-semibold tracking-wide"><LogIn className="w-3.5 h-3.5" /><span>{t('loginButton', 'Login')}</span></Link>}
+              {user ? <div className="flex items-center justify-between gap-3 px-4 text-sm font-semibold"><Link to="/profile" onClick={() => setMobileMenuOpen(false)} className="text-slate-800">{t('profileMenu', 'Profile')}</Link><button type="button" onClick={handleLogout} className="text-slate-800">{t('logoutButton', 'Logout')}</button></div> : <Link to="/login" onClick={() => setMobileMenuOpen(false)} className="glass-dark-pill w-full flex items-center justify-center gap-2 px-4 py-3 rounded-full text-xs font-semibold tracking-wide"><span>{t('loginButton', 'Login')}</span><ArrowRight className="w-3.5 h-3.5" /></Link>}
             </div>
           </div>
         </div>
       )}
     </header>
-    {/* 1.2 Independent disclaimer strip directly under navbar on EVERY page */ }
-  <div className="bg-amber-50/90 border-y border-amber-200/80 text-amber-950 py-1 px-4 text-center text-[11px] sm:text-xs font-medium tracking-wide">
-    <p className="max-w-7xl mx-auto">
-      {t('bannerDisclaimer', 'Independent project, not an official government website.')}
-    </p>
-  </div>
-  </>
   );
 };

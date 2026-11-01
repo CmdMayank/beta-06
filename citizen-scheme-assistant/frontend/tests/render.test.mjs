@@ -5,7 +5,7 @@ import {createServer} from 'vite';
 import React from 'react';
 import {renderToString} from 'react-dom/server';
 import {StaticRouter} from 'react-router-dom/server.js';
-const server=await createServer({server:{middlewareMode:true},appType:'custom'});
+const server=await createServer({server:{middlewareMode:true,hmr:false},appType:'custom'});
 after(async()=>{await server.close();delete globalThis.sessionStorage;});
 const {LanguageProvider}=await server.ssrLoadModule('/src/i18n/LanguageContext.jsx');
 const {ResultCard}=await server.ssrLoadModule('/src/components/results/ResultCard.jsx');

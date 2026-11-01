@@ -1,4 +1,4 @@
-const BASE_URL = import.meta.env?.VITE_API_BASE_URL || 'http://127.0.0.1:8001';
+import { API_BASE_URL as BASE_URL } from './apiConfig.js';
 export class ApiError extends Error {
   constructor(code, status = 0, fields = []) { super(code); this.code = code; this.status = status; this.fields = fields; }
 }
@@ -7,7 +7,8 @@ export class ApiClient {
   async request(endpoint, options = {}) {
     const controller = new AbortController();
     const abort = () => controller.abort();
-    options.signal?.addEventListener('abort', abort, { once: true });
+    if (options.signal?.aborted) abort();
+    else options.signal?.addEventListener('abort', abort, { once: true });
     const timer = setTimeout(abort, 15000);
     try {
       const response = await fetch(`${this.baseUrl}${endpoint}`, { ...options, signal: controller.signal,

@@ -5,13 +5,14 @@ from starlette.exceptions import HTTPException
 
 
 class APIError(Exception):
-    def __init__(self, status: int, code: str, message: str):
+    def __init__(self, status: int, code: str, message: str, headers: dict[str, str] | None = None):
         self.status, self.code, self.message = status, code, message
+        self.headers = headers or {}
 
 
 def private_headers(request: Request) -> dict[str, str]:
     if request.url.path.startswith(('/api/v1/questionnaire/', '/api/v1/eligibility/', '/api/v1/results/',
-                                    '/api/v1/demo/questionnaire/', '/api/v1/demo/results/')):
+                                    '/api/v1/demo/questionnaire/', '/api/v1/demo/results/', '/api/v1/chatbot/')):
         return {'Cache-Control': 'no-store', 'Pragma': 'no-cache'}
     return {}
 
@@ -19,7 +20,7 @@ def private_headers(request: Request) -> dict[str, str]:
 def register_errors(app: FastAPI) -> None:
     @app.exception_handler(APIError)
     async def api_error(request: Request, exc: APIError) -> JSONResponse:
-        return JSONResponse(status_code=exc.status, content={"error": {"code": exc.code, "message": exc.message}}, headers=private_headers(request))
+        return JSONResponse(status_code=exc.status, content={"error": {"code": exc.code, "message": exc.message}}, headers={**exc.headers, **private_headers(request)})
 
     @app.exception_handler(RequestValidationError)
     async def validation_error(request: Request, exc: RequestValidationError) -> JSONResponse:

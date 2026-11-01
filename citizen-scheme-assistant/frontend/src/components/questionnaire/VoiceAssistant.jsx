@@ -25,10 +25,6 @@ export const VoiceAssistant = ({ textToRead = '', onSpeechResult, contentLanguag
       if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
         window.speechSynthesis.cancel();
       }
-      if (recognitionRef.current) {
-        recognitionRef.current.abort();
-        recognitionRef.current = null;
-      }
     };
   }, []);
 
@@ -39,11 +35,6 @@ export const VoiceAssistant = ({ textToRead = '', onSpeechResult, contentLanguag
     if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
       window.speechSynthesis.cancel();
       setIsSpeaking(false);
-    }
-    if (recognitionRef.current) {
-      recognitionRef.current.abort();
-      recognitionRef.current = null;
-      setIsListening(false);
     }
   }, [textToRead, language]);
 
@@ -72,12 +63,6 @@ export const VoiceAssistant = ({ textToRead = '', onSpeechResult, contentLanguag
     if (!hasSpeechRecognition) return;
     setVoiceError('');
 
-    // Stop any previous recognition before starting a new one
-    if (recognitionRef.current) {
-      recognitionRef.current.abort();
-      recognitionRef.current = null;
-    }
-
     const SpeechRecognition =
       window.SpeechRecognition || window.webkitSpeechRecognition;
     recognitionRef.current?.abort();
@@ -93,7 +78,7 @@ export const VoiceAssistant = ({ textToRead = '', onSpeechResult, contentLanguag
     recognition.onerror = () => {setIsListening(false);setVoiceError(t('voiceFailed'));};
 
     recognition.onresult = (event) => {
-      const transcript = event.results[0][0].transcript.trim();
+      const transcript = event.results[0][0].transcript;
       if (onSpeechResult) {
         onSpeechResult(transcript);
       }
@@ -110,10 +95,11 @@ export const VoiceAssistant = ({ textToRead = '', onSpeechResult, contentLanguag
         type="button"
         onClick={handleReadAloud}
         disabled={!hasReadAloud}
-        className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition-all focus-visible:ring-2 focus-visible:ring-orange-400 focus-visible:outline-none ${isSpeaking
+        className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition-all focus-visible:ring-2 focus-visible:ring-orange-400 focus-visible:outline-none ${
+          isSpeaking
             ? 'bg-orange-500 text-white shadow-sm animate-pulse'
             : 'glass-card-subtle text-slate-700 hover:text-slate-900 hover:bg-white'
-          }`}
+        }`}
         title={isSpeaking ? t('voiceStop') : t('voiceReadAloud')}
       >
         {isSpeaking ? (
@@ -134,10 +120,11 @@ export const VoiceAssistant = ({ textToRead = '', onSpeechResult, contentLanguag
         <button
           type="button"
           onClick={handleSpeechInput}
-          className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition-all ${isListening
+          className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition-all ${
+            isListening
               ? 'bg-rose-500 text-white shadow-sm animate-pulse'
               : 'glass-card-subtle text-slate-700 hover:text-slate-900 hover:bg-white'
-            }`}
+          }`}
           title={isListening ? t('voiceListening') : t('voiceInput')}
         >
           {isListening ? (
