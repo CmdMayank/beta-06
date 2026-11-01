@@ -1,0 +1,32 @@
+# Prepared configuration only. No service is created by adding this file.
+services:
+  - type: web
+    name: citizen-scheme-api
+    runtime: python
+    branch: feat/chatbot-voice-integration
+    rootDir: citizen-scheme-assistant/engine
+    buildCommand: pip install -r requirements.txt
+    startCommand: python -m uvicorn main:app --host 0.0.0.0 --port $PORT --no-access-log --no-proxy-headers
+    healthCheckPath: /health
+    autoDeploy: false
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.13.5
+      - key: SCHEME_APP_ENV
+        value: production
+      - key: SCHEME_DEMO_ENABLED
+        value: "0"
+      - key: CORS_ORIGINS
+        sync: false
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: GEMINI_MODEL
+        value: gemini-3.5-flash-lite
+      - key: DATABASE_URL
+        sync: false
+      - key: DATABASE_EXPECTED_USER
+        value: scheme_api
+      - key: DATABASE_SSL_ROOT_CERT
+        value: /etc/secrets/supabase-ca.crt
+# Upload the verified CA as a private host secret file, not a repository file.
+# Published-only mode is intentional. Local demo/chat gates remain unchanged.

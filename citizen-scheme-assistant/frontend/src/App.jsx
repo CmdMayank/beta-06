@@ -1,3 +1,4 @@
+import { FloatingChatbot } from './chatbot/FloatingChatbot';
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { LanguageProvider } from './i18n/LanguageContext';
@@ -38,6 +39,7 @@ export const App = () => {
             </Routes>
           </main>
           <Footer />
+          <FloatingChatbot />
         </div>
         </Router>
       </AuthProvider>

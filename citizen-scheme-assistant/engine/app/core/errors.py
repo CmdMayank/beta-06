@@ -11,7 +11,7 @@ class APIError(Exception):
 
 def private_headers(request: Request) -> dict[str, str]:
     if request.url.path.startswith(('/api/v1/questionnaire/', '/api/v1/eligibility/', '/api/v1/results/',
-                                    '/api/v1/demo/questionnaire/', '/api/v1/demo/results/')):
+                                    '/api/v1/demo/questionnaire/', '/api/v1/demo/results/', '/api/v1/chatbot/')):
         return {'Cache-Control': 'no-store', 'Pragma': 'no-cache'}
     return {}
 

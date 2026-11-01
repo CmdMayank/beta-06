@@ -15,6 +15,9 @@ VERSION = "0.1.0"
 
 load_environment()
 
+# Provider configuration is loaded before chatbot service initialization.
+from app.api.routes.chatbot import router as chatbot_router
+
 app = FastAPI(
     title="Scheme Navigator API",
     description="Multilingual Government Scheme Eligibility Assistant",
@@ -22,13 +25,14 @@ app = FastAPI(
     docs_url="/docs",
 )
 app.add_middleware(CORSMiddleware, allow_origins=cors_origins(),
-                   allow_credentials=False, allow_methods=["GET", "POST"], allow_headers=["Accept", "Content-Type"])
+                   allow_credentials=False, allow_methods=["GET", "POST", "DELETE"], allow_headers=["Accept", "Content-Type", "X-Conversation-Token"])
 register_errors(app)
 app.include_router(router)
 app.include_router(eligibility_router)
 app.include_router(questionnaire_router)
 app.include_router(results_router)
 app.include_router(demo_router)
+app.include_router(chatbot_router)
 
 
 @app.get("/health")
