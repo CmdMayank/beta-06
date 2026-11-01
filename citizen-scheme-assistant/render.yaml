@@ -16,6 +16,8 @@ services:
         value: production
       - key: SCHEME_DEMO_ENABLED
         value: "0"
+      - key: SCHEME_CHATBOT_PUBLIC_ENABLED
+        value: "1"
       - key: CORS_ORIGINS
         sync: false
       - key: GEMINI_API_KEY
@@ -29,4 +31,5 @@ services:
       - key: DATABASE_SSL_ROOT_CERT
         value: /etc/secrets/supabase-ca.crt
 # Upload the verified CA as a private host secret file, not a repository file.
-# Published-only mode is intentional. Local demo/chat gates remain unchanged.
+# Published-only mode is intentional. Public chat uses origin checks and budgets;
+# draft previews remain loopback-only and no policy approval is created.

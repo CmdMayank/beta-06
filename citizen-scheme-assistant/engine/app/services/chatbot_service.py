@@ -44,7 +44,8 @@ class ChatbotService:
 
     def _access(self,cid,token):
         c=self._conversations.get(cid)
-        if not c or monotonic()-c['updated']>self.TTL or not token or not compare_digest(c['token'],token):
+        if (not c or monotonic()-c['updated']>self.TTL or not token
+            or not re.fullmatch(r'[a-f0-9]{64}',token) or not compare_digest(c['token'],token)):
             raise APIError(404,'CONVERSATION_UNAVAILABLE','Conversation unavailable or expired.')
         return c
 
@@ -162,6 +163,15 @@ class ChatbotService:
                 if not target: raise APIError(404,'SCHEME_UNAVAILABLE','Scheme is unavailable in the current catalogue.')
                 selected=[target]; plan=plan.model_copy(update={'intent':'screening'})
             if plan.intent=='conversation': selected=[]
+            if not local_demo:
+                # Fetch details only for bounded, server-selected published IDs.
+                # Summary records do not carry documents or application evidence.
+                details=[]
+                for record in selected[:3]:
+                    try: detail=scheme_retrieval_service.detail(record['id'],lang,False)
+                    except (APIError,ValueError,OSError): detail=None
+                    if detail: details.append(detail)
+                selected=details
             cards=[]; docs=[]; guidance=None; eligibility=None; sources=[]; screen_url=None
             parts=[]
             if plan.intent=='conversation':

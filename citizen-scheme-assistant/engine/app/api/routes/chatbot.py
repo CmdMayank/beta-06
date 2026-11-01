@@ -1,4 +1,4 @@
-"""Local chatbot API: capability-isolated RAM conversations and private audio."""
+"""Capability-isolated chat with explicit, budget-limited production access."""
 from typing import Annotated
 from fastapi import APIRouter,Depends,Header,Query,Request,Response
 from fastapi.responses import Response as RawResponse
@@ -9,15 +9,9 @@ from app.schemas.chatbot import (ChatMessageRequest,ChatMessageResponse,Conversa
 from app.services.chatbot_service import chatbot_service,WORDS
 from app.services.elevenlabs_service import elevenlabs_service
 from app.services.gemini_service import gemini_service
+from app.services.chatbot_access import chat_access
 
-def local_chat(request:Request,response:Response):
-    response.headers['Cache-Control']='no-store'
-    response.headers['Pragma']='no-cache'
-    if (not request.client or request.client.host not in ('127.0.0.1','::1','test','testclient')
-            or request.url.hostname not in ('127.0.0.1','localhost','::1','test','testserver')):
-        raise APIError(404,'CHATBOT_UNAVAILABLE','Chatbot is unavailable.')
-
-router=APIRouter(prefix='/api/v1/chatbot',tags=['Chatbot'],dependencies=[Depends(local_chat)])
+router=APIRouter(prefix='/api/v1/chatbot',tags=['Chatbot'],dependencies=[Depends(chat_access)])
 
 @router.post('/message',response_model=ChatMessageResponse)
 def send_chat_message(request:ChatMessageRequest,http_request:Request):

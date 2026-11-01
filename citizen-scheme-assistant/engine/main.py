@@ -17,6 +17,7 @@ load_environment()
 
 # Provider configuration is loaded before chatbot service initialization.
 from app.api.routes.chatbot import router as chatbot_router
+from app.services.chatbot_access import ChatBodyLimitMiddleware
 
 app = FastAPI(
     title="Scheme Navigator API",
@@ -24,6 +25,7 @@ app = FastAPI(
     version=VERSION,
     docs_url="/docs",
 )
+app.add_middleware(ChatBodyLimitMiddleware)
 app.add_middleware(CORSMiddleware, allow_origins=cors_origins(),
                    allow_credentials=False, allow_methods=["GET", "POST", "DELETE"], allow_headers=["Accept", "Content-Type", "X-Conversation-Token"])
 register_errors(app)

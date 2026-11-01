@@ -61,6 +61,7 @@ Server-side variables:
 | ELEVENLABS_MODEL_ID | Defaults to eleven_multilingual_v2 |
 | SCHEME_APP_ENV | development for local demo |
 | SCHEME_DEMO_ENABLED | Explicit 1 to enable existing local catalogue/screening |
+| SCHEME_CHATBOT_PUBLIC_ENABLED | Explicit 1 with production mode enables budget-limited public chat |
 | CORS_ORIGINS | Explicit isolated frontend origins |
 
 Restart only the isolated backend after configuring its keys. Model availability and quota depend on the account. The default was checked against official model documentation; this run also verified real responses using the owner's existing configured model. The configured value takes precedence over the default. See [Gemini model documentation](https://ai.google.dev/gemini-api/docs/models/gemini-3.8-flash), [official Python SDK](https://googleapis.github.io/python-genai/), and [ElevenLabs speech API](https://elevenlabs.io/docs/api-reference/text-to-speech/convert).
@@ -73,7 +74,7 @@ Gemini timeouts, quota, missing models and authentication failures return transp
 
 ## API contract
 
-All chatbot endpoints are local-only and use private no-store responses. Request/response models are in app/schemas/chatbot.py; Swagger is the exact reference.
+Chatbot endpoints use private no-store responses. Local access remains available; production public access requires the explicit opt-in, approved HTTPS origins and budgets documented in DEPLOYMENT_STATUS.md. Request/response models are in app/schemas/chatbot.py; Swagger is the exact reference.
 
 ```http
 POST /api/v1/chatbot/message
@@ -106,7 +107,7 @@ Hindi messages use `"language":"hi"`; Roman-script Hinglish is also passed to th
 
 History/reset require the `X-Conversation-Token` header. A guessed ID alone cannot read/delete a conversation. Voice returns private audio/mpeg when configured/successful, otherwise JSON with `provider=browser_fallback`. Clients must inspect the content type; the provided client already does.
 
-Conversations live only in bounded process memory: 15-minute expiry (purged on access), up to 100 conversations, 12 recent turns and 40 messages per conversation. Reloading/restarting can lose them; no multi-worker continuity is promised. No citizen DB/profile persistence or browser localStorage was added. This loopback preview is not an internet-ready chat service; public deployment would require explicit authentication/rate limits, privacy review and provider consent.
+Conversations live only in bounded process memory: 15-minute expiry (purged on access), up to 100 conversations, 12 recent turns and 40 messages per conversation. Reloading/restarting can lose them; no multi-worker continuity is promised. No citizen DB/profile persistence or browser localStorage was added. Public deployment requires the explicit opt-in and origin/budget controls in DEPLOYMENT_STATUS.md. Limits are process-local; multiple instances require a shared limiter and provider spending controls.
 
 ## Voice behavior and privacy
 
@@ -118,7 +119,7 @@ Read aloud first tries the configured backend speech provider; otherwise it uses
 
 | Check | Actual result |
 | --- | --- |
-| Complete Python suite | 199 passed |
+| Complete Python suite | 210 passed |
 | Isolated PGlite database suite | 35 passed; no remote DB |
 | Frontend Node tests | 32 passed, including voice, API-base and build-directory regression tests |
 | Production Vite build | Passed |

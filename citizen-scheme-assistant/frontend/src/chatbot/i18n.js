@@ -1,4 +1,6 @@
 const en={
+rateLimited:'The assistant is busy or its request limit was reached. Please retry in a minute.',
+originDenied:'Chat is not configured for this website yet. Please contact the project team.',
 open:'Open Sahayak',close:'Minimize chat',title:'Sahayak',subtitle:'Independent government-scheme guide',
 reset:'Start new conversation',voice:'Voice controls',text:'Text chat',send:'Send message',input:'Message Sahayak',
 placeholder:'Ask about a scheme…',welcome:'Hello! Ask about a government scheme, its listed documents or how to apply. I can also direct you to structured preliminary screening.',
@@ -21,6 +23,8 @@ sources:'Sources',unknown:'Needs verification',likely:'Likely eligible to apply'
 response:'Assistant response',language:'Chat language',voicePrivacy:'Voice may use your browser or configured speech provider. Review the transcript, then press Send.',
 voiceFallback:'Browser speech fallback',clearError:'Dismiss message'};
 const hi={
+rateLimited:'सहायक व्यस्त है या अनुरोध सीमा पूरी हो गई है। एक मिनट बाद फिर कोशिश करें।',
+originDenied:'इस वेबसाइट के लिए चैट अभी कॉन्फ़िगर नहीं है। कृपया परियोजना टीम से संपर्क करें।',
 open:'सहायक खोलें',close:'चैट छोटा करें',title:'सहायक',subtitle:'स्वतंत्र सरकारी योजना मार्गदर्शक',
 reset:'नई बातचीत शुरू करें',voice:'आवाज़ नियंत्रण',text:'लिखित चैट',send:'संदेश भेजें',input:'सहायक को संदेश',
 placeholder:'किसी योजना के बारे में पूछें…',welcome:'नमस्ते! सरकारी योजना, उसके सूचीबद्ध दस्तावेज़ या आवेदन के बारे में पूछें। मैं प्रारंभिक जाँच के संरचित प्रश्नों तक भी पहुँचा सकता हूँ।',

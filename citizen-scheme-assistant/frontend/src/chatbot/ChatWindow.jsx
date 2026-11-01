@@ -50,7 +50,7 @@ export const ChatWindow=({open=true,onClose})=>{
    setMessages(previous=>[...previous,{role:'assistant',content:reply.message,language:reply.language,schemes:reply.schemes,eligibility:reply.eligibility,missing_documents:reply.missing_documents,application_guidance:reply.application_guidance,sources:reply.sources,screening_url:reply.screening_url}].slice(-24));
    setSuggestions(reply.suggested_followups||[]);
   }catch(problem){
-   if(ticket===version.current)setError(problem.code==='CONVERSATION_UNAVAILABLE'?'expired':problem.name==='AbortError'?'cancelled':'serverError');
+   if(ticket===version.current)setError(problem.code==='CHATBOT_RATE_LIMITED'?'rateLimited':problem.code==='CHATBOT_ORIGIN_DENIED'?'originDenied':problem.code==='CONVERSATION_UNAVAILABLE'?'expired':problem.name==='AbortError'?'cancelled':'serverError');
   }finally{if(ticket===version.current){current.current=null;setBusy(false);}}
  }
  function reset(){

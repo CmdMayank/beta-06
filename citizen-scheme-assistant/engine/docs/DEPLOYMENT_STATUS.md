@@ -25,7 +25,7 @@ or transferred separately.
 
 ## Final verification results
 
-- Backend: 199 tests passed; isolated PGlite database: 35 passed.
+- Backend: 210 tests passed; isolated PGlite database: 35 passed.
 - Frontend: 32 tests passed, including API-origin and build-directory regression tests.
 - Production build passed. Both development and built-app browser journeys passed.
 - Actual HTTP: 15 schemes, 30 bilingual journeys and 7 additional decision cases passed.
@@ -84,7 +84,8 @@ Provide privately on the backend host:
 - DATABASE_SSL_ROOT_CERT pointing to that file.
 - CORS_ORIGINS containing the exact HTTPS frontend origin(s).
 - GEMINI_API_KEY as a private server variable, and GEMINI_MODEL=gemini-3.5-flash-lite
-  to preserve the account-tested model (this does not enable public chat access).
+  to preserve the account-tested model.
+- SCHEME_CHATBOT_PUBLIC_ENABLED=1 (prepared in render.yaml and the private render.env).
 
 Keep SCHEME_APP_ENV=production and SCHEME_DEMO_ENABLED=0. No migration or import is
 part of the startup command. The existing API connection still enforces verify-full
@@ -108,11 +109,28 @@ identified as such. Production published queries correctly exclude them; a hoste
 empty published catalogue is not an RLS bug to bypass. Policy/translation review
 and explicit publication approval remain necessary for production citizen access.
 
-Chat and preliminary-demo routes are still loopback-only. The hosting template
-does not silently turn them into public endpoints. Remote chat requires an explicit
-deployment/access/privacy decision and appropriate abuse protection. The local
-hackathon demo has working Gemini chat using the existing server-side key and
-gemini-3.5-flash-lite. Keys are never exposed in frontend configuration.
+Preliminary-demo routes remain loopback-only. Public chat is explicitly enabled by
+SCHEME_APP_ENV=production plus SCHEME_CHATBOT_PUBLIC_ENABLED=1. Browser POSTs must
+send an Origin matching an approved HTTPS CORS_ORIGINS entry or the platform-provided
+RENDER_EXTERNAL_URL. Unknown/missing POST origins are rejected before provider use.
+Public status can be checked without an Origin. Origin checks are browser protection,
+not user authentication; provider spending is independently bounded.
+
+Public requests have per-peer limits (120 total requests/minute, 30 POSTs/minute),
+global provider limits (60 POSTs/minute, 300/hour), four concurrent provider requests,
+and a 16 KiB streamed body limit. POST budgets include speech. 429 responses carry
+Retry-After: 60. Caller-supplied forwarding headers cannot bypass limits. Hosting
+proxies may conservatively share a peer budget. Peer identifiers are ephemeral HMACs;
+no raw IP addresses or answers are stored by the limiter. Keep one worker/instance:
+budgets are process-local and reset on restart. Multi-instance deployment requires a
+shared limiter and account-level provider spending controls.
+
+Existing conversation capabilities, 15-minute expiry, bounded history, no-store,
+provider timeouts, server-only keys and published-policy gates remain enforced.
+Public scheme answers fetch details only for at most three server-selected published
+records; disappeared records do not fall back to stale summaries or draft bundles.
+The local demo still uses the existing explicit development gate. No scheme is
+published or approved by enabling public chat.
 
 ## Built frontend preview and verification
 
